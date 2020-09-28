@@ -1,0 +1,18 @@
+torrent client {
+	tfile = argv[1];
+	open tfile, read // torrent file library, or your own code;
+	l = get list of trackers from tfile
+	loop over l {
+		connect to a tracker	 // 
+		if connection // you became a peer
+			break;
+	} 
+	p = get list of peers from tracker 
+		// you should konw how to talk to a tracker
+	for i in p
+		c[i] = connection open with p[i];
+		ch[i] = list of chunks available with p[i];
+	create your own map of chunks, for each chunk list of peers
+	start downloading the chunks using the algo
+		
+}
