@@ -7,7 +7,6 @@
 * The end user web browsers
 * The end user downloaders
 
-
 ### Trackers GET request -
 * info\_hash
 * peer\_id
