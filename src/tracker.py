@@ -15,8 +15,9 @@ from torrent_file_handler import torrent_metadata
     the tracker URL servers. The request paramters are included as given below
 """
 
-class tracker():
-
+class tracker_data():
+        
+    # contructs the tracker request data 
     def __init__(self, torrent):
         self.compact = 1
         # the request parameters of the torrent 
@@ -30,23 +31,77 @@ class tracker():
             'compact'   : self.compact
         }
 
+    # extract the important information for the response dictionary 
+    def parse_tracker_response(self, raw_response_dict):
+        
+        # interval : specifies minimum time client show wait for sending next request 
+        if b'interval' in raw_response_dict:
+            self.interval = raw_response_dict[b'interval']
+
+        # list of peers form the participating the torrent
+        if b'peers' in raw_response_dict:
+            self.peers_list = []
+            # extract the raw peers data 
+            raw_peers_data = raw_response_dict[b'peers']
+            # create a list of each peer information which is of 6 bytes
+            raw_peers_list = (raw_peers_data[i : 6 + i] for i in range(0, len(raw_peers_data), 6))
+            # extract all the peer id, peer IP and peer port
+            for raw_peer_data in raw_peers_list:
+                # extract the peer IP address 
+                peer_IP = ".".join(str(a) for a in raw_peer_data[0:4])
+                # extract the peer port number
+                peer_port = int("".join(str(a) for a in raw_peers_data[5:6]))
+                self.peers_list.append((peer_IP, peer_port))
+            
+        # number of peers with the entire file
+        if b'complete' in raw_response_dict:
+            self.complete = raw_response_dict[b'complete']
+
+        # number of non-seeder peers, aka "leechers"
+        if b'incomplete' in raw_response_dict:
+            self.incomplete = raw_response_dict[b'incomplete']
+        
+        # tracker id must be sent back by the user on announcement
+        if b'tracker id' in raw_response_dict:
+            self.tracker_id = raw_response_dict[b'tracker id']
+
+
 """
     Class HTTP torrent tracker helps the client communicate to any HTTP torrent 
-    tracker. However the base class data of torrent remains the same only way
-    to communicate will change
+    tracker. However the base class containing data of torrent remains the 
+    same only way to communicate changes
 """
-
-class http_torrent_tracker(tracker):
+class http_torrent_tracker(tracker_data):
+    # contructor : initializes the torrent information
     def __init__(self, torrent, tracker_url):
         self.tracker_url = tracker_url
         super().__init__(torrent)
+    
+    # attempts to connect to HTTP tracker
+    # returns true if conncetion is established false otherwise
+    def request_torrent_information(self):
+        # try establishing a connection to the tracker
+        try:
+            # the reponse from HTTP tracker is an bencoded dictionary 
+            bencoded_response = requests.get(self.tracker_url, self.request_parameters)
+            # decode the bencoded dictionary to python ordered dictionary 
+            raw_response_dict = bencodepy.decode(bencoded_response.content)
+            # parse the dictionary containing raw data
+            self.parse_tracker_response(raw_response_dict)
+            return True
+        # TODO : except block must log why it was not able to connect the tracker
+        except:
+            # cannont establish a connection with the tracker
+            return False
+
 
 """
     Class UDP torrent tracker helps the client communicate to any HTTP torrent 
     tracker. However the base class data of torrent remains the same only way
     to communicate will change
 """
-class udp_torrent_tracker(tracker):
+# TODO : implementation is left
+class udp_torrent_tracker(tracker_data):
     pass
 
 
@@ -56,7 +111,11 @@ class udp_torrent_tracker(tracker):
     with them accordingly
 """
 class torrent_tracker():
+    # tracker for the torrent
+    tracker = None
     
+    # contructors initializes a torernt tracker connection given 
+    # the tracker urls from the torrent metadata file
     def __init__(self, torrent):
         # get all the trackers list of the torrent data
         self.trackers_list = []
@@ -68,12 +127,9 @@ class torrent_tracker():
                 tracker = udp_torrent_tracker(torrent, tracker_url)
             self.trackers_list.append(tracker)
         
-        # try connecting with any of the tracker 
+        # try connecting with any of the tracker obtained in the list
         for tracker in self.trackers_list:
-            try:
-                response = requests.get(tracker.tracker_url, tracker.request_parameters)
-                print(bencodepy.encode(response.text))
-            except:
-                print(tracker.tracker_url + ' : TRACKER NOT CONNECTED !')
-
+            if(tracker.request_torrent_information()):
+                self.tracker = tracker
+                break
 
