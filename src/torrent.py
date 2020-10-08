@@ -16,12 +16,8 @@ class torrent():
         # store the orginal metadata extracted from the file
         self.torrent_metadata = torrent_metadata
         
-        # torrent peer socket for communicating with the tracker
-        self.peer_socket = socket(AF_INET, SOCK_STREAM)
-        self.peer_port = 12345
-        self.peer_hostname = ''
-        self.peer_socket.bind((self.peer_hostname, self.peer_port)) 
-        self.peer_socket.listen(1)
+        # torrent peer port revserved for bit torrent 
+        self.peer_port = 6881
 
         # information about the file being downloaded/uploaded
         self.uploaded = 0

@@ -13,7 +13,6 @@ def main(argv):
     client = torrent_client(torrent_file_path)
 
 
-
 if __name__ == '__main__':
     if(len(sys.argv) != 2):
         print('Usage of program is : python3 main.py <torrent_file>')
