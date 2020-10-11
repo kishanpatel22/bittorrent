@@ -5,8 +5,21 @@
 * PWP is layered on top of TCP and handles all its communication using
   asynchronous messages.
 
-*
-
+### Working with Peers
+* Manage Peer State
+    + Choked
+    + Interested
+* Handle Peer messages
+    + Handshake
+    + Keep Alive
+    + Choke 
+    + Unchoke
+    + Interested
+    + Not Interested
+    + Have
+    + Bitfield
+    + Request
+    + Piece
 
 
 

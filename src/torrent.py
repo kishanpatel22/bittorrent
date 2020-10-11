@@ -1,6 +1,7 @@
 import sys
 import os
 import hashlib
+import random as rd
 from datetime import datetime
 from socket import *
 
@@ -17,7 +18,7 @@ class torrent():
         self.torrent_metadata = torrent_metadata
         
         # torrent peer port revserved for bit torrent 
-        self.peer_port = 6881
+        self.port = 6881
 
         # information about the file being downloaded/uploaded
         self.uploaded = 0
@@ -27,11 +28,10 @@ class torrent():
         self.requested_pieces = None
         self.downloaded_piece_offset = None
     
-        # urlencoded 20-byte string used as a unique ID for the torrent
-        peer_id_sha = hashlib.sha1()
-        peer_id_sha.update(str(os.getpid()).encode())
-        peer_id_sha.update(str(datetime.now()).encode())
-        self.peer_id = peer_id_sha.digest()
+        # Azureus-style encoding for peer id
+        self.peer_id = ('-PC0001-' + ''.join([str(rd.randint(0, 9)) for i in range(12)])).encode()
+
+
 
 
 

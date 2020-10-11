@@ -28,7 +28,7 @@ class tracker_data():
         self.request_parameters = {
             'info_hash' : torrent.torrent_metadata.info_hash,
             'peer_id'   : torrent.peer_id,
-            'port'      : torrent.peer_port,
+            'port'      : torrent.port,
             'uploaded'  : torrent.uploaded,
             'downloaded': torrent.downloaded,
             'left'      : torrent.left,
@@ -47,7 +47,8 @@ class http_torrent_tracker(tracker_data):
     def __init__(self, torrent, tracker_url):
         super().__init__(torrent)
         self.tracker_url = tracker_url
-    
+   
+
     # attempts to connect to HTTP tracker
     # returns true if conncetion is established false otherwise
     def request_torrent_information(self):
@@ -79,16 +80,17 @@ class http_torrent_tracker(tracker_data):
             # extract the raw peers data 
             raw_peers_data = raw_response_dict[b'peers']
             # create a list of each peer information which is of 6 bytes
-            raw_peers_list = (raw_peers_data[i : 6 + i] for i in range(0, len(raw_peers_data), 6))
+            raw_peers_list = [raw_peers_data[i : 6 + i] for i in range(0, len(raw_peers_data), 6)]
             # extract all the peer id, peer IP and peer port
             for raw_peer_data in raw_peers_list:
                 # extract the peer IP address 
-                peer_IP = ".".join(str(a) for a in raw_peer_data[0:4])
+                peer_IP = ".".join(str(int(a)) for a in raw_peer_data[0:4])
                 # extract the peer port number
-                peer_port = int("".join(str(a) for a in raw_peers_data[5:6]))
+                peer_port = raw_peer_data[4] * 256 + raw_peer_data[5]
+                # append the (peer IP, peer port)
                 self.peers_list.append((peer_IP, peer_port))
             
-        # number of peers with the entire file
+        # number of peers with the entire file aka seeders
         if b'complete' in raw_response_dict:
             self.complete = raw_response_dict[b'complete']
 
@@ -99,7 +101,13 @@ class http_torrent_tracker(tracker_data):
         # tracker id must be sent back by the user on announcement
         if b'tracker id' in raw_response_dict:
             self.tracker_id = raw_response_dict[b'tracker id']
- 
+
+
+    # API function for creating the getting the peer data recivied by HTTP tracker
+    def get_peers_data(self):
+        peer_data = {'interval' : self.interval, 'peers' : self.peers_list,
+                     'leechers' : self.complete, 'seeders'  : self.incomplete}
+        return peer_data
 
 
 """
@@ -137,7 +145,7 @@ class udp_torrent_tracker(tracker_data):
 
         # create a socket for sending request and recieving responses
         self.tracker_sock = socket(AF_INET, SOCK_DGRAM) 
-        self.tracker_sock.settimeout(8)
+        self.tracker_sock.settimeout(10)
 
         # connection payload for UDP tracker connection request
         connection_payload = self.build_connection_payload()
@@ -153,6 +161,9 @@ class udp_torrent_tracker(tracker_data):
             
             # extract the peers IP, peer port from the announce response
             self.parse_udp_tracker_response(self.raw_announce_reponse)
+            
+            # close the socket once the reponse is obtained
+            self.tracker_sock.close()
 
             if self.peers_list and len(self.peers_list) != 0:
                 return True
@@ -160,6 +171,8 @@ class udp_torrent_tracker(tracker_data):
                 raise network_error('Peer list empty !')
 
         except Exception as error_msg:
+            # close the socket if the response is not obtained
+            self.tracker_sock.close()
             print('Error is ', error_msg)
             return False
             
@@ -293,8 +306,8 @@ class udp_torrent_tracker(tracker_data):
         self.leechers = struct.unpack_from("!i", raw_announce_reponse, offset)[0] 
         
         offset = offset + 4
-        # seeds : the peers uploading the file
-        self.seeds = struct.unpack_from("!i", raw_announce_reponse, offset)[0] 
+        # seeders : the peers uploading the file
+        self.seeders = struct.unpack_from("!i", raw_announce_reponse, offset)[0] 
         
         offset = offset + 4
         # obtains the peers list of (peer IP, peer port)
@@ -308,9 +321,18 @@ class udp_torrent_tracker(tracker_data):
             # append to IP, port tuple to peer list
             self.peers_list.append((peer_IP, peer_port))
             offset = offset + 6
-        
 
 
+    # API function for creating the getting the peer data recivied by UDP tracker
+    def get_peers_data(self):
+        peer_data = {'interval' : self.interval, 'peers'    : self.peers_list,
+                     'leechers' : self.leechers, 'seeders'  : self.seeders}
+        return peer_data
+       
+    
+    # ensure that socket used for tracker request is closed
+    def __exit__(self):
+        self.tracker_sock.close()
 
 
 """

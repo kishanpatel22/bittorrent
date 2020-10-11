@@ -25,13 +25,13 @@ class torrent_client():
         # make any tracker connection from the list of tracker
         self.tracker = self.trackers_list.request_connection()
         
-        # get the list of all peers from the tracker connection response
-        for peer_IP, peer_port in self.tracker.peers_list:
-            print(peer_IP, peer_port)
+        # get the peer data from the recieved from the tracker
+        peers_data = self.tracker.get_peers_data()
         
         # create peers instance from the list of peers obtained from tracker
-        self.peers = peers(self.tracker.peers_list, self.torrent)
+        self.peers = peers(peers_data, self.torrent)
         
+        self.peers.handshakes()
 
 
 
