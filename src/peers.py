@@ -1,5 +1,6 @@
 import struct
 from network_error import network_error
+from peer_wire_messages import *
 from socket import *
 
 """
@@ -22,24 +23,31 @@ class peer():
         self.max_peer_connections = 10
 
         # handshake flag with peer
-        self.handshake_flag = 0
+        self.handshake_flag = False
         
         # keep track of upload and download speed
         self.upload_speed   = None
         self.download_speed = None
         
-        # Initialize the two states of the peer
+        # Initialize the states of the peer 
+        # Initial state of the peer is choked and not interested
         self.am_choking         = True
         self.am_interested      = False
         self.peer_choking       = True
         self.peer_interested    = False
-         
+    
+        # bitfield representing which data file pieces peer has
+        self.bitfield = set([])
+
         # initializing a peer socket for TCP communiction 
         self.peer_sock = socket(AF_INET, SOCK_STREAM)
         self.peer_sock.settimeout(10)
         
+        info_hash = self.torrent.torrent_metadata.info_hash
+        client_peer_id = self.torrent.peer_id
+
         # make the handshake payload for handshake
-        self.handshake_payload = self.build_handshake_payload()
+        self.handshake_payload = handshake().message(info_hash, client_peer_id)
 
 
     # attempts to connect the peer using TCP connection 
@@ -51,64 +59,88 @@ class peer():
         except Exception as err_msg:
             print('The error is : ', err_msg)
             return False
-   
-
-    # creates the handshake payload for peer wire protocol handshake
-    def build_handshake_payload(self):
-        # protocol name : BTP 
-        protcol_name = "BitTorrent protocol"
-        # first bytes the length of protocol name default - 19
-        handshake_payload  = struct.pack("!B", 19)
-        # protocol name 19 bytes
-        handshake_payload += struct.pack("!19s", protcol_name.encode())
-        # next 8 bytes reserved 
-        handshake_payload += struct.pack("!Q", 0x0)
-        # next 20 bytes info hash
-        handshake_payload += struct.pack("!20s", self.torrent.torrent_metadata.info_hash)
-        # next 20 bytes peer id
-        handshake_payload += struct.pack("!20s", self.torrent.peer_id)
-        # returns the handshake payload
-        return handshake_payload
-        
+       
 
     # does an handshake with the peer 
     # returns success/failure for handshake
     def hanshake(self):
         # only do handshake if not done earlier
-        if self.handshake_flag == 0 and self.connect():
+        if not self.handshake_flag and self.connect():
             self.peer_sock.send(self.handshake_payload)
             try:
                 # recieves the peer handshake response 
-                peer_response = self.peer_sock.recv(1024)
+                peer_response_handshake = self.peer_sock.recv(1024)
+                self.handshake_flag = True
                 # compared the recieved handshake
-                if(self.confirm_handshake_response(peer_response)):
-                    self.handshake_flag = True
+                if(self.validate_handshake_response(peer_response_handshake)):
                     return True
                 else:
+                    print('Invalid Handshake !')
                     return False
-            except:
+            except Exception as err:
+                print('Error is ', err)
                 return False
    
 
     # checks if handshake response given by peer is correct
-    def confirm_handshake_response(self, peer_response):
+    def validate_handshake_response(self, peer_response_handshake):
         # check for valid peer response 
-        if(len(peer_response) < 64):
+        if(len(peer_response_handshake) != 68):
             return False
+        
         # extract the info hash of torrent 
-        peer_info_hash  = peer_response[28:48]
+        peer_info_hash  = peer_response_handshake[28:48]
         # extract the peer id 
-        peer_id    = peer_response[48:68]
+        self.peer_id    = peer_response_handshake[48:68]
 
         # check if the info hash is equal 
         if(peer_info_hash != self.torrent.torrent_metadata.info_hash):
             return False
         # check if peer has got a unique id associated with it
-        if(peer_id == self.torrent.peer_id):
+        if(self.peer_id == self.torrent.peer_id):
             return False
-        
         # succesfully validaded the peer information
         return True
+    
+    
+    # sends the peer given request message 
+    def send_message(self, peer_request):
+        if self.handshake_flag:
+            self.peer_sock.send(peer_request.message())
+
+    
+    # the function attempts recieves for any messages from the peer
+    # the function returns the peer wire message object if recieved
+    # any message for peer successfully else returns None
+    def recieve_message(self):
+        # attempt to recieve any message
+        try:
+            peer_message = self.peer_sock.recv(1024)
+        except:
+            print(self.IP + " peer didn't send any message !")
+            return None
+        
+        # extract the peer wire message information
+        offset = 0
+        # first 4 bytes     : message length
+        message_length = struct.unpack_from("!I", peer_message)[0]
+        
+        offset = offset + 4
+        # next 1 byte       : message ID
+        message_id     = struct.unpack_from("!B", peer_message, offset)[0]
+        
+        offset = offset + 1
+        # variable bytes    : message ID
+        if(message_length > 1): 
+            message_payload = peer_message[offset:]
+        else:
+            message_payload = None
+        return peer_wire_message(message_length, message_id, message_payload)
+       
+
+
+
+
 
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
@@ -129,17 +161,21 @@ class peers:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
 
     def handshakes(self):
-        peer = self.peers_list[0]
-        if(peer.hanshake()):
-            print(peer.IP, peer.port, ' Did handshake succesfully!')
-        else:
-            print(peer.IP, peer.port, ' Did not do handshake !')
+        for peer in self.peers_list[:3]:
+            if(peer.hanshake()):
+                print(peer.IP, peer.port, ' Did handshake succesfully!')
+                peer.send_message(interested())
+                a = peer.recieve_message()
+                print(a.message_length)
+                print(a.message_id)
+                print(a.payload)
+                print('')
+            else:
+                print(peer.IP, peer.port, ' Did not do handshake !\n')
 
-        #for peer in self.peers_list:
-        #    print(peer.IP, peer.port)
-        #    if(peer.hanshake()):
-        #        print(peer.IP, peer.port, ' Did handshake succesfully!')
-        #    else:
-        #        print(peer.IP, peer.port, ' Did not do handshake !')
+
+
+
+
 
 

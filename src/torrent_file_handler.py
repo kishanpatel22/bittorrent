@@ -33,14 +33,14 @@ class torrent_metadata():
         self.info_hash      = info_hash                 # sha1 hash of the info metadata
 
     # logs the meta data of torrent
-    def log_metadata(self):
-        print('=================== TORRENT_FILE METADATA ===================')
-        print('Trackers List : ' + str(self.trackers_url_list))
-        print('File name     : ' + str(self.file_name))
-        print('File size     : ' + str(self.file_size) + ' B')
-        print('Piece length  : ' + str(self.piece_length) + ' B')
-        print('Pieces        : ' + str(self.pieces))
-        print('=============================================================')
+    def __str__(self):
+        logging_info =  'TORRENT FILE METADATA : '                         + '\n'
+        logging_info += 'Trackers List : ' + str(self.trackers_url_list)   + '\n'
+        logging_info += 'File name     : ' + str(self.file_name)           + '\n'
+        logging_info += 'File size     : ' + str(self.file_size) + ' B'    + '\n'
+        logging_info += 'Piece length  : ' + str(self.piece_length) + ' B' + '\n'
+        logging_info += '\n'
+        return logging_info
 
 
 """
@@ -73,7 +73,7 @@ class torrent_file_reader(torrent_metadata):
         except Exception as err:
             print('Error in reading given torrent file ! \n' + str(err))
             sys.exit()
-
+        
         # formatted metadata from the torrent file
         self.torrent_file_extract = self.extract_torrent_metadata(self.torrent_file_raw_extract)
         

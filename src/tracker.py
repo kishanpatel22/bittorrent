@@ -43,11 +43,12 @@ class tracker_data():
     same only way to communicate changes
 """
 class http_torrent_tracker(tracker_data):
+    
     # contructor : initializes the torrent information
     def __init__(self, torrent, tracker_url):
         super().__init__(torrent)
         self.tracker_url = tracker_url
-   
+       
 
     # attempts to connect to HTTP tracker
     # returns true if conncetion is established false otherwise
@@ -106,8 +107,23 @@ class http_torrent_tracker(tracker_data):
     # API function for creating the getting the peer data recivied by HTTP tracker
     def get_peers_data(self):
         peer_data = {'interval' : self.interval, 'peers' : self.peers_list,
-                     'leechers' : self.complete, 'seeders'  : self.incomplete}
+                     'leechers' : self.incomplete, 'seeders'  : self.complete}
         return peer_data
+
+
+    # logs the information obtained by the HTTP tracker 
+    def __str__(self):
+        logging_info =  'HTTP TRACKER RESPONSE :'                       + '\n'
+        logging_info += 'HTTP Tracker URL : ' + self.tracker_url        + '\n'
+        logging_info += 'Interval         : ' + str(self.interval)      + '\n'
+        logging_info += 'Leechers         : ' + str(self.incomplete)    + '\n'
+        logging_info += 'Seeders          : ' + str(self.complete)      + '\n'
+        logging_info += 'Peers            : peer IP : peer port' + '\n'
+        for peer_IP, peer_port in self.peers_list:
+            logging_info += '                 : ' + peer_IP + ' : ' + str(peer_port) + '\n'
+        logging_info += '\n'
+        return logging_info
+
 
 
 """
@@ -117,6 +133,7 @@ class http_torrent_tracker(tracker_data):
     UDP Tracker Protcol mentioned at "https://libtorrent.org/udp_tracker_protocol.html"
 """
 class udp_torrent_tracker(tracker_data):
+    
     # contructor : initializes the torrent information
     def __init__(self, torrent, tracker_url):
         super().__init__(torrent)
@@ -130,7 +147,7 @@ class udp_torrent_tracker(tracker_data):
         # transaction id : random id to be set by the client
         self.transaction_id = int(rd.randrange(0, 255))          
         
-     
+    
     # parse the UDP tracker URL : the function returns (hostname, port)
     def parse_udp_tracker_url(self, tracker_url):
         domain_url = tracker_url[6:].split(':')
@@ -164,11 +181,11 @@ class udp_torrent_tracker(tracker_data):
             
             # close the socket once the reponse is obtained
             self.tracker_sock.close()
-
+            
             if self.peers_list and len(self.peers_list) != 0:
                 return True
             else:
-                raise network_error('Peer list empty !')
+                return False
 
         except Exception as error_msg:
             # close the socket if the response is not obtained
@@ -341,34 +358,65 @@ class udp_torrent_tracker(tracker_data):
     with them accordingly
 """
 class torrent_tracker():
-    
+
     # contructors initializes a torernt tracker connection given 
     # the tracker urls from the torrent metadata file
     def __init__(self, torrent):
+        # the responding tracker instance for client
+        self.client_tracker = None
+        # connection status of the trackers
+        self.connection_success         = 1 
+        self.connection_failure         = 2
+        self.connection_not_attempted   = 3
+        
         # get all the trackers list of the torrent data
         self.trackers_list = []
+        self.trackers_connection_status = []
+
         for tracker_url in torrent.torrent_metadata.trackers_url_list:
             # classify HTTP and UDP torrent trackers
             if 'http' in tracker_url[:4]:
                 tracker = http_torrent_tracker(torrent, tracker_url)
             if 'udp' in tracker_url[:4]:
                 tracker = udp_torrent_tracker(torrent, tracker_url)
+            # append the tracker class instance 
             self.trackers_list.append(tracker)
+            # append the connection status 
+            self.trackers_connection_status.append(self.connection_not_attempted)
 
 
     # the torrent tracker requests for the list of peers 
-    # Note : function attempts tracker connections for all the URL if 
-    #        any tracker url reponse is recieved it returns that tracker
+    # Note : function attempts to connect to tracker for given all the tracker
+    #        instances and any tracker url reponse is recieved that is retunred
     def request_connection(self):
-        client_tracker = None
         # attempts connecting with any of the tracker obtained in the list
-        for tracker in self.trackers_list:
-            print(tracker.tracker_url)
+        for i, tracker in enumerate(self.trackers_list):
+            # check if you can request for torrent information 
             if(tracker.request_torrent_information()):
-                client_tracker = tracker
+                self.trackers_connection_status[i] = self.connection_success
+                self.client_tracker = tracker
                 break
+            else:
+                self.trackers_connection_status[i] = self.connection_failure
         
         # returns tracker instance for which successful connection was established
-        return client_tracker
+        return self.client_tracker
 
+    
+    # logs the tracker connections information 
+    def __str__(self):
+        logging_info =  'TRACKER CONNECTIONS INFORMATION :'               + '\n'
+        logging_info += 'Connection Status' + '\t\t\t\t' + 'Trackers URL' + '\n'
+        # log all the trackers and corresponding status connection
+        for i, status in enumerate(self.trackers_connection_status):
+            if(status == self.connection_success):
+                logging_info += 'Tracker connection success !'            + '\t\t\t'
+            elif(status == self.connection_failure):
+                logging_info += 'Tracker connection failure !'            + '\t\t\t'
+            else:
+                logging_info += 'Tracker connection not attempted !'      + '\t\t'
+            logging_info += self.trackers_list[i].tracker_url             + '\n'
+        
+        logging_info += '\n'
+        return logging_info
 

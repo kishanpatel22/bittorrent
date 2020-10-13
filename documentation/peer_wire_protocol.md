@@ -21,5 +21,15 @@
     + Request
     + Piece
 
+### Communication with the peer 
+
+|Message order |   Client side     |     Message      |    Peer side        |
+|--------------|-------------------|------------------|---------------------|
+|1             | TCP connection    |      <-->        | TCP connection      |
+|2             | Handshake request |      --->        |                     |
+|3             |                   |      <---        | Handshake response  |
+
+
+
 
 

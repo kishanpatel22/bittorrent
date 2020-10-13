@@ -31,6 +31,19 @@ class torrent():
         # Azureus-style encoding for peer id
         self.peer_id = ('-PC0001-' + ''.join([str(rd.randint(0, 9)) for i in range(12)])).encode()
 
+    
+    # logs the torrent information of torrent
+    def __str__(self):
+        logging_info =  'TORRENT INFORMATION : '+ '\n'
+        logging_info += 'Trackers List  : ' + str(self.torrent_metadata.trackers_url_list)      + '\n'
+        logging_info += 'File name      : ' + str(self.torrent_metadata.file_name)              + '\n'
+        logging_info += 'File size      : ' + str(self.torrent_metadata.file_size) + ' B'       + '\n'
+        logging_info += 'Piece length   : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
+        logging_info += 'Info hash      : ' + str(self.torrent_metadata.info_hash)              + '\n'
+        logging_info += 'Client port    : ' + str(self.port)                                    + '\n'
+        logging_info += 'Client peer ID : ' + str(self.peer_id)                                 + '\n'
+        logging_info += '\n'
+        return logging_info
 
 
 

@@ -19,11 +19,16 @@ class torrent_client():
         # make torrent class instance from the torrent data extracted from torrent file
         self.torrent = torrent(self.torrent_info.get_data())
         
+        print(self.torrent)
+
         # get the list of torrent tracker instance
         self.trackers_list = torrent_tracker(self.torrent)
-        
+    
         # make any tracker connection from the list of tracker
         self.tracker = self.trackers_list.request_connection()
+        
+        print(self.trackers_list)
+        print(self.tracker)
         
         # get the peer data from the recieved from the tracker
         peers_data = self.tracker.get_peers_data()
