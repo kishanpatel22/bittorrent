@@ -36,9 +36,11 @@ class torrent_client():
         # create peers instance from the list of peers obtained from tracker
         self.peers = peers(peers_data, self.torrent)
         
+        # does initial handshaking with all the peers 
         self.peers.handshakes()
-
-
+        
+        # recieve all the bitfields from the peer
+        self.peers.recieve_bitfields()
 
 
 

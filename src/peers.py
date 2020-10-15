@@ -19,8 +19,8 @@ class peer():
         # unique peer ID recieved from peer
         self.peer_id = None
 
-        # maximum peer connections
-        self.max_peer_connections = 10
+        # maximum message length
+        self.max_message_length = 1024
 
         # handshake flag with peer
         self.handshake_flag = False
@@ -37,7 +37,7 @@ class peer():
         self.peer_interested    = False
     
         # bitfield representing which data file pieces peer has
-        self.bitfield = set([])
+        self.bitfield_pieces = None
 
         # initializing a peer socket for TCP communiction 
         self.peer_sock = socket(AF_INET, SOCK_STREAM)
@@ -46,8 +46,6 @@ class peer():
         info_hash = self.torrent.torrent_metadata.info_hash
         client_peer_id = self.torrent.peer_id
 
-        # make the handshake payload for handshake
-        self.handshake_payload = handshake().message(info_hash, client_peer_id)
 
 
     # attempts to connect the peer using TCP connection 
@@ -57,88 +55,165 @@ class peer():
             self.peer_sock.connect((self.IP, self.port))
             return True
         except Exception as err_msg:
-            print('The error is : ', err_msg)
+            print(self.IP + ' peer connection Error : ', err_msg)
             return False
-       
 
-    # does an handshake with the peer 
-    # returns success/failure for handshake
-    def hanshake(self):
-        # only do handshake if not done earlier
-        if not self.handshake_flag and self.connect():
-            self.peer_sock.send(self.handshake_payload)
-            try:
-                # recieves the peer handshake response 
-                peer_response_handshake = self.peer_sock.recv(1024)
-                self.handshake_flag = True
-                # compared the recieved handshake
-                if(self.validate_handshake_response(peer_response_handshake)):
-                    return True
-                else:
-                    print('Invalid Handshake !')
-                    return False
-            except Exception as err:
-                print('Error is ', err)
-                return False
-   
-
-    # checks if handshake response given by peer is correct
-    def validate_handshake_response(self, peer_response_handshake):
-        # check for valid peer response 
-        if(len(peer_response_handshake) != 68):
-            return False
-        
-        # extract the info hash of torrent 
-        peer_info_hash  = peer_response_handshake[28:48]
-        # extract the peer id 
-        self.peer_id    = peer_response_handshake[48:68]
-
-        # check if the info hash is equal 
-        if(peer_info_hash != self.torrent.torrent_metadata.info_hash):
-            return False
-        # check if peer has got a unique id associated with it
-        if(self.peer_id == self.torrent.peer_id):
-            return False
-        # succesfully validaded the peer information
-        return True
+    """
+        function helps in work of recieving data from peers
+        function returns raw data if recieved from peer else returns None
+    """
+    def recieve(self, data_size):
+        # attempt to recieve the message length from message
+        try:
+            peer_raw_data = self.peer_sock.recv(data_size)
+        except:
+            return None
+        return peer_raw_data 
     
-    
-    # sends the peer given request message 
+    """
+        function helps in recieving full message given the data length
+        the recieve function accumulates the data that is being recieved
+    """
+    def recieve_full():
+        return None
+
+    """
+        function helps sends raw data to the peer connection
+    """
+    def send(self, raw_data):
+        self.peer_sock.send(raw_data)
+     
+
+    """
+        function helps in sending peer messgae given peer wire message 
+        class object as an argument to the function
+    """
     def send_message(self, peer_request):
         if self.handshake_flag:
             self.peer_sock.send(peer_request.message())
 
-    
-    # the function attempts recieves for any messages from the peer
-    # the function returns the peer wire message object if recieved
-    # any message for peer successfully else returns None
+    """
+        functions helpes in recieving peer wire protocol messages. Note that 
+        function uses low level function to recieve data and creates peer
+        wire message class object as return value is no had no errors
+    """
     def recieve_message(self):
-        # attempt to recieve any message
-        try:
-            peer_message = self.peer_sock.recv(1024)
-        except:
-            print(self.IP + " peer didn't send any message !")
+        # extract the peer wire message information by receiving chunks of data
+        
+        # recieve the message length 
+        raw_message_length = self.recieve(MESSAGE_LENGTH_SIZE)
+        if raw_message_length is None:
             return None
-        
-        # extract the peer wire message information
-        offset = 0
-        # first 4 bytes     : message length
-        message_length = struct.unpack_from("!I", peer_message)[0]
-        
-        offset = offset + 4
-        # next 1 byte       : message ID
-        message_id     = struct.unpack_from("!B", peer_message, offset)[0]
-        
-        offset = offset + 1
-        # variable bytes    : message ID
-        if(message_length > 1): 
-            message_payload = peer_message[offset:]
-        else:
-            message_payload = None
-        return peer_wire_message(message_length, message_id, message_payload)
+
+        # unpack the message length which is 4 bytes long
+        message_length = struct.unpack_from("!I", raw_message_length)[0]
+        # keep alive messages have no message ID and payload
+        if message_length == 0:
+            return peer_wire_message(message_length, None, None)
+
+        # attempt to recieve the message ID from message
+        raw_message_ID =  self.recieve(MESSAGE_ID_SIZE)
+        if raw_message_ID is None:
+            return None
        
+        # unpack the message length which is 4 bytes long
+        message_id  = struct.unpack_from("!B", raw_message_ID)[0]
+        # messages having no payload 
+        if message_length == 1:
+            return peers_wire_message(message_length, message_id, None)
+       
+        # extract all the payload
+        payload_length = message_length - 1
+        
+        # extract the message payload 
+        message_payload = b''
+        while(payload_length != 0):
+            recieved_payload = self.recieve(payload_length)
+            if recieved_payload is None:
+                return None
+            message_payload += recieved_payload
+            payload_length = payload_length - len(recieved_payload)
+
+        # return peer wire message object given the three parameters
+        return peer_wire_message(message_length, message_id, message_payload)
+ 
+
+    """
+        functions helps in doing a handshake with peer connection
+        functions returns success/failure result of handshake 
+    """
+    def handshake(self):
+        # only do handshake if not done earlier and connection established with peer
+        if not self.handshake_flag and self.connect():
+            info_hash = self.torrent.torrent_metadata.info_hash
+            peer_id   = self.torrent.peer_id
+
+            # create a handshake object instance for request
+            handshake_request = handshake(info_hash, peer_id)
+            # send the handshake message
+            self.send(handshake_request.message())
+            
+            # recieve message for the peer
+            raw_handshake_response = self.recieve(HANDSHAKE_MESSAGE_LENGTH)
+            if raw_handshake_response is None:
+                return False
+            # validate the raw handshake response with handshake request
+            handshake_response = handshake_request.validate_handshake(raw_handshake_response)
+            if handshake_response is None:
+                return False
+
+            # get the client peer id for the handshake response
+            self.peer_id = handshake_response.client_peer_id
+            self.handshake_flag = True
+            
+            # handshake success 
+            return True
+        # already attempted handshake with the peer
+        return False
+            
+  
 
 
+
+    # recieves the bitfield values from peer
+    def recieve_bitfield(self):
+        peer_response_message = self.recieve_message()
+        print(peer_response_message)        
+        
+        """"
+        if(peer_response_message is None):
+            return None
+
+        print(peer_response_message.message_id)
+
+        # the peer many send UNCHOKE message
+        if peer_response_message.message_id == UNCHOKE:
+            print('RECIEVED UNCHOKE')
+            # the peer is not choking
+            self.peer_choking = False        
+            self.send_message(interested()) 
+            print('SENDING INTERESTED !')
+            peer_response_message = self.recieve_message()
+            if(peer_response_message is None):
+                return None
+
+        # if the peer message is BITFIELD message:
+        if peer_response_message.message_id == BITFIELD:
+            print('RECIEVED BITFILED')
+            # peer is not choking the client peer
+            self.peer_choking = False
+            bitfield_message = bitfield(peer_response_message.payload)
+            # extract all the bitfield pieces
+            self.bitfield_pieces = bitfield_message.extract_pieces()
+        
+        # TODO : handle the have response from the peer
+        
+        # return the bitfields recieved  
+        return self.bitfield_pieces
+        """
+        return None
+    
+            
 
 
 
@@ -149,6 +224,7 @@ class peer():
     downloading stratergy, chocking and unchocking the peers, etc.
 """
 class peers:
+
     def __init__(self, peers_data, torrent):
         # initialize the peers class with peer data recieved
         self.interval   = peers_data['interval']
@@ -160,22 +236,28 @@ class peers:
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
 
+
+    # perfroms the handshake with all the peers 
     def handshakes(self):
-        for peer in self.peers_list[:3]:
-            if(peer.hanshake()):
-                print(peer.IP, peer.port, ' Did handshake succesfully!')
-                peer.send_message(interested())
-                a = peer.recieve_message()
-                print(a.message_length)
-                print(a.message_id)
-                print(a.payload)
-                print('')
+        for peer in self.peers_list[:1]:
+            print('===========================================================')
+            if(peer.handshake()):
+                print(peer.IP, peer.port, ' did handshake succesfully !')
             else:
-                print(peer.IP, peer.port, ' Did not do handshake !\n')
+                print(peer.IP, peer.port, ' did not do handshake !')
+            print('===========================================================\n')
 
 
-
-
-
+    # recieves a set of bitfields from the peers 
+    def recieve_bitfields(self):
+        for peer in self.peers_list[:1]:
+            if(peer.handshake_flag):
+                print('===========================================================')
+                bitfield_piece = peer.recieve_bitfield()
+                if(bitfield_piece == None):
+                    print(peer.IP, ' did not send bitfield !')
+                else:
+                    print(peer.IP, ' did send bitfields successfully !')
+                print('===========================================================\n')
 
 

@@ -351,6 +351,21 @@ class udp_torrent_tracker(tracker_data):
     def __exit__(self):
         self.tracker_sock.close()
 
+    
+    # logs the information obtained by the HTTP tracker 
+    def __str__(self):
+        logging_info =  'UDP TRACKER RESPONSE :'                    + '\n'
+        logging_info += 'UDP Tracker URL : '+ self.tracker_url      + '\n'
+        logging_info += 'Interval        : '+ str(self.interval)    + '\n'
+        logging_info += 'Leechers        : '+ str(self.leechers)    + '\n'
+        logging_info += 'Seeders         : '+ str(self.seeders)     + '\n'
+        logging_info += 'Peers           : peer IP : peer port'     + '\n'
+        for peer_IP, peer_port in self.peers_list:
+            logging_info += '                 : ' + peer_IP + ' : ' + str(peer_port) + '\n'
+        logging_info += '\n'
+        return logging_info
+
+
 
 """
     Torrent tracker class helps then client to connect to any of the trackers

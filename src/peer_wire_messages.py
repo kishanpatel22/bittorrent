@@ -14,6 +14,29 @@ import struct
 
 """
 
+# constants indicating ID's for each message
+KEEP_ALIVE      = None
+CHOKE           = 0
+UNCHOKE         = 1 
+INTERESTED      = 2
+UNINTERESTED    = 3
+HAVE            = 4
+BITFIELD        = 5
+REQUEST         = 6
+PIECE           = 7
+CANCEL          = 8
+PORT            = 9
+
+
+# constant handshake message length
+HANDSHAKE_MESSAGE_LENGTH = 68
+
+# constants indicating the message sizes in PWM
+MESSAGE_LENGTH_SIZE     = 4
+MESSAGE_ID_SIZE         = 1
+
+
+
 """ class for general peer message exchange in P2P bittorrent """
 class peer_wire_message():
     
@@ -25,21 +48,39 @@ class peer_wire_message():
 
     # returns raw bytes as peer message
     def message(self):
+        # pack the message length
         message  = struct.pack("!I", self.message_length)
-        message += struct.pack("!B", self.message_id)
+        # pack the message ID if present in message
+        if self.message_id != None:
+            message += struct.pack("!B", self.message_id)
+        # pack the paylaod is specified 
         if self.payload != None:
             message += self.payload
         return message
+    
+    # printing the peer wire message
+    def __str__(self):
+        message_data = 'PEER MESSAGE DATA : '
+        message_data += '(message length : ' +  str(self.message_length)   + '), '
+        message_data += '(message id : ' +  str(self.message_id)           + '), '
+        message_data += '(payload length : ' +  str(len(self.payload))     + ')'
+        return message_data
 
 
 """ class for creating handshake messages between the peers """
 class handshake():
-    def __init__(self): 
+    # initialize the handshake with the paylaod 
+    def __init__(self, info_hash, client_peer_id): 
         # protocol name : BTP 
         self.protocol_name = "BitTorrent protocol"
+        # client peer info hash
+        self.info_hash = info_hash
+        # client peer id 
+        self.client_peer_id = client_peer_id
+
 
     # creates the handshake payload for peer wire protocol handshake
-    def message(self, info_hash, client_peer_id):
+    def message(self):
         # first bytes the length of protocol name default - 19
         handshake_message  = struct.pack("!B", len(self.protocol_name))
         # protocol name 19 bytes
@@ -47,11 +88,49 @@ class handshake():
         # next 8 bytes reserved 
         handshake_message += struct.pack("!Q", 0x0)
         # next 20 bytes info hash
-        handshake_message += struct.pack("!20s", info_hash)
+        handshake_message += struct.pack("!20s", self.info_hash)
         # next 20 bytes peer id
-        handshake_message += struct.pack("!20s", client_peer_id)
+        handshake_message += struct.pack("!20s", self.client_peer_id)
         # returns the handshake payload
         return handshake_message
+
+
+    # validate the response handshake with itself
+    def validate_handshake(self, response_handshake):
+        # compare the handshake length
+        response_handshake_length = len(response_handshake)
+        if(response_handshake_length != HANDSHAKE_MESSAGE_LENGTH):
+            print('recieved invalid handshake length of ' + str(response_handshake_length))
+            return None
+        
+        # extract the info hash of torrent 
+        peer_info_hash  = response_handshake[28:48]
+        # extract the peer id 
+        peer_id         = response_handshake[48:68]
+
+        # check if the info hash is equal 
+        if(peer_info_hash != self.info_hash):
+            print('recieved info hash of torrent do not match !')
+            return None
+        # check if peer has got a unique id associated with it
+        if(peer_id == self.client_peer_id):
+            print('client peer ID and recieved peer ID matches drop the peer!')
+            return None
+
+        # succesfully validating returns the handshake response
+        return handshake(peer_info_hash, peer_id)
+
+
+""" 
+    This message is send to remote peer to indicate that 
+    it is still alive and participating in file sharing.
+"""
+class keep_alive(peer_wire_message):
+    def __init__(self):   
+        message_length  = 0                             # 4 bytes message length
+        message_id      = KEEP_ALIVE                    # no message ID
+        payload         = None                          # no payload
+        super().__init__(message_length, message_id, payload)
 
 
 """ This message is send to remote peer informing 
@@ -59,9 +138,9 @@ class handshake():
 """
 class choke(peer_wire_message):
     def __init__(self):   
-        message_length = 1                              # 4 bytes message length
-        message_id     = 0                              # 1 byte message ID
-        payload        = None                           # no payload
+        message_length = 1                                  # 4 bytes message length
+        message_id     = CHOKE                              # 1 byte message ID
+        payload        = None                               # no payload
         super().__init__(message_length, message_id, payload)
 
 
@@ -70,9 +149,9 @@ class choke(peer_wire_message):
 """
 class unchoke(peer_wire_message):
     def __init__(self):   
-        message_length = 1                              # 4 bytes message length
-        message_id     = 1                              # 1 byte message ID
-        payload        = None                           # no payload
+        message_length = 1                                  # 4 bytes message length
+        message_id     = UNCHOKE                            # 1 byte message ID
+        payload        = None                               # no payload
         super().__init__(message_length, message_id, payload)
 
 
@@ -82,9 +161,9 @@ class unchoke(peer_wire_message):
 """
 class interested(peer_wire_message):
     def __init__(self):   
-        message_length = 1                              # 4 bytes message length
-        message_id     = 2                              # 1 byte message ID
-        payload        = None                           # no payload
+        message_length = 1                                  # 4 bytes message length
+        message_id     = INTERESTED                         # 1 byte message ID
+        payload        = None                               # no payload
         super().__init__(message_length, message_id, payload)
 
 
@@ -94,10 +173,11 @@ class interested(peer_wire_message):
 """
 class uninterested(peer_wire_message):
     def __init__(self):   
-        message_length = 1                              # 4 bytes message length
-        message_id     = 3                              # 1 byte message ID
-        payload        = None                           # no payload
+        message_length = 1                                  # 4 bytes message length
+        message_id     = UNINTERESTED                       # 1 byte message ID
+        payload        = None                               # no payload
         super().__init__(message_length, message_id, payload)
+
 
 
 """ 
@@ -107,55 +187,69 @@ class uninterested(peer_wire_message):
 class have(peer_wire_message):
     # initializes the message with given paylaod
     def __init__(self, piece_index):   
-        message_length = 5                              # 4 bytes message length
-        message_id     = 4                              # 1 byte message ID
-        payload        = struct.pack("!I", piece_index) # 4 bytes payload
-        super.__init__(message_length, message_id, payload)
+        message_length = 5                                  # 4 bytes message length
+        message_id     = HAVE                               # 1 byte message ID
+        payload        = struct.pack("!I", piece_index)     # 4 bytes payload
+        super().__init__(message_length, message_id, payload)
 
 
 
-
-
-
-# TODO : implementation left
 """
-    This message must be send immediately after handshake, telling the remote
-    peer what peicies does the clinet peer has. However the client peer may 
+    This message must be send immediately after handshake, telling the client
+    peer what peicies does the remote peer has. However the client peer may 
     avoid replying this message in case if doesn't have any pieces downloaded
 """
-class bitfield():
-    # Message length : var | Message ID(1 byte) : 5 | paylaod : variable length
+class bitfield(peer_wire_message):
+    # initialize the message with pieces information
+    def __init__(self, pieces_info):
+        message_length  = 1 + len(pieces_info)              # 4 bytes message length
+        message_id      = BITFIELD                          # 1 byte message id
+        payload         = pieces_info                       # variable length payload
+        super().__init__(message_length, message_id, payload)
+   
 
-    # Note that piece_index is the payload length of 4 bytes 
-    def message(self, piece_index):
-        self.message_id = 5
-        message  = struct.pack("!I", len(piece_index) + 1)
-        message += struct.pack("!B", self.message_id)
-        return message
-
-
-class request():
-    # Message length(4 bytes): 13 | Message ID(1 byte): 6 | paylaod(12 bytes): 3 integers
-
-    # payload can be described as given below 
-    # | Piece Index(4 bytes) | Block Offset(4 bytes) | Block Length(4 bytes) |
-    
-    def message(self, piece_index, block_offset, block_length):
-        self.message_id = 6
-        message  = struct.pack("!I", 13) 
-        message += struct.pack("!B", self.message_id)
-        message += struct.pack("!I", piece_index)
-        message += struct.pack("!I", block_offset)
-        message += struct.pack("!I", block_length)
-        return message
+    # extract downloaded pieces from bitfield send by peer 
+    def extract_pieces(self):
+        bitfield_pieces = set([])
+        # for every bytes value in payload check for its bits
+        for i, byte_value in enumerate(self.payload):
+            for j in range(8):
+                # check if jth bit is set
+                if((byte_value >> j) & 1):
+                    piece_number = i * 8 + 7 - j
+                    bitfield_pieces.add(piece_number)
+        # return the extracted bitfield pieces
+        return bitfield_pieces
 
 
-class piece():
-    # Message length(4 bytes): 9 | Message ID(1 byte): 7 | paylaod(8 bytes): 2 integers
-    
-    def message(self, piece_index, block_offset, block_length):
-        self.message_id = 7
-        return message
+
+"""
+    This message is send inorder to request a piece of block for the remote peer
+    The payload is defined as given below 
+    | Piece Index(4 bytes) | Block Offset(4 bytes) | Block Length(4 bytes) |
+"""
+class request(peer_wire_message):
+    def __init__(self, piece_index, block_offset, block_length):
+        message_length  = 13                                # 4 bytes message length
+        message_id      = REQUEST                           # 1 byte message id
+        payload         = struct.pack("!I", piece_index)    # 12 bytes payload
+        payload        += struct.pack("!I", block_offset) 
+        payload        += struct.pack("!I", block_length) 
+        super().__init__(message_length, message_id, payload)
+
+
+
+"""
+    This message is used to exchange the data among the peers. The payload for
+    the message as given below
+    | index(index of piece) | begin(offest within piece) | block(actual data) |
+"""
+class piece(peer_wire_message):
+    def __init__(self, data_block):
+        message_length  = 9 + len(piece_info)               # 4 bytes message length
+        message_id      = PIECE                             # 1 byte message id
+        payload         = data_block                        # variable length payload
+        super().__init__(message_length, message_id, payload)
 
 
 
