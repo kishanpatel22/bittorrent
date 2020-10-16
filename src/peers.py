@@ -1,3 +1,4 @@
+import time
 import struct
 from network_error import network_error
 from peer_wire_messages import *
@@ -102,7 +103,7 @@ class peer():
         
         # recieve the message length 
         raw_message_length = self.recieve(MESSAGE_LENGTH_SIZE)
-        if raw_message_length is None:
+        if raw_message_length is None or raw_message_length == 0:
             return None
 
         # unpack the message length which is 4 bytes long
@@ -120,7 +121,7 @@ class peer():
         message_id  = struct.unpack_from("!B", raw_message_ID)[0]
         # messages having no payload 
         if message_length == 1:
-            return peers_wire_message(message_length, message_id, None)
+            return peer_wire_message(message_length, message_id, None)
        
         # extract all the payload
         payload_length = message_length - 1
@@ -172,49 +173,33 @@ class peer():
         return False
             
   
-
-
-
-    # recieves the bitfield values from peer
+    # TODO : bitfields do get recieved need resolve the thing 
+    # recieved commands since many peers send many messages in one response
+    # Note : after recieving bitfields messages like unchoke or have keep on 
+    # accumulating, example in given below example I am able to get the piece
+    # request
     def recieve_bitfield(self):
         peer_response_message = self.recieve_message()
         print(peer_response_message)        
         
-        """"
-        if(peer_response_message is None):
-            return None
-
-        print(peer_response_message.message_id)
-
-        # the peer many send UNCHOKE message
-        if peer_response_message.message_id == UNCHOKE:
-            print('RECIEVED UNCHOKE')
-            # the peer is not choking
-            self.peer_choking = False        
-            self.send_message(interested()) 
-            print('SENDING INTERESTED !')
-            peer_response_message = self.recieve_message()
-            if(peer_response_message is None):
-                return None
-
-        # if the peer message is BITFIELD message:
-        if peer_response_message.message_id == BITFIELD:
-            print('RECIEVED BITFILED')
-            # peer is not choking the client peer
-            self.peer_choking = False
-            bitfield_message = bitfield(peer_response_message.payload)
-            # extract all the bitfield pieces
-            self.bitfield_pieces = bitfield_message.extract_pieces()
+        time.sleep(5)
+        peer_response_message = self.recieve_message()
+        print(peer_response_message)        
         
-        # TODO : handle the have response from the peer
+        print('sending a request message')
+        self.send_message(request(0, 0, 1024))
+
+        time.sleep(5)
+        print('recieve the peer response')
+        peer_response_message = self.recieve_message()
+        print(peer_response_message)        
+        print(peer_response_message.payload)
         
-        # return the bitfields recieved  
-        return self.bitfield_pieces
-        """
-        return None
+        
+        bitfield_piece = bitfield(peer_response_message.payload)
+        return bitfield_piece.extract_pieces()
     
             
-
 
 
 """

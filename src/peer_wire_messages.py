@@ -62,8 +62,14 @@ class peer_wire_message():
     def __str__(self):
         message_data = 'PEER MESSAGE DATA : '
         message_data += '(message length : ' +  str(self.message_length)   + '), '
-        message_data += '(message id : ' +  str(self.message_id)           + '), '
-        message_data += '(payload length : ' +  str(len(self.payload))     + ')'
+        if self.message_id is None:
+            message_data += '(message id : None), '
+        else:
+            message_data += '(message id : ' +  str(self.message_id)       + '), '
+        if self.payload is None:
+            message_data += '(protocol length : None)'
+        else:
+            message_data += '(payload length : ' +  str(len(self.payload)) + ')'
         return message_data
 
 
@@ -127,9 +133,9 @@ class handshake():
 """
 class keep_alive(peer_wire_message):
     def __init__(self):   
-        message_length  = 0                             # 4 bytes message length
-        message_id      = KEEP_ALIVE                    # no message ID
-        payload         = None                          # no payload
+        message_length  = 0                                 # 4 bytes message length
+        message_id      = KEEP_ALIVE                        # no message ID
+        payload         = None                              # no payload
         super().__init__(message_length, message_id, payload)
 
 
@@ -222,7 +228,6 @@ class bitfield(peer_wire_message):
         return bitfield_pieces
 
 
-
 """
     This message is send inorder to request a piece of block for the remote peer
     The payload is defined as given below 
@@ -245,11 +250,12 @@ class request(peer_wire_message):
     | index(index of piece) | begin(offest within piece) | block(actual data) |
 """
 class piece(peer_wire_message):
-    def __init__(self, data_block):
+    def __init__(self, index, begin_offset, block):
         message_length  = 9 + len(piece_info)               # 4 bytes message length
         message_id      = PIECE                             # 1 byte message id
-        payload         = data_block                        # variable length payload
+        payload         = struct.pack("!I", index)          # variable length payload
+        payload        += struct.pack("!I", begin_offset)
+        payload        += block
         super().__init__(message_length, message_id, payload)
-
 
 
