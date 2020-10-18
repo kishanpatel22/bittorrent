@@ -1,0 +1,84 @@
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	Handshake initiated -----> (142.120.71.70 : 33075)
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	Handshake recived   <----- (142.120.71.70 : 33075)
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	Handshake validation : ✅
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- BITFIELD : (message length : 64), (message id : 5), (message paylaod : [bitfield length : 63])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 144])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 277])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 378])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 125])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 425])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 221])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 250])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 384])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 33])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 37])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 382])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 439])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 182])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 308])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 357])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 23])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 199])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 137])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 140])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 455])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 404])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 256])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 93])
+
+MainThread -DEBUG -(142.120.71.70 : 33075) 
+	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 139])
+

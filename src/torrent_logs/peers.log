@@ -1,0 +1,6 @@
+MainThread -DEBUG -peers 
+	HANDSHAKE EVENT : (142.120.71.70 : 33075)✅
+
+MainThread -DEBUG -peers 
+	INIT BITFIELD EVENT : (142.120.71.70 : 33075)
+

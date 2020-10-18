@@ -4,7 +4,7 @@ import requests
 import bencodepy
 import random as rd
 import struct
-from network_error import *
+from torrent_error import torrent_error
 from socket import *
 from torrent_file_handler import torrent_metadata
 
@@ -354,12 +354,12 @@ class udp_torrent_tracker(tracker_data):
     
     # logs the information obtained by the HTTP tracker 
     def __str__(self):
-        logging_info =  'UDP TRACKER RESPONSE :'                    + '\n'
-        logging_info += 'UDP Tracker URL : '+ self.tracker_url      + '\n'
-        logging_info += 'Interval        : '+ str(self.interval)    + '\n'
-        logging_info += 'Leechers        : '+ str(self.leechers)    + '\n'
-        logging_info += 'Seeders         : '+ str(self.seeders)     + '\n'
-        logging_info += 'Peers           : peer IP : peer port'     + '\n'
+        logging_info =  'UDP TRACKER RESPONSE :'                 + '\n'
+        logging_info += 'UDP Tracker URL : '+ self.tracker_url   + '\n'
+        logging_info += 'Interval        : '+ str(self.interval) + '\n'
+        logging_info += 'Leechers        : '+ str(self.leechers) + '\n'
+        logging_info += 'Seeders         : '+ str(self.seeders)  + '\n'
+        logging_info += 'Peers           : peer IP : peer port'  + '\n'
         for peer_IP, peer_port in self.peers_list:
             logging_info += '                 : ' + peer_IP + ' : ' + str(peer_port) + '\n'
         logging_info += '\n'

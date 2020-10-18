@@ -39,9 +39,8 @@ class torrent_client():
         # does initial handshaking with all the peers 
         self.peers.handshakes()
         
-        # recieve all the bitfields from the peer
-        self.peers.recieve_bitfields()
-
+        # initialize all the bitfields from peers
+        self.peers.initialize_bitfields()
 
 
 

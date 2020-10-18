@@ -1,8 +1,12 @@
+# unicode characters for success/failure indication
+SUCCESS = u"\u2705"
+FAILURE = u"\u274C"
+
 """
     The user defined class helps in raising user defined expection
     occuring during bittorent client transmission and reception
 """
-class network_error(RuntimeError): 
+class torrent_error(RuntimeError): 
     
     def __init__(self, error_msg): 
         self.error_msg = error_msg

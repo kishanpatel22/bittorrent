@@ -2,7 +2,7 @@ import logging
 import sys
 
 # root directory for log files
-TORRENT_LOG_DIR = 'torrent_logs/'
+TORRENT_LOG_DIR = './torrent_logs/'
 
 # logging file names
 TRACKER_LOG = 'tracker.log'
@@ -20,7 +20,6 @@ FILE_LOG_FILE       = TORRENT_LOG_DIR + FILE_LOG
 
 
 # different logging levels provided
-
 DEBUG       = logging.DEBUG
 INFO        = logging.INFO
 WARNING     = logging.WARNING
@@ -49,8 +48,7 @@ class torrent_logger():
         
         verbose_string  = '%(threadName)s -'
         verbose_string += '%(levelname)s -'
-        verbose_string += '%(name)s - '
-        verbose_string += '%(filename)s:%(funcName)s:%(lineno)d\n'
+        verbose_string += '%(name)s \n'
         verbose_string += '%(message)s'
         
         # verbose formatter for logging
@@ -70,7 +68,7 @@ class torrent_logger():
         self.logger.setLevel(self.verbosity_level)
 
 
-    # logs the data into the file stream
+    # logs the data into the file stream and standard output console
     def log(self, message):
         # log according to verbosity level of the object created
         if self.verbosity_level == logging.DEBUG:
