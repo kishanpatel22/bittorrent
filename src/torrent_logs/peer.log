@@ -1,84 +1,111 @@
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	Handshake initiated -----> (142.120.71.70 : 33075)
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+Handshake initiated -----> (172.105.175.232 : 51413)
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	Handshake recived   <----- (142.120.71.70 : 33075)
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+Handshake recived   <----- (172.105.175.232 : 51413)
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	Handshake validation : ✅
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+Handshake validation : ✅
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- BITFIELD : (message length : 64), (message id : 5), (message paylaod : [bitfield length : 63])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- BITFIELD : (message length : 1329), (message id : 5), (message paylaod : [bitfield length : 1328])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 144])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 277])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 378])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 125])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 16384, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 425])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 16384, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 221])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 32768, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 250])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 32768, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 384])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 49152, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 33])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 49152, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 37])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 65536, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 382])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 65536, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 439])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 81920, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 182])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 81920, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 308])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 98304, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 357])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 98304, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 23])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 114688, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 199])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 114688, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 137])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 131072, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 140])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 131072, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 455])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 147456, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 404])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 147456, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 256])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 163840, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 93])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 163840, block length : 16384 ])
 
-MainThread -DEBUG -(142.120.71.70 : 33075) 
-	recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 139])
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 180224, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 180224, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 196608, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 196608, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 212992, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 212992, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 229376, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 229376, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 245760, block length : 16384 ])
+
+MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 245760, block length : 16384 ])
 

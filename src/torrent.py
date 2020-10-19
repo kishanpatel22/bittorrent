@@ -21,7 +21,7 @@ class torrent():
         self.port = 6881
         
         # the count of the number pieces that the files is made of
-        self.count_pieces = int(len(self.torrent_metadata.pieces) / 20)
+        self.pieces_count = int(len(self.torrent_metadata.pieces) / 20)
 
         # information about the file being downloaded/uploaded
         self.uploaded = 0
@@ -42,7 +42,7 @@ class torrent():
         logging_info += 'File size      : ' + str(self.torrent_metadata.file_size) + ' B'       + '\n'
         logging_info += 'Piece length   : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
         logging_info += 'Info hash      : ' + str(self.torrent_metadata.info_hash)              + '\n'
-        logging_info += 'No. of Pieces  : ' + str(self.count_pieces)                            + '\n'
+        logging_info += 'No. of Pieces  : ' + str(self.pieces_count)                            + '\n'
         logging_info += 'Client port    : ' + str(self.port)                                    + '\n'
         logging_info += 'Client peer ID : ' + str(self.peer_id)                                 + '\n'
         logging_info += '\n'

@@ -46,8 +46,8 @@ class torrent_logger():
         # logger object instance
         self.logger = logging.getLogger(self.logger_name)
         
-        verbose_string  = '%(threadName)s -'
-        verbose_string += '%(levelname)s -'
+        verbose_string  = '%(threadName)s - '
+        verbose_string += '%(levelname)s - '
         verbose_string += '%(name)s \n'
         verbose_string += '%(message)s'
         
@@ -70,6 +70,7 @@ class torrent_logger():
 
     # logs the data into the file stream and standard output console
     def log(self, message):
+        message = message + '\n'
         # log according to verbosity level of the object created
         if self.verbosity_level == logging.DEBUG:
             self.logger.debug(message)

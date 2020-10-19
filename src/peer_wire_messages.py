@@ -169,8 +169,8 @@ class choke(peer_wire_message):
 
     def __str__(self):
         message  = 'CHOKE : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : None)'
         return message
 
@@ -189,8 +189,8 @@ class unchoke(peer_wire_message):
 
     def __str__(self):
         message  = 'UNCHOKE : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : None)'
         return message
 
@@ -209,8 +209,8 @@ class interested(peer_wire_message):
 
     def __str__(self):
         message  = 'INTERESTED : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : None)'
         return message
 
@@ -229,8 +229,8 @@ class uninterested(peer_wire_message):
 
     def __str__(self):
         message  = 'UNINTERESTED : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : None)'
         return message
 
@@ -252,8 +252,8 @@ class have(peer_wire_message):
 
     def __str__(self):
         message  = 'HAVE : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [piece index : ' + str(self.piece_index) + '])'
         return message
 
@@ -320,12 +320,12 @@ class request(peer_wire_message):
 
     def __str__(self):
         message  = 'REQUEST : '
-        message += '(message length : ' + str(self.message_length) + '), '
-        message += '(message id : '     + str(self.message_id) + '), '
+        message += '(message length : ' + str(self.message_length)  + '), '
+        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [ '
-        message += 'piece index : '     + str(self.piece_index)  + ', '
-        message += 'block offest : '    + str(self.block_offset) + ', '
-        message += 'block length : '    + str(self.block_length) + ' ])'
+        message += 'piece index : '     + str(self.piece_index)     + ', '
+        message += 'block offest : '    + str(self.block_offset)    + ', '
+        message += 'block length : '    + str(self.block_length)    + ' ])'
         return message
 
 
@@ -336,11 +336,11 @@ class request(peer_wire_message):
 """
 class piece(peer_wire_message):
     # the piece message for any block data from file
-    def __init__(self, piece_index, begin_offset, block):
-        message_length  = 9 + len(piece_info)               # 4 bytes message length
+    def __init__(self, piece_index, block_offset, block):
+        message_length  = 9 + len(block)                    # 4 bytes message length
         message_id      = PIECE                             # 1 byte message id
         payload         = struct.pack("!I", piece_index)    # variable length payload
-        payload        += struct.pack("!I", begin_offset)
+        payload        += struct.pack("!I", block_offset)
         payload        += block
         super().__init__(message_length, message_id, payload)
         # actual payload data to be associated with object
@@ -354,7 +354,7 @@ class piece(peer_wire_message):
         message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [ '
         message += 'piece index : '     + str(self.piece_index)     + ', '
-        message += 'begin offest : '    + str(self.block_offset)    + ', '
+        message += 'block offest : '    + str(self.block_offset)    + ', '
         message += 'block length : '    + str(len(self.block))      + ' ])'
         return message
 

@@ -42,7 +42,8 @@ class torrent_client():
         # initialize all the bitfields from peers
         self.peers.initialize_bitfields()
 
-
-
+        # lastly download the whole file
+        self.peers.download_file() 
+        
 
 
