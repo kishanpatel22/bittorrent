@@ -4,7 +4,7 @@ import sys
 from torrent_file_handler import torrent_file_reader
 from tracker import torrent_tracker
 from torrent import *
-from peers import peers
+from swarm import swarm
 
 """
     Torrent client would help interacting with the tracker server and
@@ -34,16 +34,19 @@ class torrent_client():
         peers_data = self.tracker.get_peers_data()
         
         # create peers instance from the list of peers obtained from tracker
-        self.peers = peers(peers_data, self.torrent)
+        self.swarm = swarm(peers_data, self.torrent)
         
         # does initial handshaking with all the peers 
-        self.peers.handshakes()
+        self.swarm.handshakes()
         
         # initialize all the bitfields from peers
-        self.peers.initialize_bitfields()
+        # self.swarm.initialize_bitfields()
 
+        # add file handler for download / uploading data from peers
+        # file_path = '../results/' + self.torrent.torrent_metadata.file_name
+        # self.swarm.add_file_handler(file_path)
+       
         # lastly download the whole file
-        self.peers.download_file() 
+        # self.swarm.download_file() 
         
-
 

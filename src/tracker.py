@@ -330,11 +330,14 @@ class udp_torrent_tracker(tracker_data):
         # obtains the peers list of (peer IP, peer port)
         self.peers_list = []
         while(offset != len(raw_announce_reponse)):
-            # first 4 bytes is the peer IP address
-            raw_peer_IP = struct.unpack_from("!4s", raw_announce_reponse, offset)[0]
-            peer_IP = ".".join(str(a) for a in raw_peer_IP)
-            # next 2 bytes is the peer port address
-            peer_port = int(struct.unpack_from("!H", raw_announce_reponse, offset + 4)[0])
+            # raw data of peer IP, peer port
+            raw_peer_data = raw_announce_reponse[offset : offset + 6]    
+
+            # extract the peer IP address 
+            peer_IP = ".".join(str(int(a)) for a in raw_peer_data[0:4])
+            # extract the peer port number
+            peer_port = raw_peer_data[4] * 256 + raw_peer_data[5]
+               
             # append to IP, port tuple to peer list
             self.peers_list.append((peer_IP, peer_port))
             offset = offset + 6

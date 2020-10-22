@@ -35,7 +35,7 @@ class file_io():
         
     # moves the file descripter to the given index position from start of file
     def move_descriptor_position(self, index_position):
-        os.lseek(self.file_descriptor, index_position, SEEK_SET)
+        os.lseek(self.file_descriptor, index_position, os.SEEK_SET)
 
 
 """
@@ -48,7 +48,7 @@ class file_io():
     this function of request will e multithreaded 
 """
 
-class torrent_shared_file_handler(file_io):
+class torrent_shared_file_handler():
     
     # initialize the class with torrent and path where file needs to be downloaded
     def __init__(self, download_file_path, torrent):
@@ -58,42 +58,54 @@ class torrent_shared_file_handler(file_io):
         # file size in bytes
         self.file_size = torrent.torrent_metadata.file_size
         # piece size in bytes of torrent file data
-        self.piece_size = torrent.torrent_metadata.piece_size
+        self.piece_size = torrent.torrent_metadata.piece_length
 
         # initlizes the file input/output object instance 
         self.download_file = file_io(self.download_file_path)
         # initialize the file with all the null values 
-        self.download_file.max_write_buffer(self.file_size)
+        self.download_file.write_null_values(self.file_size)
         
-        
-        # queue for handling all the file piece read/write request
-        self.file_requests = Queue()
+    
+    # calculates the position index in file given piece index and block offset
+    def calculate_file_position(self, piece_index, block_offset):
+        return piece_index * self.piece_size + block_offset
+   
 
+    # initialize the file descriptor given the piece index and block offset
+    def initalize_file_descriptor(self, piece_index, block_offset):
 
-    # writes the given block of pieces into the file 
-    # note that fiven datablock must be byte class object
-    def write_block(self, piece_index, block_offset, data_block):
-
-        # calulcate the position of fd using piece index and offset
-        file_descriptor_position = pieces * self.piece_size + block_offset
+        # calulcate the position in file using piece index and offset
+        file_descriptor_position = self.calculate_file_position(piece_index, block_offset)
 
         # move the file descripter to the desired location 
         self.download_file.move_descriptor_position(file_descriptor_position)
+
+
+    """
+        function helps in writing a block for file given piece index and block offset
+    """
+    def write_block(self, piece_index, block_offset, data_block):
         
-        # write the while block of data into the file
+        # initialize the file descriptor at given piece index and block offset
+        self.initalize_file_descriptor(piece_index, block_offset)
+
+        # write the block of data into the file
         self.download_file.write(data_block)
 
+    """
+        function helps in reading a block for file given piece index and block offset
+        function returns the block of bytes class data that is read
+    """
+    def read_block(self, piece_index, block_offset, block_size):
 
-    # TODO : piece writing is different than the block writing in the file
-    #        1) we need to validate the piece after writing in the file
-    #        2) how do we do this process of validating and writing
-    def write_piece(self, piece_index):
-        pass
+        # initialize the file descriptor at given piece index and block offset
+        self.initalize_file_descriptor(piece_index, block_offset)
+        
+        # read the block of data into the file
+        data_block  = self.download_file.read(block_size)
 
-
-    def add_write_request(self, peer_message):
-        self.file_requests(peer_message)
-
+        return data_block
+    
 
 
 

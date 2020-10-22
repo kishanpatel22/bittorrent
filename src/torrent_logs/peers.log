@@ -1,6 +1,177 @@
 MainThread - DEBUG - peers 
-HANDSHAKE EVENT : (172.105.175.232 : 51413) ✅
+HANDSHAKE EVENT : (79.110.53.243 : 3135) ❌
 
 MainThread - DEBUG - peers 
-INIT BITFIELD EVENT : (172.105.175.232 : 51413)
+HANDSHAKE EVENT : (75.115.45.135 : 10920) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (220.130.129.243 : 11720) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (74.230.197.28 : 12833) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (112.118.162.140 : 13164) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (89.122.90.203 : 13718) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (143.244.36.68 : 16028) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (194.59.251.39 : 16881) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (185.45.195.176 : 20112) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (69.248.90.57 : 21194) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (104.249.229.118 : 21733) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (66.183.78.69 : 22848) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (221.121.145.135 : 24562) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (104.244.230.236 : 24581) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (72.252.37.214 : 26953) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (69.73.215.237 : 27640) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (210.185.79.188 : 29203) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (154.21.20.104 : 29856) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (45.45.29.202 : 31830) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (191.97.124.204 : 32373) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (45.56.142.174 : 37255) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (193.36.225.89 : 41216) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (178.30.89.129 : 42366) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (5.14.33.144 : 46758) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (105.184.65.21 : 48319) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (70.39.111.240 : 49649) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (210.186.180.214 : 50953) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (111.119.188.13 : 51413) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (136.49.155.92 : 51413) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (155.4.14.39 : 51413) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (180.107.30.245 : 51413) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (185.56.20.124 : 51413) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (209.58.131.42 : 51413) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (84.17.41.141 : 51417) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (24.49.222.242 : 52108) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (41.248.142.25 : 54425) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (185.157.245.95 : 54671) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (197.148.8.16 : 57096) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (70.32.6.137 : 60010) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (41.210.25.3 : 60122) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (199.36.223.130 : 60152) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (209.58.130.129 : 60364) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (62.178.173.193 : 62348) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (82.78.0.45 : 62424) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (217.138.205.82 : 62518) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (212.102.34.130 : 63800) ❌
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (85.245.135.131 : 64623) ✅
+
+MainThread - DEBUG - peers 
+HANDSHAKE EVENT : (192.158.226.199 : 64880) ❌
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (75.115.45.135 : 10920)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (112.118.162.140 : 13164)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (185.45.195.176 : 20112)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (66.183.78.69 : 22848)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (69.73.215.237 : 27640)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (210.185.79.188 : 29203)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (45.45.29.202 : 31830)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (185.56.20.124 : 51413)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (24.49.222.242 : 52108)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (41.210.25.3 : 60122)
+
+MainThread - DEBUG - peers 
+INIT BITFIELD EVENT : (85.245.135.131 : 64623)
 

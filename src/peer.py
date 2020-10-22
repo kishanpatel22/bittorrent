@@ -4,7 +4,7 @@ from torrent_error import *
 from torrent_logger import *
 from peer_wire_messages import *
 from socket import *
-
+from shared_file_handler import torrent_shared_file_handler
 
 """
     peer class instance maintains the information about the peer participating
@@ -54,7 +54,10 @@ class peer():
         # initializing a peer socket for TCP communiction 
         self.peer_sock = socket(AF_INET, SOCK_STREAM)
         self.peer_sock.settimeout(5)
-        
+            
+        # file handler used for reading/writing the file file
+        self.file_handler = None
+
         # peer logger object with unique ID 
         logger_name = 'peer' + self.unique_id
         self.peer_logger = torrent_logger(logger_name, PEER_LOG_FILE, DEBUG)
@@ -78,33 +81,74 @@ class peer():
         returns success/failure for the peer connection
     """
     def connect(self):
+        connection_log = 'CONNECTION STATUS :' + self.unique_id + ' '
         try:
             self.peer_sock.connect((self.IP, self.port))
+            
+            # user for EXCECUTION LOGGING
+            connection_log += SUCCESS
+            self.peer_logger.log(connection_log)
+
+            self.peer_connection = True
             return True
         except Exception as err_msg:
-            err_log = self.unique_id + ' error : ' + err_msg.__str__()
-            self.peer_logger.log(err_log)
+            
+            # user for EXCECUTION LOGGING
+            connection_log += FAILURE + ' ' + err_msg.__str__()
+            self.peer_logger.log(connection_log)
+            
             return False
+    
+
+    """
+        disconnects the peer socket connection
+    """
+    def disconnect(self):
+        self.peer_sock.close()
+        self.peer_connection = False
 
     """
         function helps in work of recieving data from peers
         function returns raw data if recieved from peer else returns None
+        function returns the full length data as recieved from the peer
     """
     def recieve(self, data_size):
-        # attempt to recieve the message length from message
-        try:
-            peer_raw_data = self.peer_sock.recv(data_size)
-        except:
-            return None
+        peer_raw_data = b''
+        recieved_data_length = 0
+        request_size = data_size
+        
+        #loop untill you recieve all the data from the peer
+        while(recieved_data_length < data_size):
+            # attempt recieving request size data
+            try:
+                chunk = self.peer_sock.recv(request_size)
+            except:
+                return None
+
+            # when recieves returns 0 means the peer has disconnected
+            if len(chunk) == 0:
+                self.disconnect()
+                return None
+            
+            peer_raw_data += chunk
+            request_size -=  len(chunk)
+            recieved_data_length += len(chunk)
+
+        # return required size data recieved from peer
         return peer_raw_data 
-    
+   
+
     """
-        function helps sends raw data to the peer connection
+        function helps send raw data to the peer connection
+        function sends the complete message to peer
     """
     def send(self, raw_data):
-        self.peer_sock.send(raw_data)
-     
+        data_length_send = 0    
+        while(data_length_send < len(raw_data)):
+            data_length_send += self.peer_sock.send(raw_data[data_length_send:])
 
+
+    
     """
         function helps in sending peer messgae given peer wire message 
         class object as an argument to the function
@@ -153,14 +197,10 @@ class peer():
         payload_length = message_length - 1
         
         # extract the message payload 
-        message_payload = b''
-        while(payload_length != 0):
-            recieved_payload = self.recieve(payload_length)
-            if recieved_payload is None:
-                return None
-            message_payload += recieved_payload
-            payload_length = payload_length - len(recieved_payload)
-
+        message_payload = self.recieve(payload_length)
+        if message_payload is None:
+            return None
+       
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
  
@@ -246,7 +286,7 @@ class peer():
         function handles any peer message that is recieved on the port
         function manages -> recieving, decoding and reacting to recieved message 
         function returns decoded message if successfully recieved, decoded
-        and reacted the message, else return None
+        and reacted, else returns None
     """
     def handle_response(self):
         # RECIEVE message from peer 
@@ -275,7 +315,7 @@ class peer():
         # select the respective message handler 
         message_handler = self.response_handler[decoded_message.message_id]
         # handle the deocode response message
-        message_handler(decoded_message)
+        return message_handler(decoded_message)
 
 
     """
@@ -351,10 +391,19 @@ class peer():
 
     """
         recieved piece          : peer has responed with the piece to client
+                                  after recieving any piece, it is written into file
     """
     def recieved_piece(self, piece_message):
-        # TODO : write in the file 
-        pass
+        print(piece_message.block)
+        
+        # extract the piece index, block offset and data recieved from peer  
+        piece_index     = piece_message.piece_index
+        block_offset    = piece_message.block_offset
+        data_recieved   = piece_message.block
+        
+        # write the block of piece into the file
+        self.file_handler.write_block(piece_index, block_offset, data_recieved) 
+
 
 
     """ 
@@ -386,13 +435,20 @@ class peer():
         # block offset for downloading the piece
         block_offset = 0
         # block length 
-        block_length = self.max_block_length
+        block_length = 0
         
         # piece length for torrent 
         piece_length = self.torrent.torrent_metadata.piece_length 
         
         # loop untill you download all the blocks in the piece
         while self.can_download() and block_offset < piece_length:
+            
+            # find out how much max length of block that can be requested
+            if piece_length - block_offset >= self.max_block_length:
+                block_length = self.max_block_length
+            else:
+                block_length = piece_length - block_offset
+            
             # create a request message for given piece index and block offset
             request_message = request(piece_index, block_offset, block_length)
             # send request message to peer
@@ -401,22 +457,13 @@ class peer():
             # recieve response message 
             response_message = self.handle_response()
             if response_message is None:
-                return False
-            
-            # if the response message is piece
+                return FAILURE
+                
             if response_message.message_id == PIECE:
-                # extract the length of message recieved
-                recieved_block_length = response_message.message_length - 9
-                
-                # extract the recieved block of data
-                data_recieved = response_message.payload[:recieved_block_length]
-                
-                block_offset += recieved_block_length
-                # now check for remaining block length to be requests
-                if piece_length - block_offset >= self.max_block_length:
-                    block_length = self.max_block_length
-                else:
-                    block_length = piece_length - block_offset
+                # increament offset according to size of data block recieved
+                block_offset += len(response_message.block)
+
+        # TODO validate the piece after recieving 
 
 
 
@@ -457,9 +504,11 @@ class peer():
         else:
             return False
 
-
-
-
+    """
+        function adds the file handler by which client can upload / download 
+    """
+    def add_file_handler(self, file_handler):
+        self.file_handler = file_handler
 
 
 
@@ -491,13 +540,16 @@ class peers():
         
         # bitfield downloaded from peers
         self.bitfield_pieces_downloaded = {i:0 for i in range(torrent.pieces_count)}
+            
+        # file handler for downloading / uploading file data
+        self.file_handler = None
 
 
     """
         performs handshakes with all the peers 
     """
     def handshakes(self):
-        for peer in self.peers_list[:1]:
+        for peer in self.peers_list:
             handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
             if(peer.handshake()):
                 handshake_log += SUCCESS
@@ -514,7 +566,7 @@ class peers():
     """
     def initialize_bitfields(self):
         # recieved bitfields from given set of peers
-        for peer in self.peers_list[:1]:
+        for peer in self.peers_list:
             # recieve only from handshaked peers
             if(peer.handshake_flag):
                 # used for EXCECUTION LOGGING
@@ -526,7 +578,7 @@ class peers():
                 # update the total bitfields recieved from all peers
                 self.update_bitfield_count(peer.bitfield_pieces)
               
-
+    
     """     
         Updates the bitfield values obtained from the peers
     """
@@ -536,18 +588,29 @@ class peers():
                 self.bitfield_pieces_count[piece] += 1
             else:
                 self.bitfield_pieces_count[piece] = 1
-
-
+        
+        
     """ 
-        The main event loop for the downloading the torrrent file
+        The main event loop for the downloading the torrrent file from peers
     """
     def download_file(self):
-        # most simplist event loop will be
-        # for not downloaded peiece in not downloaded pieces
-        #   for peer in peers:
-        #       if peer has the the piece then request a download
-        #          downloaded corrrectly then break and procide for next piece
-        for peer in self.peers_list[:1]:
-            peer.download_piece(0)
+        if self.file_handler is None:
+            self.peers_logger.log('File handler not initiated !')
+            return None
+        
+        for piece, peer in enumerate(self.peers_list[:1]):
+            peer.download_piece(piece)
+   
+
+    """
+        The peer class must handle the downloaded file writing and reading 
+        thus peer class must have the file handler for this purpose
+    """
+    def add_file_handler(self, file_path):
+        # instantiate the torrent shared file handler class object
+        self.file_handler = torrent_shared_file_handler(file_path, self.torrent)
+        for peer in self.peers_list:
+            peer.add_file_handler(self.file_handler)
+
 
 

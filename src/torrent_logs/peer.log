@@ -1,111 +1,111 @@
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-Handshake initiated -----> (172.105.175.232 : 51413)
+MainThread - DEBUG - peer(79.110.53.243 : 3135) 
+CONNECTION STATUS :(79.110.53.243 : 3135) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-Handshake recived   <----- (172.105.175.232 : 51413)
+MainThread - DEBUG - peer(79.110.53.243 : 3135) 
+Handshake initiated -----> (79.110.53.243 : 3135)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
+MainThread - DEBUG - peer(79.110.53.243 : 3135) 
+Handshake not recived from (79.110.53.243 : 3135)
+
+MainThread - DEBUG - peer(75.115.45.135 : 10920) 
+CONNECTION STATUS :(75.115.45.135 : 10920) ✅
+
+MainThread - DEBUG - peer(75.115.45.135 : 10920) 
+Handshake initiated -----> (75.115.45.135 : 10920)
+
+MainThread - DEBUG - peer(75.115.45.135 : 10920) 
+Handshake recived   <----- (75.115.45.135 : 10920)
+
+MainThread - DEBUG - peer(75.115.45.135 : 10920) 
 Handshake validation : ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- BITFIELD : (message length : 1329), (message id : 5), (message paylaod : [bitfield length : 1328])
+MainThread - DEBUG - peer(220.130.129.243 : 11720) 
+CONNECTION STATUS :(220.130.129.243 : 11720) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
+MainThread - DEBUG - peer(220.130.129.243 : 11720) 
+Handshake initiated -----> (220.130.129.243 : 11720)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+MainThread - DEBUG - peer(220.130.129.243 : 11720) 
+Handshake not recived from (220.130.129.243 : 11720)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+MainThread - DEBUG - peer(74.230.197.28 : 12833) 
+CONNECTION STATUS :(74.230.197.28 : 12833) ❌ timed out
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 16384, block length : 16384 ])
+MainThread - DEBUG - peer(112.118.162.140 : 13164) 
+CONNECTION STATUS :(112.118.162.140 : 13164) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 16384, block length : 16384 ])
+MainThread - DEBUG - peer(112.118.162.140 : 13164) 
+Handshake initiated -----> (112.118.162.140 : 13164)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 32768, block length : 16384 ])
+MainThread - DEBUG - peer(112.118.162.140 : 13164) 
+Handshake recived   <----- (112.118.162.140 : 13164)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 32768, block length : 16384 ])
+MainThread - DEBUG - peer(112.118.162.140 : 13164) 
+Handshake validation : ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 49152, block length : 16384 ])
+MainThread - DEBUG - peer(89.122.90.203 : 13718) 
+CONNECTION STATUS :(89.122.90.203 : 13718) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 49152, block length : 16384 ])
+MainThread - DEBUG - peer(89.122.90.203 : 13718) 
+Handshake initiated -----> (89.122.90.203 : 13718)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 65536, block length : 16384 ])
+MainThread - DEBUG - peer(89.122.90.203 : 13718) 
+Handshake not recived from (89.122.90.203 : 13718)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 65536, block length : 16384 ])
+MainThread - DEBUG - peer(143.244.36.68 : 16028) 
+CONNECTION STATUS :(143.244.36.68 : 16028) ❌ [Errno 111] Connection refused
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 81920, block length : 16384 ])
+MainThread - DEBUG - peer(194.59.251.39 : 16881) 
+CONNECTION STATUS :(194.59.251.39 : 16881) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 81920, block length : 16384 ])
+MainThread - DEBUG - peer(194.59.251.39 : 16881) 
+Handshake initiated -----> (194.59.251.39 : 16881)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 98304, block length : 16384 ])
+MainThread - DEBUG - peer(194.59.251.39 : 16881) 
+Handshake not recived from (194.59.251.39 : 16881)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 98304, block length : 16384 ])
+MainThread - DEBUG - peer(185.45.195.176 : 20112) 
+CONNECTION STATUS :(185.45.195.176 : 20112) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 114688, block length : 16384 ])
+MainThread - DEBUG - peer(185.45.195.176 : 20112) 
+Handshake initiated -----> (185.45.195.176 : 20112)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 114688, block length : 16384 ])
+MainThread - DEBUG - peer(185.45.195.176 : 20112) 
+Handshake not recived from (185.45.195.176 : 20112)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 131072, block length : 16384 ])
+MainThread - DEBUG - peer(69.248.90.57 : 21194) 
+CONNECTION STATUS :(69.248.90.57 : 21194) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 131072, block length : 16384 ])
+MainThread - DEBUG - peer(69.248.90.57 : 21194) 
+Handshake initiated -----> (69.248.90.57 : 21194)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 147456, block length : 16384 ])
+MainThread - DEBUG - peer(69.248.90.57 : 21194) 
+Handshake not recived from (69.248.90.57 : 21194)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 147456, block length : 16384 ])
+MainThread - DEBUG - peer(104.249.229.118 : 21733) 
+CONNECTION STATUS :(104.249.229.118 : 21733) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 163840, block length : 16384 ])
+MainThread - DEBUG - peer(104.249.229.118 : 21733) 
+Handshake initiated -----> (104.249.229.118 : 21733)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 163840, block length : 16384 ])
+MainThread - DEBUG - peer(104.249.229.118 : 21733) 
+Handshake not recived from (104.249.229.118 : 21733)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 180224, block length : 16384 ])
+MainThread - DEBUG - peer(66.183.78.69 : 22848) 
+CONNECTION STATUS :(66.183.78.69 : 22848) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 180224, block length : 16384 ])
+MainThread - DEBUG - peer(66.183.78.69 : 22848) 
+Handshake initiated -----> (66.183.78.69 : 22848)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 196608, block length : 16384 ])
+MainThread - DEBUG - peer(66.183.78.69 : 22848) 
+Handshake not recived from (66.183.78.69 : 22848)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 196608, block length : 16384 ])
+MainThread - DEBUG - peer(221.121.145.135 : 24562) 
+CONNECTION STATUS :(221.121.145.135 : 24562) ✅
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 212992, block length : 16384 ])
+MainThread - DEBUG - peer(221.121.145.135 : 24562) 
+Handshake initiated -----> (221.121.145.135 : 24562)
 
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 212992, block length : 16384 ])
-
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 229376, block length : 16384 ])
-
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 229376, block length : 16384 ])
-
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 245760, block length : 16384 ])
-
-MainThread - DEBUG - peer(172.105.175.232 : 51413) 
-recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 245760, block length : 16384 ])
+MainThread - DEBUG - peer(221.121.145.135 : 24562) 
+Handshake not recived from (221.121.145.135 : 24562)
 
