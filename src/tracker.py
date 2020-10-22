@@ -210,7 +210,7 @@ class udp_torrent_tracker(tracker_data):
         try:
             raw_connection_data, conn = self.tracker_sock.recvfrom(2048)
         except :
-            raise newtork_error('UDP tracker connection request failed')
+            raise torrent_error('UDP tracker connection request failed')
         
         return self.parse_connection_response(raw_connection_data)
 
@@ -220,20 +220,20 @@ class udp_torrent_tracker(tracker_data):
     def parse_connection_response(self, raw_connection_data):
         # check if it is less than 16 bytes
         if(len(raw_connection_data) < 16):
-            raise newtork_error('UDP tracker wrong reponse length of connection ID !')
+            raise torrent_error('UDP tracker wrong reponse length of connection ID !')
         
         # extract the reponse action : first 4 bytes
         response_action = struct.unpack_from("!i", raw_connection_data)[0]       
         # error reponse from tracker 
         if response_action == 0x3:
             error_msg = struct.unpack_from("!s", raw_connection_data, 8)
-            raise newtork_error('UDP tracker reponse error : ' + error_msg)
+            raise torrent_error('UDP tracker reponse error : ' + error_msg)
         
         # extract the reponse transaction id : next 4 bytes
         response_transaction_id = struct.unpack_from("!i", raw_connection_data, 4)[0]
         # compare the request and response transaction id
         if(response_transaction_id != self.transaction_id):
-            raise newtork_error('UDP tracker wrong response transaction ID !')
+            raise torrent_error('UDP tracker wrong response transaction ID !')
         
         # extract the response connection id : next 8 bytes
         reponse_connection_id = struct.unpack_from("!q", raw_connection_data, 8)[0]
@@ -299,7 +299,7 @@ class udp_torrent_tracker(tracker_data):
     # parses the UDP tracker annouce response 
     def parse_udp_tracker_response(self, raw_announce_reponse):
         if(len(raw_announce_reponse) < 20):
-            raise newtork_error('Invalid response length in announcing!')
+            raise torrent_error('Invalid response length in announcing!')
         
         # first 4 bytes is action
         response_action = struct.unpack_from("!i", raw_announce_reponse)[0]     
@@ -307,12 +307,12 @@ class udp_torrent_tracker(tracker_data):
         response_transaction_id = struct.unpack_from("!i", raw_announce_reponse, 4)[0]
         # compare for the transaction id
         if response_transaction_id != self.transaction_id:
-            raise newtork_error('The transaction id in annouce response do not match')
+            raise torrent_error('The transaction id in annouce response do not match')
         
         # check if the response contains any error message
         if response_action != 0x1:
             error_msg = struct.unpack_from("!s", raw_announce_reponse, 8)
-            raise newtork_error("Error while annoucing: %s" % error_msg)
+            raise torrent_error("Error while annoucing: %s" % error_msg)
 
         offset = 8
         # interval : specifies minimum time client show wait for sending next request 

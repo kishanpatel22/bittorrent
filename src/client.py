@@ -20,7 +20,7 @@ class torrent_client():
         self.torrent = torrent(self.torrent_info.get_data())
         
         print(self.torrent)
-
+        
         # get the list of torrent tracker instance
         self.trackers_list = torrent_tracker(self.torrent)
     
@@ -40,13 +40,12 @@ class torrent_client():
         self.swarm.handshakes()
         
         # initialize all the bitfields from peers
-        # self.swarm.initialize_bitfields()
+        self.swarm.initialize_bitfields()
 
         # add file handler for download / uploading data from peers
-        # file_path = '../results/' + self.torrent.torrent_metadata.file_name
-        # self.swarm.add_file_handler(file_path)
+        file_path = '../results/' + self.torrent.torrent_metadata.file_name
+        self.swarm.add_file_handler(file_path)
        
         # lastly download the whole file
-        # self.swarm.download_file() 
-        
+        self.swarm.download_file() 
 

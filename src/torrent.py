@@ -42,6 +42,7 @@ class torrent():
         logging_info += 'File size      : ' + str(self.torrent_metadata.file_size) + ' B'       + '\n'
         logging_info += 'Piece length   : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
         logging_info += 'Info hash      : ' + str(self.torrent_metadata.info_hash)              + '\n'
+        logging_info += 'Files          : ' + str(self.torrent_metadata.files)                  + '\n'
         logging_info += 'No. of Pieces  : ' + str(self.pieces_count)                            + '\n'
         logging_info += 'Client port    : ' + str(self.port)                                    + '\n'
         logging_info += 'Client peer ID : ' + str(self.peer_id)                                 + '\n'

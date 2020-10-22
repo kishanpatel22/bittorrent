@@ -5,7 +5,6 @@ from torrent_logger import *
 from socket import *
 from shared_file_handler import torrent_shared_file_handler
 
-
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
     PWP will help in contacting the list of peers requesting them chucks 
@@ -49,40 +48,49 @@ class swarm():
         performs handshakes with all the peers 
     """
     def handshakes(self):
+        handshake_thread_pool = []
+        for peer in self.peers_list:
+            t = Thread(target = peer.handshake)
+            t.start()
+            handshake_thread_pool.append(t)
         
+        for handshake_thread in handshake_thread_pool:
+            handshake_thread.join()
+        
+        # used for EXCECUTION LOGGING
         for peer in self.peers_list:
             handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
-            if(peer.handshake()):
-                handshake_log += SUCCESS
+            if peer.handshake_flag:
+                self.swarm_logger.log(handshake_log + SUCCESS)
             else:
-                handshake_log += FAILURE
-
-            # used for EXCECUTION LOGGING
-            self.swarm_logger.log(handshake_log)
-
+                self.swarm_logger.log(handshake_log + FAILURE)
 
     """
         recieves the bifields from all the peers
-        Since bitfield is send immediately after handshake response, this
-        function must be called after the handshaking event is done
     """
     def initialize_bitfields(self):
+        reponse_thread_pool = []
         # recieved bitfields from given set of peers
         for peer in self.peers_list:
-            # recieve only from handshaked peers
-            if(peer.handshake_flag):
-                # used for EXCECUTION LOGGING
-                init_bitfield_log = 'INIT BITFIELD EVENT : ' + peer.unique_id
-                self.swarm_logger.log(init_bitfield_log)
+            # initialize the bitfields obtained from peers
+            t = Thread(target = peer.initialize_bitfield)
+            t.start()
+            reponse_thread_pool.append(t)
 
-                # initialize the bitfields obtained from peers
-                peer.initialize_bitfield()
-                # update the total bitfields recieved from all peers
-                self.update_bitfield_count(peer.bitfield_pieces)
-              
-    
-    """     
-        Updates the bitfield values obtained from the peers
+        for reponse_thread in reponse_thread_pool:
+            reponse_thread.join()
+        
+        # update the total bitfields recieved from all peers
+        for peer in self.peers_list:
+            self.update_bitfield_count(peer.bitfield_pieces)
+            # used for EXCECUTION LOGGING
+            init_bitfield_log  = 'INIT BITFIELD EVENT : ' + peer.unique_id + ' '
+            init_bitfield_log += 'has ' + str(len(peer.bitfield_pieces)) + ' torrent pieces'
+            self.swarm_logger.log(init_bitfield_log)
+        
+        
+    """
+        Updates bitfield values obtained from peers, global state of pieces is maintained
     """
     def update_bitfield_count(self, bitfield_pieces):
         for piece in bitfield_pieces:
@@ -90,19 +98,7 @@ class swarm():
                 self.bitfield_pieces_count[piece] += 1
             else:
                 self.bitfield_pieces_count[piece] = 1
-        
-        
-    """ 
-        The main event loop for the downloading the torrrent file from peers
-    """
-    def download_file(self):
-        if self.file_handler is None:
-            self.swarm_logger.log('File handler not instantiated !')
-            return None
-        
-        for piece, peer in enumerate(self.peers_list[:1]):
-            peer.download_piece(piece)
-   
+
 
     """
         The peer class must handle the downloaded file writing and reading 
@@ -113,6 +109,32 @@ class swarm():
         self.file_handler = torrent_shared_file_handler(file_path, self.torrent)
         for peer in self.peers_list:
             peer.add_file_handler(self.file_handler)
+
+       
+        
+    """ 
+        The main event loop for downloading torrrent file from peers
+    """
+    def download_file(self):
+        if self.file_handler is None:
+            self.swarm_logger.log('File handler not instantiated !')
+            return None
+        # linearly downlaoding all the pieces 
+        # for i in range(self.torrent.pieces_count):
+        i = 112
+        self.swarm_logger.log('downloading piece ' + str(i))
+        for peer in self.peers_list:
+            if(peer.download_piece(i)):
+                download_log = peer.unique_id + ' downloaded the piece ' + str(i) + ' ' 
+                download_log += SUCCESS
+                self.swarm_logger.log(download_log)
+                break
+            else:
+                download_log = peer.unique_id + ' did not downloaded the piece ' + str(i) + ' '
+                download_log += FAILURE
+                self.swarm_logger.log(download_log)
+
+
 
 
 

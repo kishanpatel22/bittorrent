@@ -24,21 +24,23 @@ import hashlib
 class torrent_metadata():
 
     # usefull metadata from torrent file
-    def __init__(self, trackers_url_list, file_name, file_size, piece_length, pieces, info_hash):
+    def __init__(self, trackers_url_list, file_name, file_size, piece_length, pieces, info_hash, files):
         self.trackers_url_list  = trackers_url_list     # list   : URL of trackers
         self.file_name      = file_name                 # string : file name 
         self.file_size      = file_size                 # int    : file size in bytes
         self.piece_length   = piece_length              # int    : piece length in bytes
         self.pieces         = pieces                    # bytes  : sha1 hash concatination of file
         self.info_hash      = info_hash                 # sha1 hash of the info metadata
+        self.files          = files                     # list   : [length, path] (multifile torrent)
 
     # logs the meta data of torrent
     def __str__(self):
         logging_info =  'TORRENT FILE METADATA : '                         + '\n'
         logging_info += 'Trackers List : ' + str(self.trackers_url_list)   + '\n'
         logging_info += 'File name     : ' + str(self.file_name)           + '\n'
-        logging_info += 'File size     : ' + str(self.file_size) + ' B'    + '\n'
+        logging_info += 'File size     : ' + str(self.file_size)    + ' B' + '\n'
         logging_info += 'Piece length  : ' + str(self.piece_length) + ' B' + '\n'
+        logging_info += 'Files         : ' + str(self.files)               + '\n'
         logging_info += '\n'
         return logging_info
 
@@ -50,10 +52,10 @@ class torrent_metadata():
 
     * announce          : the URL of the tracker
     * info              : ordered dictionary containing key and values 
-        * files         : list of directories each containg the one file
+        * files         : list of directories each containg files (in case of multile files)
             * length    : length of file in bytes
             * path      : contains path of each file
-        * length        : length of the file
+        * length        : length of the file (in case of single files)
         * name          : name of the file
         * piece length  : number of bytes per piece
         * pieces        : list of SHA1 hash of the given files
@@ -62,8 +64,6 @@ class torrent_metadata():
 # Torrent File reader function
 class torrent_file_reader(torrent_metadata):
     
-    # encoding format of torrent files
-    encoding = 'unicode_escape'
     
     # parameterized constructor 
     def __init__(self, torrent_file_path = None):
@@ -73,6 +73,12 @@ class torrent_file_reader(torrent_metadata):
         except Exception as err:
             print('Error in reading given torrent file ! \n' + str(err))
             sys.exit()
+        
+        # check if encoding scheme is given in dictionary
+        if b'encoding' in self.torrent_file_raw_extract.keys():
+            self.encoding = self.torrent_file_raw_extract[b'encoding'].decode()
+        else:
+            self.encoding = 'UTF-8'
         
         # formatted metadata from the torrent file
         self.torrent_file_extract = self.extract_torrent_metadata(self.torrent_file_raw_extract)
@@ -85,17 +91,30 @@ class torrent_file_reader(torrent_metadata):
         
         # file name 
         file_name    = self.torrent_file_extract['info']['name']
-        # file size in bytes 
-        file_size    = self.torrent_file_extract['info']['length']
         # piece length in bytes
         piece_length = self.torrent_file_extract['info']['piece length']
         # sha1 hash concatenation of all pieces of files
         pieces       = self.torrent_file_extract['info']['pieces']
         # info hash generated for trackers
         info_hash    = self.generate_info_hash()
-    
+            
+
+        # files size and path list in case of multifile torrent
+        files = None
+        # file size in case of single file torrent
+        file_size = None
+
+        # check if torrent file contains multiple paths 
+        if 'files' in self.torrent_file_extract['info'].keys():
+            # file information - (length, path)
+            files_dictionary = self.torrent_file_extract['info']['files']
+            files = [(file_data['length'], file_data['path']) for file_data in files_dictionary]
+        else : 
+            # file size in bytes 
+            file_size    = self.torrent_file_extract['info']['length']
+       
         # base class constructor 
-        super().__init__(trackers_url_list, file_name, file_size, piece_length, pieces, info_hash)
+        super().__init__(trackers_url_list, file_name, file_size, piece_length, pieces, info_hash, files)
 
 
     # extracts the metadata from the raw data of given torrent extract
@@ -113,6 +132,11 @@ class torrent_file_reader(torrent_metadata):
             # if type of value is of type dictionary then do deep copying
             if type(value) == OrderedDict:
                 torrent_extract[new_key] = self.extract_torrent_metadata(value)
+            # if the current torrent file could have multiple files with paths
+            elif type(value) == list and new_key == 'files':
+                torrent_extract[new_key] = list(map(lambda x : self.extract_torrent_metadata(x), value))
+            elif type(value) == list and new_key == 'path':
+                torrent_extract[new_key] = value[0].decode(self.encoding)
             # if type of value is of type list
             elif type(value) == list :
                 torrent_extract[new_key] = list(map(lambda x : x[0].decode(self.encoding), value))
@@ -138,10 +162,10 @@ class torrent_file_reader(torrent_metadata):
 
     # return the torrent instance 
     def get_data(self):
-        return torrent_metadata(self.trackers_url_list, self.file_name, self.file_size,     
-                                self.piece_length,      self.pieces,    self.info_hash)
-
-
+        return torrent_metadata(self.trackers_url_list, self.file_name, 
+                                self.file_size,         self.piece_length,      
+                                self.pieces,            self.info_hash, self.files)
+    
     # provides torrent file full information
     def __str__(self):
         logging_info = ""

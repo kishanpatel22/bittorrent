@@ -6,4 +6,4 @@ __pycache__
 tags
 results/
 data/
-torrent_log/
+src/torrent_logs/

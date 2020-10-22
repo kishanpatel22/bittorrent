@@ -1,9 +1,12 @@
 import time
 import struct
-from torrent_error import *
+import hashlib
+from socket import *
+
+# user defined libraries 
+from torrent_error import torrent_error
 from torrent_logger import *
 from peer_wire_messages import *
-from socket import *
 from shared_file_handler import torrent_shared_file_handler
 
 """
@@ -53,7 +56,7 @@ class peer():
 
         # initializing a peer socket for TCP communiction 
         self.peer_sock = socket(AF_INET, SOCK_STREAM)
-        self.peer_sock.settimeout(5)
+        self.peer_sock.settimeout(10)
             
         # file handler used for reading/writing the file file
         self.file_handler = None
@@ -81,7 +84,7 @@ class peer():
         returns success/failure for the peer connection
     """
     def connect(self):
-        connection_log = 'CONNECTION STATUS :' + self.unique_id + ' '
+        connection_log = 'CONNECTION STATUS : ' + self.unique_id + ' '
         try:
             self.peer_sock.connect((self.IP, self.port))
             
@@ -264,8 +267,8 @@ class peer():
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
         the handshake is done successfully. 
-        Note : some peer actaully even sends multiple have requests, unchoke 
-        message in any order that condition is below implementation
+        Note : some peer actaully even sends multiple have requests, unchoke,
+        have messages in any order that condition is below implementation
     """
     def initialize_bitfield(self):
         # recieve only if handshake is done successfully
@@ -394,7 +397,6 @@ class peer():
                                   after recieving any piece, it is written into file
     """
     def recieved_piece(self, piece_message):
-        print(piece_message.block)
         
         # extract the piece index, block offset and data recieved from peer  
         piece_index     = piece_message.piece_index
@@ -432,6 +434,9 @@ class peer():
         if not self.has_piece(piece_index):
             return False
         
+        # recieved piece data from the peer
+        recieved_piece = b''  
+
         # block offset for downloading the piece
         block_offset = 0
         # block length 
@@ -457,14 +462,19 @@ class peer():
             # recieve response message 
             response_message = self.handle_response()
             if response_message is None:
-                return FAILURE
-                
+                return False
+
             if response_message.message_id == PIECE:
+                # if the message recieved was a piece message
+                recieved_piece += response_message.block
                 # increament offset according to size of data block recieved
                 block_offset += len(response_message.block)
-
-        # TODO validate the piece after recieving 
-
+        
+        # validate the piece and update the peer downloaded bitfield
+        if(self.validate_piece(recieved_piece, piece_index)):
+            return True
+        else:
+            return False
 
 
     """ 
@@ -485,16 +495,19 @@ class peer():
         
         # if peer is choking the client it will not respond to client requests
         if self.peer_choking:
-            request = interested()
+            interested_request = interested()
              
             # what we can do in this case is send interested request to the peer
-            self.send_message(request)
+            self.send_message(interested_request)
             response_message = self.handle_response()
-    
+        
+        # finally check if peer is interested and peer is not choking
         if self.am_interested and not self.peer_choking:
             return True
+        else:
+            return False
 
-    
+
     """
         function returns true or false depending upon peer has piece or not
     """
@@ -504,113 +517,37 @@ class peer():
         else:
             return False
 
+
     """
-        function adds the file handler by which client can upload / download 
+        function adds file handler abstraction object by which client 
+        can read / write block into file which file handler will deal
     """
     def add_file_handler(self, file_handler):
         self.file_handler = file_handler
 
 
+    """
+        function validates piece recieved and given the piece index.
+        validation is comparing the sha1 hash of the recieved piece 
+        with the torrent file pieces value at particular index.
+    """
+    def validate_piece(self, piece, piece_index):
+        # compare the length of the piece recieved
+        piece_length = self.torrent.torrent_metadata.piece_length
+        if (len(piece) != piece_length):
+            self.peer_logger.log("piece length do not match aborting the piece")
+            return False
 
-"""
-    Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
-    PWP will help in contacting the list of peers requesting them chucks 
-    of file data. The peer class implements various algorithms like piece
-    downloading stratergy, chocking and unchocking the peers, etc.
-"""
-class peers():
-
-    def __init__(self, peers_data, torrent):
-        # initialize the peers class with peer data recieved
-        self.torrent    = torrent 
-        self.interval   = peers_data['interval']
-        self.seeders    = peers_data['seeders']
-        self.leechers   = peers_data['leechers']
-            
-        # create a peer instance for all the peers recieved 
-        self.peers_list = []
-        for peer_IP, peer_port in peers_data['peers']:
-            self.peers_list.append(peer(peer_IP, peer_port, torrent))
+        piece_hash = hashlib.sha1(piece).digest()
+        index = piece_index * 20
+        torrent_piece_hash = self.torrent.torrent_metadata.pieces[index : index + 20]
         
-        # bitfields from all peers
-        self.bitfield_pieces_count = dict()
-
-        # peers logger object
-        self.peers_logger = torrent_logger('peers', PEERS_LOG_FILE, DEBUG)
+        # compare the pieces hash with torrent file piece hash
+        if piece_hash != torrent_piece_hash:
+            self.peer_logger.log("piece length do not match aborting the piece")
+            return False
         
-        # bitfield downloaded from peers
-        self.bitfield_pieces_downloaded = {i:0 for i in range(torrent.pieces_count)}
-            
-        # file handler for downloading / uploading file data
-        self.file_handler = None
-
-
-    """
-        performs handshakes with all the peers 
-    """
-    def handshakes(self):
-        for peer in self.peers_list:
-            handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
-            if(peer.handshake()):
-                handshake_log += SUCCESS
-            else:
-                handshake_log += FAILURE
-
-            # used for EXCECUTION LOGGING
-            self.peers_logger.log(handshake_log)
-
-
-    """
-        recieves the bifields from all the peers
-        Note bitfield is send immediately after handshake response
-    """
-    def initialize_bitfields(self):
-        # recieved bitfields from given set of peers
-        for peer in self.peers_list:
-            # recieve only from handshaked peers
-            if(peer.handshake_flag):
-                # used for EXCECUTION LOGGING
-                init_bitfield_log = 'INIT BITFIELD EVENT : ' + peer.unique_id
-                self.peers_logger.log(init_bitfield_log)
-
-                # initialize the bitfields obtained from peers
-                peer.initialize_bitfield()
-                # update the total bitfields recieved from all peers
-                self.update_bitfield_count(peer.bitfield_pieces)
-              
-    
-    """     
-        Updates the bitfield values obtained from the peers
-    """
-    def update_bitfield_count(self, bitfield_pieces):
-        for piece in bitfield_pieces:
-            if piece in self.bitfield_pieces_count.keys():
-                self.bitfield_pieces_count[piece] += 1
-            else:
-                self.bitfield_pieces_count[piece] = 1
-        
-        
-    """ 
-        The main event loop for the downloading the torrrent file from peers
-    """
-    def download_file(self):
-        if self.file_handler is None:
-            self.peers_logger.log('File handler not initiated !')
-            return None
-        
-        for piece, peer in enumerate(self.peers_list[:1]):
-            peer.download_piece(piece)
-   
-
-    """
-        The peer class must handle the downloaded file writing and reading 
-        thus peer class must have the file handler for this purpose
-    """
-    def add_file_handler(self, file_path):
-        # instantiate the torrent shared file handler class object
-        self.file_handler = torrent_shared_file_handler(file_path, self.torrent)
-        for peer in self.peers_list:
-            peer.add_file_handler(self.file_handler)
-
+        # return true if valid
+        return True
 
 

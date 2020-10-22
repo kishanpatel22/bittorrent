@@ -42,12 +42,8 @@ class file_io():
     The peers use this class object to write pieces downloaded into file in 
     any order resulting into forming of orignal file using Bittorrent's 
     P2P architecture. Simply the class helps in writing pieces of the file 
-
-    Queue is used for for managing the requests for read/write operations
-    the python inbuild queue will help in handling these requests note that
-    this function of request will e multithreaded 
 """
-
+# TODO : case of multiple torrent files initialization needs to be handled
 class torrent_shared_file_handler():
     
     # initialize the class with torrent and path where file needs to be downloaded
