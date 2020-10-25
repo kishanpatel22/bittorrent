@@ -36,13 +36,8 @@ class peer():
         # maximum download block message length (default - 16 KB)
         self.max_block_length = 16 * (2 ** 10)
         
-
         # handshake flag with peer
         self.handshake_flag = False
-        
-        # keep track of upload and download speed
-        self.upload_speed   = None
-        self.download_speed = None
         
         # Initialize the states of the peer 
         # Initial state of the peer is choked and not interested
@@ -443,7 +438,7 @@ class peer():
         block_length = 0
         
         # piece length for torrent 
-        piece_length = self.torrent.torrent_metadata.piece_length 
+        piece_length = self.torrent.get_piece_length(piece_index)
         
         # loop untill you download all the blocks in the piece
         while self.can_download() and block_offset < piece_length:
@@ -533,9 +528,8 @@ class peer():
     """
     def validate_piece(self, piece, piece_index):
         # compare the length of the piece recieved
-        piece_length = self.torrent.torrent_metadata.piece_length
+        piece_length = self.torrent.get_piece_length(piece_index)
         if (len(piece) != piece_length):
-            self.peer_logger.log("piece length do not match aborting the piece")
             return False
 
         piece_hash = hashlib.sha1(piece).digest()
@@ -544,7 +538,7 @@ class peer():
         
         # compare the pieces hash with torrent file piece hash
         if piece_hash != torrent_piece_hash:
-            self.peer_logger.log("piece length do not match aborting the piece")
+            self.peer_logger.log("info hash of piece is invalid !")
             return False
         
         # return true if valid

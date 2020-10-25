@@ -25,7 +25,11 @@ class swarm():
         self.interval   = peers_data['interval']
         self.seeders    = peers_data['seeders']
         self.leechers   = peers_data['leechers']
-            
+        
+        # keep track of upload and download speed
+        self.upload_speed   = None
+        self.download_speed = None
+    
         # create a peer instance for all the peers recieved 
         self.peers_list = []
         for peer_IP, peer_port in peers_data['peers']:
@@ -111,7 +115,6 @@ class swarm():
             peer.add_file_handler(self.file_handler)
 
        
-        
     """ 
         The main event loop for downloading torrrent file from peers
     """
@@ -119,22 +122,15 @@ class swarm():
         if self.file_handler is None:
             self.swarm_logger.log('File handler not instantiated !')
             return None
-        # linearly downlaoding all the pieces 
-        # for i in range(self.torrent.pieces_count):
-        i = 112
-        self.swarm_logger.log('downloading piece ' + str(i))
-        for peer in self.peers_list:
-            if(peer.download_piece(i)):
-                download_log = peer.unique_id + ' downloaded the piece ' + str(i) + ' ' 
-                download_log += SUCCESS
-                self.swarm_logger.log(download_log)
-                break
-            else:
-                download_log = peer.unique_id + ' did not downloaded the piece ' + str(i) + ' '
-                download_log += FAILURE
-                self.swarm_logger.log(download_log)
-
-
-
-
+        
+        for i in range(self.torrent.pieces_count):
+            for peer in self.peers_list:
+                if(peer.download_piece(i)):
+                    download_log = peer.unique_id + ' downloaded piece ' + str(i) + ' ' + SUCCESS
+                    self.swarm_logger.log(download_log)
+                    break
+                else:
+                    download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
+                    self.swarm_logger.log(download_log)
+                    
 

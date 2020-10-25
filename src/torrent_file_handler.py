@@ -111,7 +111,7 @@ class torrent_file_reader(torrent_metadata):
             files = [(file_data['length'], file_data['path']) for file_data in files_dictionary]
         else : 
             # file size in bytes 
-            file_size    = self.torrent_file_extract['info']['length']
+            file_size = self.torrent_file_extract['info']['length']
        
         # base class constructor 
         super().__init__(trackers_url_list, file_name, file_size, piece_length, pieces, info_hash, files)

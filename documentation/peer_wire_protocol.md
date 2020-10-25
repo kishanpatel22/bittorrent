@@ -55,6 +55,13 @@
     + CPU resources used are less 
 
 
+## Algorithms are Bittorrent client implements 
+
+### Queuing 
+* 
+
+### Piece selection startergy 
+*
 
 
 
