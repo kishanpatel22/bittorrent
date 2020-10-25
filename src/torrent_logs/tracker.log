@@ -1,2 +1,97 @@
-MainThread -DEBUG -tracker - torrent_logger.py:log:77
-Hello world
+MainThread - DEBUG - tracker 
+TRACKERS CONNECTION STATUS :
+Connection Status				Trackers URL
+✅ Tracker connection success ! 		tracker.leechers-paradise.org
+++ Tracker connection not attempted !		tracker.internetwarriors.net
+++ Tracker connection not attempted !		tracker.opentrackr.org
+++ Tracker connection not attempted !		tracker.coppersurfer.tk
+++ Tracker connection not attempted !		tracker.pirateparty.gr
+++ Tracker connection not attempted !		9.rarbg.to
+++ Tracker connection not attempted !		9.rarbg.to
+++ Tracker connection not attempted !		bt.xxx-tracker.com
+++ Tracker connection not attempted !		tracker.cyberia.is
+++ Tracker connection not attempted !		retracker.lanta-net.ru
+++ Tracker connection not attempted !		9.rarbg.to
+++ Tracker connection not attempted !		9.rarbg.me
+++ Tracker connection not attempted !		eddie4.nl
+++ Tracker connection not attempted !		tracker.mg64.net
+++ Tracker connection not attempted !		open.demonii.si
+++ Tracker connection not attempted !		tracker.zer0day.to
+++ Tracker connection not attempted !		tracker.tiny-vps.com
+++ Tracker connection not attempted !		ipv6.tracker.harry.lu
+++ Tracker connection not attempted !		9.rarbg.me
+++ Tracker connection not attempted !		9.rarbg.me
+++ Tracker connection not attempted !		denis.stalker.upeer.me
+++ Tracker connection not attempted !		tracker.port443.xyz
+++ Tracker connection not attempted !		tracker.moeking.me
+++ Tracker connection not attempted !		exodus.desync.com
+++ Tracker connection not attempted !		9.rarbg.to
+++ Tracker connection not attempted !		9.rarbg.to
+++ Tracker connection not attempted !		tracker.justseed.it
+++ Tracker connection not attempted !		tracker.torrent.eu.org
+++ Tracker connection not attempted !		ipv4.tracker.harry.lu
+++ Tracker connection not attempted !		tracker.open-internet.nl
+++ Tracker connection not attempted !		torrentclub.tech
+++ Tracker connection not attempted !		open.stealth.si
+++ Tracker connection not attempted !		http://tracker.tfile.co:80/announce
+
+
+MainThread - DEBUG - tracker 
+UDP TRACKER RESPONSE :
+UDP Tracker URL : tracker.leechers-paradise.org
+Interval        : 130
+Leechers        : 1
+Seeders         : 55
+Peers           : (peer IP : peer port)
+                  104.143.92.20 : 2222
+                  74.81.88.26 : 3451
+                  123.205.17.149 : 6882
+                  5.180.62.127 : 6890
+                  185.245.86.147 : 8999
+                  104.238.58.95 : 10182
+                  64.44.80.84 : 10869
+                  50.99.240.34 : 12261
+                  68.108.189.129 : 12752
+                  185.247.70.4 : 12990
+                  109.88.175.16 : 13284
+                  68.50.18.71 : 17626
+                  37.98.57.197 : 19317
+                  185.45.195.185 : 20021
+                  185.45.195.162 : 20037
+                  121.214.209.93 : 20921
+                  120.29.113.233 : 22274
+                  84.17.35.4 : 22826
+                  212.102.45.68 : 26453
+                  37.120.153.27 : 28221
+                  156.146.49.178 : 29856
+                  181.188.5.89 : 29879
+                  102.65.132.249 : 30229
+                  45.56.183.106 : 37508
+                  109.103.5.181 : 40891
+                  209.89.216.57 : 43015
+                  92.193.167.64 : 43033
+                  187.67.215.58 : 44902
+                  45.74.26.126 : 45676
+                  5.14.33.144 : 46758
+                  47.222.161.251 : 47244
+                  192.145.124.92 : 51413
+                  142.167.175.165 : 52563
+                  185.157.245.95 : 54671
+                  216.169.133.4 : 54751
+                  186.84.88.144 : 55764
+                  92.235.30.144 : 57157
+                  37.228.233.191 : 58976
+                  154.3.44.121 : 60010
+                  79.97.79.46 : 60202
+                  161.29.157.115 : 61180
+                  92.119.17.10 : 62601
+                  70.117.165.216 : 63576
+                  184.161.207.165 : 63715
+                  185.92.26.40 : 63738
+                  189.181.90.111 : 63970
+                  184.170.246.164 : 64605
+                  192.158.226.135 : 64880
+                  172.93.177.12 : 64997
+
+
+

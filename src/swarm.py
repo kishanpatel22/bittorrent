@@ -3,7 +3,6 @@ from peer import peer
 from torrent_error import *
 from torrent_logger import *
 from socket import *
-from shared_file_handler import torrent_shared_file_handler
 
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
@@ -41,8 +40,8 @@ class swarm():
         # peers logger object
         self.swarm_logger = torrent_logger('swarm', SWARM_LOG_FILE, DEBUG)
         
-        # bitfield downloaded from peers
-        self.bitfield_pieces_downloaded = {i:0 for i in range(torrent.pieces_count)}
+        # bitfield for pieces downloaded from peers
+        self.bitfield_pieces_downloaded = {i : 0 for i in range(torrent.pieces_count)}
             
         # file handler for downloading / uploading file data
         self.file_handler = None
@@ -106,17 +105,18 @@ class swarm():
 
     """
         The peer class must handle the downloaded file writing and reading 
-        thus peer class must have the file handler for this purpose
+        thus peer class must have the file handler for this purpose.
+        function helps in making the share copy of handler available to peers
     """
-    def add_file_handler(self, file_path):
+    def add_shared_file_handler(self, file_handler):
         # instantiate the torrent shared file handler class object
-        self.file_handler = torrent_shared_file_handler(file_path, self.torrent)
+        self.file_handler = file_handler
         for peer in self.peers_list:
             peer.add_file_handler(self.file_handler)
 
        
     """ 
-        The main event loop for downloading torrrent file from peers
+        main event loop for downloading torrrent file from peers
     """
     def download_file(self):
         if self.file_handler is None:
@@ -132,5 +132,20 @@ class swarm():
                 else:
                     download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
                     self.swarm_logger.log(download_log)
-                    
+    
+    """
+        the main event loop for uploading torrent file to the peer
+    """
+    # TODO : implementation is left
+    def seed_file(self):
+        print('This client is will be seeding the file !')
+        print(self.peers_list[0].IP, self.peers_list[0].port)
+        
+        seeding_file_forever = True
+        
+             
+
+
+
+
 

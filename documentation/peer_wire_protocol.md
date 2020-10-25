@@ -61,7 +61,21 @@
 * 
 
 ### Piece selection startergy 
+
+* Before requesting the any piece for peer, the client must be unchoked by that
+  peer and client must obviously be interested in downloading the piece.
+* There are many types of piece selection stratergy some of them are given below
+    + **Random first policy** 
+        * In this policy random piece which is not downloaded is requested first.
+    + **Rarest first policy**
+        * In this policy rareset first piece is requested first.
+    + **End game policy**
+        * get the last remaining pieces.
+
+### Peer selection startergy 
+
 *
+
 
 
 

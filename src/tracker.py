@@ -4,7 +4,8 @@ import requests
 import bencodepy
 import random as rd
 import struct
-from torrent_error import torrent_error
+from torrent_logger import *
+from torrent_error import *
 from socket import *
 from torrent_file_handler import torrent_metadata
 
@@ -28,7 +29,7 @@ class tracker_data():
         self.request_parameters = {
             'info_hash' : torrent.torrent_metadata.info_hash,
             'peer_id'   : torrent.peer_id,
-            'port'      : torrent.port,
+            'port'      : torrent.client_port,
             'uploaded'  : torrent.uploaded,
             'downloaded': torrent.downloaded,
             'left'      : torrent.left,
@@ -113,17 +114,15 @@ class http_torrent_tracker(tracker_data):
 
     # logs the information obtained by the HTTP tracker 
     def __str__(self):
-        logging_info =  'HTTP TRACKER RESPONSE :'                       + '\n'
-        logging_info += 'HTTP Tracker URL : ' + self.tracker_url        + '\n'
-        logging_info += 'Interval         : ' + str(self.interval)      + '\n'
-        logging_info += 'Leechers         : ' + str(self.incomplete)    + '\n'
-        logging_info += 'Seeders          : ' + str(self.complete)      + '\n'
-        logging_info += 'Peers            : peer IP : peer port' + '\n'
+        tracker_log =  'HTTP TRACKER RESPONSE :'                       + '\n'
+        tracker_log += 'HTTP Tracker URL : ' + self.tracker_url        + '\n'
+        tracker_log += 'Interval         : ' + str(self.interval)      + '\n'
+        tracker_log += 'Leechers         : ' + str(self.incomplete)    + '\n'
+        tracker_log += 'Seeders          : ' + str(self.complete)      + '\n'
+        tracker_log += 'Peers            : (peer IP : peer port)'      + '\n'
         for peer_IP, peer_port in self.peers_list:
-            logging_info += '                 : ' + peer_IP + ' : ' + str(peer_port) + '\n'
-        logging_info += '\n'
-        return logging_info
-
+            tracker_log += '                   ' + peer_IP + ' : ' + str(peer_port) + '\n'
+        return tracker_log
 
 
 """
@@ -362,9 +361,9 @@ class udp_torrent_tracker(tracker_data):
         logging_info += 'Interval        : '+ str(self.interval) + '\n'
         logging_info += 'Leechers        : '+ str(self.leechers) + '\n'
         logging_info += 'Seeders         : '+ str(self.seeders)  + '\n'
-        logging_info += 'Peers           : peer IP : peer port'  + '\n'
+        logging_info += 'Peers           : (peer IP : peer port)'  + '\n'
         for peer_IP, peer_port in self.peers_list:
-            logging_info += '                 : ' + peer_IP + ' : ' + str(peer_port) + '\n'
+            logging_info += '                  ' + peer_IP + ' : ' + str(peer_port) + '\n'
         logging_info += '\n'
         return logging_info
 
@@ -387,6 +386,9 @@ class torrent_tracker():
         self.connection_failure         = 2
         self.connection_not_attempted   = 3
         
+        # tracker logger 
+        self.tracker_logger = torrent_logger('tracker', TRACKER_LOG_FILE, DEBUG)
+
         # get all the trackers list of the torrent data
         self.trackers_list = []
         self.trackers_connection_status = []
@@ -417,24 +419,27 @@ class torrent_tracker():
             else:
                 self.trackers_connection_status[i] = self.connection_failure
         
+        # used for EXCECUTION LOGGING
+        self.tracker_logger.log(self.__str__())
+        self.tracker_logger.log(self.client_tracker.__str__())        
+
         # returns tracker instance for which successful connection was established
         return self.client_tracker
 
     
     # logs the tracker connections information 
     def __str__(self):
-        logging_info =  'TRACKER CONNECTIONS INFORMATION :'               + '\n'
-        logging_info += 'Connection Status' + '\t\t\t\t' + 'Trackers URL' + '\n'
+        trackers_log  = 'TRACKERS CONNECTION STATUS :'                    + '\n'
+        trackers_log += 'Connection Status' + '\t\t\t\t' + 'Trackers URL' + '\n'
         # log all the trackers and corresponding status connection
         for i, status in enumerate(self.trackers_connection_status):
             if(status == self.connection_success):
-                logging_info += 'Tracker connection success !'            + '\t\t\t'
+                trackers_log += SUCCESS + ' Tracker connection success ! '+ '\t\t'
             elif(status == self.connection_failure):
-                logging_info += 'Tracker connection failure !'            + '\t\t\t'
+                trackers_log += FAILURE + ' Tracker connection failure ! '+ '\t\t'
             else:
-                logging_info += 'Tracker connection not attempted !'      + '\t\t'
-            logging_info += self.trackers_list[i].tracker_url             + '\n'
+                trackers_log += '++ Tracker connection not attempted !'   + '\t\t'
+            trackers_log += self.trackers_list[i].tracker_url             + '\n'
         
-        logging_info += '\n'
-        return logging_info
+        return trackers_log
 

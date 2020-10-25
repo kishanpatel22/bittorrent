@@ -58,10 +58,15 @@ class torrent_shared_file_handler():
 
         # initlizes the file input/output object instance 
         self.download_file = file_io(self.download_file_path)
-        # initialize the file with all the null values 
-        self.download_file.write_null_values(self.file_size)
         
     
+    # initialize the file before downloading 
+    # function writes all null values in the file 
+    def initialize_for_download(self):
+        # initialize the file with all the null values 
+        self.download_file.write_null_values(self.file_size)
+   
+
     # calculates the position index in file given piece index and block offset
     def calculate_file_position(self, piece_index, block_offset):
         return piece_index * self.piece_size + block_offset

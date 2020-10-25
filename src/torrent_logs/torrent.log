@@ -1,2 +1,45 @@
-MainThread -DEBUG -torrent - torrent_logger.py:log:77
-Hello world
+MainThread - DEBUG - torrent file 
+Torrent file decoded successfully ✅
+
+MainThread - DEBUG - torrent file 
+TORRENT FILE READ CONTAINS DATA : 
+Trackers List  : udp://tracker.leechers-paradise.org:6969/announce
+                 udp://tracker.internetwarriors.net:1337/announce
+                 udp://tracker.opentrackr.org:1337/announce
+                 udp://tracker.coppersurfer.tk:6969/announce
+                 udp://tracker.pirateparty.gr:6969/announce
+                 udp://9.rarbg.to:2730/announce
+                 udp://9.rarbg.to:2710/announce
+                 udp://bt.xxx-tracker.com:2710/announce
+                 udp://tracker.cyberia.is:6969/announce
+                 udp://retracker.lanta-net.ru:2710/announce
+                 udp://9.rarbg.to:2770/announce
+                 udp://9.rarbg.me:2730/announce
+                 udp://eddie4.nl:6969/announce
+                 udp://tracker.mg64.net:6969/announce
+                 udp://open.demonii.si:1337/announce
+                 udp://tracker.zer0day.to:1337/announce
+                 udp://tracker.tiny-vps.com:6969/announce
+                 udp://ipv6.tracker.harry.lu:80/announce
+                 udp://9.rarbg.me:2740/announce
+                 udp://9.rarbg.me:2770/announce
+                 udp://denis.stalker.upeer.me:6969/announce
+                 udp://tracker.port443.xyz:6969/announce
+                 udp://tracker.moeking.me:6969/announce
+                 udp://exodus.desync.com:6969/announce
+                 udp://9.rarbg.to:2740/announce
+                 udp://9.rarbg.to:2720/announce
+                 udp://tracker.justseed.it:1337/announce
+                 udp://tracker.torrent.eu.org:451/announce
+                 udp://ipv4.tracker.harry.lu:80/announce
+                 udp://tracker.open-internet.nl:6969/announce
+                 udp://torrentclub.tech:6969/announce
+                 udp://open.stealth.si:80/announce
+                 http://tracker.tfile.co:80/announce
+File name      : Too Much and Never Enough - Mary Trump.epub
+File size      : 1848350 B
+Piece length   : 16384 B
+Info hash      : b'\xbc<W\xec7\xcbq2\xef/T\x9c\xab\xca\xab\x86\xf0\x00\xda\n'
+Files          : None
+
+

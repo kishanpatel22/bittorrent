@@ -13,18 +13,24 @@ from socket import *
 
 class torrent():
 
-    def __init__(self, torrent_metadata):
+    def __init__(self, torrent_metadata, client_state):
         # store the orginal metadata extracted from the file
-        self.torrent_metadata = torrent_metadata
-        
+        self.torrent_metadata   = torrent_metadata
+        self.client_state       = client_state
+
         # torrent peer port reserved for bittorrent, this will be used 
         # for listening to the peer request for uploading (seeding)
-        self.port = 6881
+        self.client_port = 6881
+        self.client_IP = '192.168.0.106'
             
-        # downloaded and uploaded values
+        # downloaded and uploaded values 
         self.uploaded = 0 
-        self.downloaded = 0                                                    
+        self.downloaded = 0
         self.left = 0    
+        
+        # if the client wants to upload the file 
+        if self.client_state['seeding'] != None:
+            self.downloaded = self.torrent_metadata.file_size
 
         # the count of the number pieces that the files is made of
         self.pieces_count = int(len(self.torrent_metadata.pieces) / 20)
@@ -43,22 +49,25 @@ class torrent():
             return self.torrent_metadata.piece_length
    
 
-
     # logs the torrent information of torrent
     def __str__(self):
-        logging_info =  'TORRENT INFORMATION : '+ '\n'
-        logging_info += 'Trackers List  : ' + str(self.torrent_metadata.trackers_url_list)      + '\n'
-        logging_info += 'File name      : ' + str(self.torrent_metadata.file_name)              + '\n'
-        logging_info += 'File size      : ' + str(self.torrent_metadata.file_size) + ' B'       + '\n'
-        logging_info += 'Piece length   : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
-        logging_info += 'Info hash      : ' + str(self.torrent_metadata.info_hash)              + '\n'
-        logging_info += 'Files          : ' + str(self.torrent_metadata.files)                  + '\n'
-        logging_info += 'No. of Pieces  : ' + str(self.pieces_count)                            + '\n'
-        logging_info += 'Client port    : ' + str(self.port)                                    + '\n'
-        logging_info += 'Client peer ID : ' + str(self.peer_id)                                 + '\n'
-        logging_info += '\n'
-        return logging_info
+        torrent_log  =  'CLIENT TORRENT DATA : (client state = ' 
+        if self.client_state['downloading'] != None:
+            torrent_log += 'downloading)\n'
+        if self.client_state['seeding'] != None:
+            torrent_log += 'seeding)\n'
 
-
+        torrent_log += 'File name       : ' + str(self.torrent_metadata.file_name)              + '\n'
+        torrent_log += 'File size       : ' + str(self.torrent_metadata.file_size)    + ' B'    + '\n'
+        torrent_log += 'Piece length    : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
+        torrent_log += 'Info hash       : ' + str(self.torrent_metadata.info_hash)              + '\n'
+        torrent_log += 'Files           : ' + str(self.torrent_metadata.files)                  + '\n'
+        torrent_log += 'No. of Pieces   : ' + str(self.pieces_count)                            + '\n'
+        torrent_log += 'Client port     : ' + str(self.client_port)                             + '\n'
+        torrent_log += 'Client peer ID  : ' + str(self.peer_id)                                 + '\n'
+        torrent_log += 'Downloaded      : ' + str(self.downloaded)                              + '\n'
+        torrent_log += 'Uploadaed       : ' + str(self.uploaded)                                + '\n'
+        
+        return torrent_log
 
 

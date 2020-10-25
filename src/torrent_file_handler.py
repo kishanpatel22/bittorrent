@@ -11,6 +11,13 @@ from collections import OrderedDict
 # hashlib for generating sha1 hash values
 import hashlib
 
+# torrent logger for execution logging
+from torrent_logger import *
+
+# user defined class for rasing torrent execptions
+from torrent_error import *
+
+
 """
     Torrent file hanlders contain code related to torrent file reading and
     extracting useful information related to the metadata of the torrent file.
@@ -64,14 +71,21 @@ class torrent_metadata():
 # Torrent File reader function
 class torrent_file_reader(torrent_metadata):
     
-    
     # parameterized constructor 
-    def __init__(self, torrent_file_path = None):
+    def __init__(self, torrent_file_path):
+        # the torrent_class logger
+        self.torrent_file_logger = torrent_logger('torrent file', TORRENT_LOG_FILE, DEBUG)
+        
         try :
             # raw extract of the torrent file 
             self.torrent_file_raw_extract = bencodepy.decode_from_file(torrent_file_path)
+            # used for EXCECUTION LOGGING
+            torrent_read_log = 'Torrent file decoded successfully ' + SUCCESS
+            self.torrent_file_logger.log(torrent_read_log)
         except Exception as err:
-            print('Error in reading given torrent file ! \n' + str(err))
+            # used for EXCECUTION LOGGING
+            torrent_read_log = 'Torrent file decoding failed ! ' + FAILURE + err.__str__()
+            self.torrent_file_logger.log(torrent_read_log)
             sys.exit()
         
         # check if encoding scheme is given in dictionary
@@ -115,6 +129,9 @@ class torrent_file_reader(torrent_metadata):
        
         # base class constructor 
         super().__init__(trackers_url_list, file_name, file_size, piece_length, pieces, info_hash, files)
+            
+        # used for EXCECUTION LOGGING
+        self.torrent_file_logger.log(self.__str__())
 
 
     # extracts the metadata from the raw data of given torrent extract
@@ -168,10 +185,14 @@ class torrent_file_reader(torrent_metadata):
     
     # provides torrent file full information
     def __str__(self):
-        logging_info = ""
-        for key, value in self.torrent_file_extract.items():
-            logging_info = logging_info + str(key) + "\t: " + str(value) + "\n"
-        return logging_info
-
-
+        torrent_file_log  = 'TORRENT FILE READ CONTAINS DATA : '                + '\n'
+        torrent_file_log += 'Trackers List  : ' + self.trackers_url_list[0]     + '\n'
+        for tracker_url in self.trackers_url_list[1:]:
+            torrent_file_log += '                 ' + tracker_url               + '\n'
+        torrent_file_log += 'File name      : ' + str(self.file_name)           + '\n'
+        torrent_file_log += 'File size      : ' + str(self.file_size)    + ' B' + '\n'
+        torrent_file_log += 'Piece length   : ' + str(self.piece_length) + ' B' + '\n'
+        torrent_file_log += 'Info hash      : ' + str(self.info_hash)           + '\n'
+        torrent_file_log += 'Files          : ' + str(self.files)               + '\n'
+        return torrent_file_log
 
