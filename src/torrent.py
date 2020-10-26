@@ -21,7 +21,7 @@ class torrent():
         # torrent peer port reserved for bittorrent, this will be used 
         # for listening to the peer request for uploading (seeding)
         self.client_port = 6881
-        self.client_IP = '192.168.0.106'
+        self.client_IP = ''
             
         # downloaded and uploaded values 
         self.uploaded = 0 

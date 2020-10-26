@@ -62,11 +62,6 @@ class torrent_client():
         # get the peer data from the recieved from the tracker
         peers_data = self.active_tracker.get_peers_data()
         
-        # seeding only peer in swarm is the client 
-        if self.client_state['seeding'] != None:
-            # for uploading we just create class with one peer that is client
-            peers_data['peers'] = [(self.torrent.client_IP, self.torrent.client_port)]
-    
         # create peers instance from the list of peers obtained from tracker
         self.swarm = swarm(peers_data, self.torrent)
 
@@ -76,9 +71,8 @@ class torrent_client():
         downloaded completely, basically the client becomes the seeder
     """
     def seed(self):
-        
         # download file initialization 
-        upload_file_path = self.client_state['seeding'] + self.torrent.torrent_metadata.file_name
+        upload_file_path = self.client_state['seeding'] 
         # create file handler for downloading data from peers
         file_handler = torrent_shared_file_handler(upload_file_path, self.torrent)
         
@@ -88,13 +82,11 @@ class torrent_client():
         self.swarm.seed_file()
 
 
-            
     """
         function helps in downloading the torrent file form swarm 
         in which peers are sharing file data
     """
     def download(self):
-        
         # does initial handshaking with all the peers 
         self.swarm.handshakes()
 
@@ -115,6 +107,13 @@ class torrent_client():
         self.swarm.download_file() 
 
 
-
+    """
+        the event loop that either downloads / uploads a file
+    """
+    def event_loop(self):
+        if self.client_state['downloading'] is not None:
+            self.download()
+        if self.client_state['seeding'] is not None:
+            self.seed()
 
 

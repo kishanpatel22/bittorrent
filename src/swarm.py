@@ -2,7 +2,7 @@ from threading import *
 from peer import peer
 from torrent_error import *
 from torrent_logger import *
-from socket import *
+import time
 
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
@@ -32,7 +32,9 @@ class swarm():
         # create a peer instance for all the peers recieved 
         self.peers_list = []
         for peer_IP, peer_port in peers_data['peers']:
-            self.peers_list.append(peer(peer_IP, peer_port, torrent))
+            peer_object = peer(peer_IP, peer_port, torrent)
+            peer_object.initialize_leecher()
+            self.peers_list.append(peer_object)
         
         # bitfields from all peers
         self.bitfield_pieces_count = dict()
@@ -45,8 +47,11 @@ class swarm():
             
         # file handler for downloading / uploading file data
         self.file_handler = None
-
-
+        
+        # client peer only need incase of seeding torrent
+        self.client_peer = peer(self.torrent.client_IP, self.torrent.client_port, self.torrent)
+        self.client_peer.initialize_seeder()
+   
     """
         performs handshakes with all the peers 
     """
@@ -132,18 +137,25 @@ class swarm():
                 else:
                     download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
                     self.swarm_logger.log(download_log)
-    
+   
+
+
     """
         the main event loop for uploading torrent file to the peer
     """
-    # TODO : implementation is left
     def seed_file(self):
-        print('This client is will be seeding the file !')
-        print(self.peers_list[0].IP, self.peers_list[0].port)
-        
         seeding_file_forever = True
-        
+        while seeding_file_forever:
+            peer_socket, peer_address = self.client_peer.recieve_connection()
+            if recieved_connection != None:
+                print(recieved_connection) 
+                break
+            else:
+                time.sleep(5)
              
+
+
+
 
 
 

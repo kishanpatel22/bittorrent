@@ -1,13 +1,13 @@
 import time
 import struct
 import hashlib
-from socket import *
 
 # user defined libraries 
 from torrent_error import torrent_error
 from torrent_logger import *
 from peer_wire_messages import *
 from shared_file_handler import torrent_shared_file_handler
+from peer_socket import *
 
 """
     peer class instance maintains the information about the peer participating
@@ -48,10 +48,9 @@ class peer():
     
         # bitfield representing which data file pieces peer has
         self.bitfield_pieces = set([])
-
-        # initializing a peer socket for TCP communiction 
-        self.peer_sock = socket(AF_INET, SOCK_STREAM)
-        self.peer_sock.settimeout(10)
+        
+        # peer socket for communication
+        self.peer_sock = None
             
         # file handler used for reading/writing the file file
         self.file_handler = None
@@ -73,79 +72,76 @@ class peer():
                                   CANCEL        : self.recieved_cancel,
                                   PORT          : self.recieved_port }
     
+    """
+        initialize socket of leecher type
+    """
+    def initialize_leecher(self): 
+        self.peer_sock = leecher_socket(self.IP, self.port)
+
+    """
+        initialize socket of seeder type
+    """
+    def initialize_seeder(self):
+        self.peer_sock = seeder_socket(self.IP, self.port)
+
+
+    """
+        function attempts to recieve any external TCP connection
+        returns the connection socket and address if connection 
+        if recieved else returns None
+    """
+    def recieve_connection(self):
+        connection_log = 'RECIEVE CONNECTION STATUS : ' 
+        try:
+            connection = self.peer_sock.accept_connection()
+            connection_log += SUCCESS
+            self.peer_logger.log(connection_log)
+            return connection 
+        except Exception as err:
+            connection_log += FAILURE + ' ' + err.__str__()
+            self.peer_logger.log(connection_log)
+            return None
+
 
     """
         attempts to connect the peer using TCP connection 
         returns success/failure for the peer connection
     """
-    def connect(self):
-        connection_log = 'CONNECTION STATUS : ' + self.unique_id + ' '
+    def send_connection(self):
+        connection_log = 'SEND CONNECTION STATUS : ' + self.unique_id + ' '
         try:
-            self.peer_sock.connect((self.IP, self.port))
-            
+            self.peer_sock.request_connection()
             # user for EXCECUTION LOGGING
             connection_log += SUCCESS
             self.peer_logger.log(connection_log)
-
             self.peer_connection = True
             return True
         except Exception as err_msg:
-            
             # user for EXCECUTION LOGGING
             connection_log += FAILURE + ' ' + err_msg.__str__()
             self.peer_logger.log(connection_log)
-            
             return False
     
-
+    
     """
         disconnects the peer socket connection
     """
     def disconnect(self):
-        self.peer_sock.close()
+        self.peer_sock.disconnect()
         self.peer_connection = False
 
     """
-        function helps in work of recieving data from peers
-        function returns raw data if recieved from peer else returns None
-        function returns the full length data as recieved from the peer
+        function helps in recieving data from peers
     """
     def recieve(self, data_size):
-        peer_raw_data = b''
-        recieved_data_length = 0
-        request_size = data_size
-        
-        #loop untill you recieve all the data from the peer
-        while(recieved_data_length < data_size):
-            # attempt recieving request size data
-            try:
-                chunk = self.peer_sock.recv(request_size)
-            except:
-                return None
-
-            # when recieves returns 0 means the peer has disconnected
-            if len(chunk) == 0:
-                self.disconnect()
-                return None
-            
-            peer_raw_data += chunk
-            request_size -=  len(chunk)
-            recieved_data_length += len(chunk)
-
-        # return required size data recieved from peer
-        return peer_raw_data 
-   
+        return self.peer_sock.recieve_data(data_size)
 
     """
         function helps send raw data to the peer connection
         function sends the complete message to peer
     """
     def send(self, raw_data):
-        data_length_send = 0    
-        while(data_length_send < len(raw_data)):
-            data_length_send += self.peer_sock.send(raw_data[data_length_send:])
-
-
+        self.peer_sock.send_data(raw_data)
     
     """
         function helps in sending peer messgae given peer wire message 
@@ -153,12 +149,11 @@ class peer():
     """
     def send_message(self, peer_request):
         if self.handshake_flag:
-            self.peer_sock.send(peer_request.message())
+            self.peer_sock.send_data(peer_request.message())
             
             # used for EXCECUTION LOGGING
             peer_request_log = 'sending message  -----> ' + peer_request.__str__() 
             self.peer_logger.log(peer_request_log)
-
 
     """
         functions helpes in recieving peer wire protocol messages. Note that 
@@ -202,14 +197,13 @@ class peer():
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
  
-
     """
         functions helps in doing a handshake with peer connection
         functions returns success/failure result of handshake 
     """
     def handshake(self):
         # only do handshake if not done earlier and connection established with peer
-        if not self.handshake_flag and self.connect():
+        if not self.handshake_flag and self.send_connection():
             info_hash = self.torrent.torrent_metadata.info_hash
             peer_id   = self.torrent.peer_id
 
@@ -257,7 +251,6 @@ class peer():
         # already attempted handshake with the peer
         return False
        
-
     """
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
@@ -279,7 +272,6 @@ class peer():
             if response_message is None: 
                 messages_begin_recieved = False
 
-    
     """
         function handles any peer message that is recieved on the port
         function manages -> recieving, decoding and reacting to recieved message 
@@ -402,7 +394,6 @@ class peer():
         self.file_handler.write_block(piece_index, block_offset, data_recieved) 
 
 
-
     """ 
         recieved cancel         : message to cancel a block request from client
     """
@@ -512,14 +503,12 @@ class peer():
         else:
             return False
 
-
     """
         function adds file handler abstraction object by which client 
         can read / write block into file which file handler will deal
     """
     def add_file_handler(self, file_handler):
         self.file_handler = file_handler
-
 
     """
         function validates piece recieved and given the piece index.
@@ -540,7 +529,6 @@ class peer():
         if piece_hash != torrent_piece_hash:
             self.peer_logger.log("info hash of piece is invalid !")
             return False
-        
         # return true if valid
         return True
 

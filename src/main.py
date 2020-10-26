@@ -20,7 +20,7 @@ def main(user_arguments):
     client.initialize_swarm()
     
     # download the file from the swarm
-    client.seed()
+    client.event_loop()
 
 
 
