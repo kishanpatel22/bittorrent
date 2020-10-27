@@ -1,4 +1,6 @@
 from socket import *
+import sys
+
 """
     module handles the creating the socket for peers
     Note that peers are of two types peers 
@@ -98,8 +100,12 @@ class seeder_socket(peer_socket):
         binds the socket that IP and port and starts listening over it
     """
     def start_seeding(self):
-        self.peer_sock.bind((self.IP, self.port))
-        self.peer_sock.listen(self.max_peer_requests)
+        try:
+            self.peer_sock.bind((self.IP, self.port))
+            self.peer_sock.listen(self.max_peer_requests)
+        except Exception as err:
+            print('Socket binding failed : ' + err.__str__())
+            sys.exit(0)
 
     """
         accepts an incomming connection

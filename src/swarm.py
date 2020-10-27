@@ -58,7 +58,7 @@ class swarm():
     def handshakes(self):
         handshake_thread_pool = []
         for peer in self.peers_list:
-            t = Thread(target = peer.handshake)
+            t = Thread(target = peer.initiate_handshake)
             t.start()
             handshake_thread_pool.append(t)
         
@@ -121,14 +121,14 @@ class swarm():
 
        
     """ 
-        main event loop for downloading torrrent file from peers
+        function helps in downloading torrrent file from peers
     """
     def download_file(self):
         if self.file_handler is None:
             self.swarm_logger.log('File handler not instantiated !')
             return None
         
-        for i in range(self.torrent.pieces_count):
+        for i in [0]:
             for peer in self.peers_list:
                 if(peer.download_piece(i)):
                     download_log = peer.unique_id + ' downloaded piece ' + str(i) + ' ' + SUCCESS
@@ -138,25 +138,27 @@ class swarm():
                     download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
                     self.swarm_logger.log(download_log)
    
-
-
     """
-        the main event loop for uploading torrent file to the peer
+        function helps in seeding the file in swarm
     """
     def seed_file(self):
         seeding_file_forever = True
         while seeding_file_forever:
-            peer_socket, peer_address = self.client_peer.recieve_connection()
+            recieved_connection = self.client_peer.recieve_connection()
             if recieved_connection != None:
-                print(recieved_connection) 
-                break
+                # extract the connection socket and IP address of connection
+                peer_socket, peer_address = recieved_connection
+                peer_IP, peer_port = peer_address
+                
+                # make peer class object  
+                peer_object = peer(peer_IP, peer_port, self.torrent)
+                peer_object.initialize_leecher(peer_socket)
+                
+                peer_object.upload_file()
+
             else:
                 time.sleep(5)
              
-
-
-
-
 
 
 

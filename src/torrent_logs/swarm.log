@@ -1,0 +1,297 @@
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (111.90.145.119 : 6992) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (77.173.190.161 : 8999) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (104.238.58.6 : 10182) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (220.130.129.243 : 11720) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (104.143.92.20 : 13105) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (112.118.162.140 : 13164) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (188.230.150.164 : 15072) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.45.195.162 : 20037) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.45.195.176 : 20112) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.45.195.154 : 20144) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (196.22.236.148 : 21242) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (104.249.229.118 : 21733) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (66.183.78.69 : 22848) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (89.187.182.106 : 24104) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (63.143.95.25 : 24581) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (121.213.1.42 : 24874) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (81.159.34.75 : 28976) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (210.185.79.188 : 29203) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (107.158.155.219 : 29228) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (118.200.51.2 : 31318) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.192.243.249 : 31361) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (191.97.124.204 : 32373) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (86.98.122.31 : 32927) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (173.68.196.160 : 39872) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (115.87.120.126 : 40940) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (193.36.225.89 : 41216) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (92.195.56.12 : 43033) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (5.14.33.144 : 46758) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (79.11.184.175 : 46920) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (105.154.141.37 : 49046) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (74.81.88.26 : 49365) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (92.223.89.197 : 51000) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (23.83.129.1 : 51413) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (81.245.198.83 : 51413) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (111.119.188.8 : 51413) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (136.49.155.92 : 51413) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (155.4.14.39 : 51413) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (180.107.30.245 : 51413) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.56.20.124 : 51413) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (122.105.90.131 : 52516) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (185.157.245.95 : 54671) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (196.217.165.232 : 55197) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (84.17.45.217 : 56897) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (197.148.8.16 : 57096) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (66.183.14.74 : 61052) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (62.178.173.193 : 62348) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (212.102.34.207 : 63800) ❌
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (85.245.135.131 : 64623) ✅
+
+MainThread - DEBUG - swarm 
+HANDSHAKE EVENT : (99.132.228.85 : 65316) ❌
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (111.90.145.119 : 6992) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (77.173.190.161 : 8999) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (104.238.58.6 : 10182) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (220.130.129.243 : 11720) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (104.143.92.20 : 13105) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (112.118.162.140 : 13164) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (188.230.150.164 : 15072) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.45.195.162 : 20037) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.45.195.176 : 20112) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.45.195.154 : 20144) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (196.22.236.148 : 21242) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (104.249.229.118 : 21733) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (66.183.78.69 : 22848) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (89.187.182.106 : 24104) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (63.143.95.25 : 24581) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (121.213.1.42 : 24874) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (81.159.34.75 : 28976) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (210.185.79.188 : 29203) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (107.158.155.219 : 29228) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (118.200.51.2 : 31318) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.192.243.249 : 31361) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (191.97.124.204 : 32373) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (86.98.122.31 : 32927) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (173.68.196.160 : 39872) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (115.87.120.126 : 40940) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (193.36.225.89 : 41216) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (92.195.56.12 : 43033) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (5.14.33.144 : 46758) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (79.11.184.175 : 46920) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (105.154.141.37 : 49046) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (74.81.88.26 : 49365) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (92.223.89.197 : 51000) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (23.83.129.1 : 51413) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (81.245.198.83 : 51413) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (111.119.188.8 : 51413) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (136.49.155.92 : 51413) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (155.4.14.39 : 51413) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (180.107.30.245 : 51413) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.56.20.124 : 51413) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (122.105.90.131 : 52516) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (185.157.245.95 : 54671) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (196.217.165.232 : 55197) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (84.17.45.217 : 56897) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (197.148.8.16 : 57096) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (66.183.14.74 : 61052) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (62.178.173.193 : 62348) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (212.102.34.207 : 63800) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (85.245.135.131 : 64623) has 113 torrent pieces
+
+MainThread - DEBUG - swarm 
+INIT BITFIELD EVENT : (99.132.228.85 : 65316) has 0 torrent pieces
+
+MainThread - DEBUG - swarm 
+(111.90.145.119 : 6992) downloaded piece 0 ✅
+

@@ -75,8 +75,8 @@ class peer():
     """
         initialize socket of leecher type
     """
-    def initialize_leecher(self): 
-        self.peer_sock = leecher_socket(self.IP, self.port)
+    def initialize_leecher(self, psocket = None): 
+        self.peer_sock = leecher_socket(self.IP, self.port, psocket)
 
     """
         initialize socket of seeder type
@@ -197,60 +197,128 @@ class peer():
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
  
+    
     """
-        functions helps in doing a handshake with peer connection
+        functions helps in initiating handshake with peer connection
         functions returns success/failure result of handshake 
     """
-    def handshake(self):
+    def initiate_handshake(self):
         # only do handshake if not done earlier and connection established with peer
         if not self.handshake_flag and self.send_connection():
-            info_hash = self.torrent.torrent_metadata.info_hash
-            peer_id   = self.torrent.peer_id
-
-            # create a handshake object instance for request
-            handshake_request = handshake(info_hash, peer_id)
-            # send the handshake message
-            self.send(handshake_request.message())
-            
-            # used for EXCECUTION LOGGING
-            handshake_req_log = 'Handshake initiated -----> ' + self.unique_id
-            self.peer_logger.log(handshake_req_log)
-
-            # recieve message for the peer
-            raw_handshake_response = self.recieve(HANDSHAKE_MESSAGE_LENGTH)
+            # send handshake message
+            handshake_request = self.send_handshake()
+            # recieve handshake message
+            raw_handshake_response = self.recieve_handshake()
             if raw_handshake_response is None:
-                # used for EXCECUTION LOGGING
-                handshake_res_log = 'Handshake not recived from ' + self.unique_id
-                self.peer_logger.log(handshake_res_log)
                 return False
-            
-            # used for EXCECUTION LOGGING
-            handshake_res_log = 'Handshake recived   <----- ' + self.unique_id
-            self.peer_logger.log(handshake_res_log)
-            
-            # attempt validation of raw handshake response with handshake request
-            validation_log = 'Handshake validation : '
-            try:
-                handshake_response = handshake_request.validate_handshake(raw_handshake_response)
-                validation_log += SUCCESS
-                # used for EXCECUTION LOGGING
-                self.peer_logger.log(validation_log)
-            except Exception as err_msg:
-                validation_log += FAILURE + ' ' + err_msg.__str__()
-                # used for EXCECUTION LOGGING
-                self.peer_logger.log(validation_log)
+            # validate the hanshake message recieved obtained
+            handshake_response = self.handshake_validation(raw_handshake_response)
+            if handshake_response is None:
                 return False
-            
             # get the client peer id for the handshake response
             self.peer_id = handshake_response.client_peer_id
             self.handshake_flag = True
-            
             # handshake success 
             return True
-        
         # already attempted handshake with the peer
         return False
-       
+ 
+
+    """
+        function helps in responding to incoming handshakes
+    """
+    def respond_handshake(self):
+        if not self.handshake_flag:
+            # recieve handshake response 
+            raw_handshake_response = self.recieve_handshake()
+            if raw_handshake_response is None:
+                return False
+            # validate the hanshake message response
+            handshake_response = self.handshake_validation(raw_handshake_response)
+            if handshake_response is None:
+                return False 
+            # extract the peer id
+            self.peer_id = handshake_response.client_peer_id
+            # send handshake message after validation 
+            self.send_handshake()
+            self.handshake_flag = True
+            # handshake done successfully
+            return True
+        # handshake already done
+        return False 
+
+
+    """
+        the function helps in building the handshake message
+    """
+    def build_handshake_message(self):
+        info_hash = self.torrent.torrent_metadata.info_hash
+        peer_id   = self.torrent.peer_id
+
+        # create a handshake object instance
+        return handshake(info_hash, peer_id)
+ 
+    
+    """
+        function helps in sending the handshake message to the peer
+        function returns the handshake request that is made 
+    """
+    def send_handshake(self):
+        # create a handshake object instance for request
+        handshake_request = self.build_handshake_message()
+        # send the handshake message
+        self.send(handshake_request.message())
+        
+        # used for EXCECUTION LOGGING
+        handshake_req_log = 'Handshake initiated -----> ' + self.unique_id
+        self.peer_logger.log(handshake_req_log)
+        
+        # handshake request that is made
+        return handshake_request
+   
+
+    """
+        function helps in recieving the hanshake message from peer
+        function returns handshake recieved on success else returns None
+    """
+    def recieve_handshake(self):
+        # recieve message for the peer
+        raw_handshake_response = self.recieve(HANDSHAKE_MESSAGE_LENGTH)
+        if raw_handshake_response is None:
+            # used for EXCECUTION LOGGING
+            handshake_res_log = 'Handshake not recived from ' + self.unique_id
+            self.peer_logger.log(handshake_res_log)
+            return None
+        
+        # used for EXCECUTION LOGGING
+        handshake_res_log = 'Handshake recived   <----- ' + self.unique_id
+        self.peer_logger.log(handshake_res_log)
+        
+        # raw handshake message recieved 
+        return raw_handshake_response
+
+
+    """
+        function helps in performing handshake validation of recieved 
+        handshake response with the handshake request that is made
+    """
+    def handshake_validation(self, raw_handshake_response):
+        # attempt validation of raw handshake response with handshake request
+        validation_log = 'Handshake validation : '
+        try:
+            handshake_request = self.build_handshake_message()
+            handshake_response = handshake_request.validate_handshake(raw_handshake_response)
+            validation_log += SUCCESS
+            # used for EXCECUTION LOGGING
+            self.peer_logger.log(validation_log)
+            return handshake_response
+        except Exception as err_msg:
+            validation_log += FAILURE + ' ' + err_msg.__str__()
+            # used for EXCECUTION LOGGING
+            self.peer_logger.log(validation_log)
+            return None
+         
+
     """
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
@@ -531,5 +599,22 @@ class peer():
             return False
         # return true if valid
         return True
+    
+
+    """
+        function helps in uploading the torrent file with peer
+    """
+    def upload_file(self):
+        # first thing is do handshake
+        # send the bitfield information to the client 
+        # send unchoke after recieving interested 
+        # if everything OK then keep on recieving for requests for pieces
+        if not self.respond_handshake() :
+            return None
+        
+        
+
+
+
 
 
