@@ -61,9 +61,16 @@ class torrent_client():
     def initialize_swarm(self):
         # get the peer data from the recieved from the tracker
         peers_data = self.active_tracker.get_peers_data()
+            
+        if self.client_state['downloading'] != None:
+            # create swarm instance from the list of peers 
+            self.swarm = swarm(peers_data, self.torrent)
         
-        # create peers instance from the list of peers obtained from tracker
-        self.swarm = swarm(peers_data, self.torrent)
+        if self.client_state['seeding'] != None:
+            # no need for peers recieved from tracker
+            peers_data['peers'] = []
+            # create swarm instance for seeding 
+            self.swarm = swarm(peers_data, self.torrent)
 
     
     """
@@ -89,7 +96,7 @@ class torrent_client():
     def download(self):
         # does initial handshaking with all the peers 
         self.swarm.handshakes()
-
+        
         # initialize all the bitfields from peers
         self.swarm.initialize_bitfields()
         
@@ -105,7 +112,6 @@ class torrent_client():
        
         # lastly download the whole file
         self.swarm.download_file() 
-
 
     """
         the event loop that either downloads / uploads a file

@@ -75,7 +75,6 @@ class torrent_file_reader(torrent_metadata):
     def __init__(self, torrent_file_path):
         # the torrent_class logger
         self.torrent_file_logger = torrent_logger('torrent file', TORRENT_LOG_FILE, DEBUG)
-        
         try :
             # raw extract of the torrent file 
             self.torrent_file_raw_extract = bencodepy.decode_from_file(torrent_file_path)
@@ -113,16 +112,18 @@ class torrent_file_reader(torrent_metadata):
         info_hash    = self.generate_info_hash()
             
 
-        # files size and path list in case of multifile torrent
+        # files is list of tuple of size and path in case of multifile torrent
         files = None
-        # file size in case of single file torrent
-        file_size = None
 
         # check if torrent file contains multiple paths 
         if 'files' in self.torrent_file_extract['info'].keys():
             # file information - (length, path)
             files_dictionary = self.torrent_file_extract['info']['files']
             files = [(file_data['length'], file_data['path']) for file_data in files_dictionary]
+            file_size = 0
+            print(files)
+            for file_length, file_path in files:
+                file_size += file_length
         else : 
             # file size in bytes 
             file_size = self.torrent_file_extract['info']['length']
@@ -154,6 +155,9 @@ class torrent_file_reader(torrent_metadata):
                 torrent_extract[new_key] = list(map(lambda x : self.extract_torrent_metadata(x), value))
             elif type(value) == list and new_key == 'path':
                 torrent_extract[new_key] = value[0].decode(self.encoding)
+            # url list parameter
+            elif type(value) == list and new_key == 'url-list':
+                torrent_extract[new_key] = list(map(lambda x : x.decode(self.encoding), value))
             # if type of value is of type list
             elif type(value) == list :
                 torrent_extract[new_key] = list(map(lambda x : x[0].decode(self.encoding), value))

@@ -359,6 +359,28 @@ class piece(peer_wire_message):
         return message
 
 
+"""
+    function helps in creating the bitfield message given the bitfield set
+"""
+def create_bitfield_message(bitfield_pieces, total_pieces):
+    bitfield_payload = b''
+    piece_byte = 0
+    # check for every torrent piece in bitfield
+    for i in range(total_pieces):
+        if i in bitfield_pieces:
+            piece_byte = piece_byte | (2 ** 8)
+            piece_byte = piece_byte >> 1
+        if (i + 1) % 8 == 0:
+            bitfield_payload += struct.pack("!B", piece_byte)
+            piece_byte = 0
+
+    # adding the last piece_bytes 
+    if total_pieces % 8 != 0:
+        bitfield_payload += struct.pack("!B", piece_byte)
+
+    return bitfield(bitfield_payload)
+
+
 """ 
     The class helps in decoding any general peer wire message into its 
     appropriate message type object instance
@@ -395,7 +417,7 @@ class peer_message_decoder():
             piece_index  = struct.unpack_from("!I", peer_message.payload, 0)[0]
             block_offset = struct.unpack_from("!I", peer_message.payload, 4)[0]
             block_length = struct.unpack_from("!I", peer_message.payload, 8)[0]
-            self.peer_decoded_message = request(piece_index, payload, block_length)
+            self.peer_decoded_message = request(piece_index, block_offset, block_length)
 
         elif peer_message.message_id == PIECE :          
             piece_index  = struct.unpack_from("!I", peer_message.payload, 0)[0]

@@ -16,7 +16,7 @@ from peer_socket import *
 """
 class peer():
     # parameterized constructor does the peer class initialization
-    def __init__(self, peer_IP, peer_port, torrent):
+    def __init__(self, peer_IP, peer_port, torrent, init_peer_socket = None):
         # peer IP, port and torrent instance
         self.IP         = peer_IP
         self.port       = peer_port
@@ -31,8 +31,6 @@ class peer():
         # unique peer ID recieved from peer
         self.peer_id = None
 
-        # maximum message length
-        self.max_message_length = 2 ** 10
         # maximum download block message length (default - 16 KB)
         self.max_block_length = 16 * (2 ** 10)
         
@@ -50,7 +48,7 @@ class peer():
         self.bitfield_pieces = set([])
         
         # peer socket for communication
-        self.peer_sock = None
+        self.peer_sock = peer_socket(self.IP, self.port, init_peer_socket)
             
         # file handler used for reading/writing the file file
         self.file_handler = None
@@ -59,7 +57,6 @@ class peer():
         logger_name = 'peer' + self.unique_id
         self.peer_logger = torrent_logger(logger_name, PEER_LOG_FILE, DEBUG)
         
-
         # response message handler for recieved message
         self.response_handler = { KEEP_ALIVE    : self.recieved_keep_alive,
                                   CHOKE         : self.recieved_choke,
@@ -68,21 +65,24 @@ class peer():
                                   UNINTERESTED  : self.recieved_uninterested,
                                   HAVE          : self.recieved_have, 
                                   BITFIELD      : self.recieved_bitfield,
+                                  REQUEST       : self.recieved_request,
                                   PIECE         : self.recieved_piece,
                                   CANCEL        : self.recieved_cancel,
                                   PORT          : self.recieved_port }
     
     """
-        initialize socket of leecher type
+        initializes the socket for seeding the torrent
     """
-    def initialize_leecher(self, psocket = None): 
-        self.peer_sock = leecher_socket(self.IP, self.port, psocket)
-
+    def initialize_seeding(self):
+        # first make the socket start seeding
+        self.peer_sock.start_seeding()
+    
     """
-        initialize socket of seeder type
+        sets all the bitfield values
     """
-    def initialize_seeder(self):
-        self.peer_sock = seeder_socket(self.IP, self.port)
+    def set_bitfield(self):
+        for i in range(self.torrent.pieces_count):
+            self.bitfield_pieces.add(i)
 
 
     """
@@ -121,7 +121,6 @@ class peer():
             connection_log += FAILURE + ' ' + err_msg.__str__()
             self.peer_logger.log(connection_log)
             return False
-    
     
     """
         disconnects the peer socket connection
@@ -318,7 +317,6 @@ class peer():
             self.peer_logger.log(validation_log)
             return None
          
-
     """
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
@@ -408,8 +406,9 @@ class peer():
     def recieved_interested(self, interested_message):
         # the peer is interested in client
         self.peer_interested = True
-        # TODO : send the peer what you have
-
+        # after recieving interested send unchoke message to the peer
+        self.send_message(unchoke())
+        self.am_choking = False
 
     """
         recieved uninterested   : peer is not interested in downloading from client
@@ -417,8 +416,8 @@ class peer():
     def recieved_uninterested(self, uninterested_message): 
         # the peer is not interested in client
         self.peer_interested = False
-        # TODO : can simply ignore ?
-
+        # closing the connection
+        self.disconnect()
 
     """
         recieved bitfields      : peer sends the bitfiled values to client 
@@ -443,8 +442,21 @@ class peer():
         recieved request        : peer has requested some piece from client
     """
     def recieved_request(self, request_message):
-        # TODO : return the bitfield available to the peer
-        pass
+        # check that and accordingly reply to the peer
+        if self.am_choking or not self.peer_interested:
+            self.peer_logger.log(self.unique_id + ' dropping the request message!')
+            return None
+
+        # extract block requested
+        piece_index     = request_message.piece_index
+        block_offset    = request_message.block_offset
+        block_length    = request_message.block_length
+        # read the datablock 
+        data_block = self.file_handler.read_block(piece_index, block_offset, block_length)
+        
+        # create response piece message and send it the peer
+        response_message = piece(piece_index, block_offset, data_block)
+        self.send_message(response_message)
 
 
     """
@@ -542,7 +554,6 @@ class peer():
         # if peer has not done handshake piece will never be downloaded
         if not self.handshake_flag:
             return False
-
         # if client is not interested then peice will never be downloaded
         if not self.am_interested:
             return False
@@ -560,7 +571,6 @@ class peer():
             return True
         else:
             return False
-
 
     """
         function returns true or false depending upon peer has piece or not
@@ -599,22 +609,25 @@ class peer():
             return False
         # return true if valid
         return True
-    
 
     """
         function helps in uploading the torrent file with peer
     """
-    def upload_file(self):
-        # first thing is do handshake
-        # send the bitfield information to the client 
-        # send unchoke after recieving interested 
-        # if everything OK then keep on recieving for requests for pieces
+    def upload_pieces(self):
         if not self.respond_handshake() :
             return None
         
+        # after handshake immediately send the bitfield response
+        bitfield = create_bitfield_message(self.bitfield_pieces, self.torrent.pieces_count)
+        self.send_message(bitfield)
         
-
-
-
+        peer_requesting = True
+        while peer_requesting:
+            time.sleep(1)
+            # handle all the request messages
+            request_message = self.handle_response()
+            # if no message from peer then stop
+            if request_message is None: 
+                peer_requesting = False
 
 

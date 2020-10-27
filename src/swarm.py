@@ -31,10 +31,10 @@ class swarm():
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
+        self.peers_list.append(peer('192.168.0.106', 6881, torrent))
+
         for peer_IP, peer_port in peers_data['peers']:
-            peer_object = peer(peer_IP, peer_port, torrent)
-            peer_object.initialize_leecher()
-            self.peers_list.append(peer_object)
+            self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
         # bitfields from all peers
         self.bitfield_pieces_count = dict()
@@ -48,16 +48,18 @@ class swarm():
         # file handler for downloading / uploading file data
         self.file_handler = None
         
-        # client peer only need incase of seeding torrent
-        self.client_peer = peer(self.torrent.client_IP, self.torrent.client_port, self.torrent)
-        self.client_peer.initialize_seeder()
-   
+        # check if the torrent file is for seeding
+        if torrent.client_state['seeding'] != None:
+            # client peer only need incase of seeding torrent
+            self.client_peer = peer(self.torrent.client_IP, self.torrent.client_port, self.torrent)
+            self.client_peer.initialize_seeding()
+  
     """
         performs handshakes with all the peers 
     """
     def handshakes(self):
         handshake_thread_pool = []
-        for peer in self.peers_list:
+        for peer in self.peers_list[:1]:
             t = Thread(target = peer.initiate_handshake)
             t.start()
             handshake_thread_pool.append(t)
@@ -66,7 +68,7 @@ class swarm():
             handshake_thread.join()
         
         # used for EXCECUTION LOGGING
-        for peer in self.peers_list:
+        for peer in self.peers_list[:1]:
             handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
             if peer.handshake_flag:
                 self.swarm_logger.log(handshake_log + SUCCESS)
@@ -79,7 +81,7 @@ class swarm():
     def initialize_bitfields(self):
         reponse_thread_pool = []
         # recieved bitfields from given set of peers
-        for peer in self.peers_list:
+        for peer in self.peers_list[:1]:
             # initialize the bitfields obtained from peers
             t = Thread(target = peer.initialize_bitfield)
             t.start()
@@ -89,7 +91,7 @@ class swarm():
             reponse_thread.join()
         
         # update the total bitfields recieved from all peers
-        for peer in self.peers_list:
+        for peer in self.peers_list[:1]:
             self.update_bitfield_count(peer.bitfield_pieces)
             # used for EXCECUTION LOGGING
             init_bitfield_log  = 'INIT BITFIELD EVENT : ' + peer.unique_id + ' '
@@ -127,9 +129,8 @@ class swarm():
         if self.file_handler is None:
             self.swarm_logger.log('File handler not instantiated !')
             return None
-        
         for i in [0]:
-            for peer in self.peers_list:
+            for peer in self.peers_list[:1]:
                 if(peer.download_piece(i)):
                     download_log = peer.unique_id + ' downloaded piece ' + str(i) + ' ' + SUCCESS
                     self.swarm_logger.log(download_log)
@@ -151,15 +152,15 @@ class swarm():
                 peer_IP, peer_port = peer_address
                 
                 # make peer class object  
-                peer_object = peer(peer_IP, peer_port, self.torrent)
-                peer_object.initialize_leecher(peer_socket)
+                peer_object = peer(peer_IP, peer_port, self.torrent, peer_socket)
+                peer_object.set_bitfield() 
+                peer_object.add_file_handler(self.file_handler)
                 
-                peer_object.upload_file()
-
+                # start uploading pieces to this peer
+                peer_object.upload_pieces()
+                break
             else:
-                time.sleep(5)
+                time.sleep(2)
              
-
-
 
 
