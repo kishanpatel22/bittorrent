@@ -1,45 +1,1143 @@
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-Handshake recived   <----- (192.168.0.106 : 42136)
+Thread-1 - DEBUG - peer(192.168.0.106 : 6881) 
+SEND CONNECTION STATUS : (192.168.0.106 : 6881) ❌ [Errno 111] Connection refused
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
+Thread-3 - DEBUG - peer(66.130.88.157 : 6881) 
+SEND CONNECTION STATUS : (66.130.88.157 : 6881) ✅
+
+Thread-2 - DEBUG - peer(89.26.241.83 : 3648) 
+SEND CONNECTION STATUS : (89.26.241.83 : 3648) ✅
+
+Thread-3 - DEBUG - peer(66.130.88.157 : 6881) 
+Handshake initiated -----> (66.130.88.157 : 6881)
+
+Thread-5 - DEBUG - peer(104.238.58.111 : 10182) 
+SEND CONNECTION STATUS : (104.238.58.111 : 10182) ✅
+
+Thread-8 - DEBUG - peer(68.108.189.129 : 12752) 
+SEND CONNECTION STATUS : (68.108.189.129 : 12752) ✅
+
+Thread-6 - DEBUG - peer(193.36.224.46 : 11188) 
+SEND CONNECTION STATUS : (193.36.224.46 : 11188) ✅
+
+Thread-5 - DEBUG - peer(104.238.58.111 : 10182) 
+Handshake initiated -----> (104.238.58.111 : 10182)
+
+Thread-7 - DEBUG - peer(50.99.240.34 : 12261) 
+SEND CONNECTION STATUS : (50.99.240.34 : 12261) ✅
+
+Thread-11 - DEBUG - peer(105.99.114.57 : 22222) 
+SEND CONNECTION STATUS : (105.99.114.57 : 22222) ✅
+
+Thread-14 - DEBUG - peer(78.129.190.41 : 25138) 
+SEND CONNECTION STATUS : (78.129.190.41 : 25138) ✅
+
+Thread-21 - DEBUG - peer(31.208.185.79 : 44411) 
+SEND CONNECTION STATUS : (31.208.185.79 : 44411) ✅
+
+Thread-18 - DEBUG - peer(37.235.103.187 : 29923) 
+SEND CONNECTION STATUS : (37.235.103.187 : 29923) ✅
+
+Thread-17 - DEBUG - peer(181.188.5.89 : 29879) 
+SEND CONNECTION STATUS : (181.188.5.89 : 29879) ✅
+
+Thread-24 - DEBUG - peer(47.222.161.251 : 47244) 
+SEND CONNECTION STATUS : (47.222.161.251 : 47244) ✅
+
+Thread-25 - DEBUG - peer(196.75.131.177 : 49046) 
+SEND CONNECTION STATUS : (196.75.131.177 : 49046) ✅
+
+Thread-8 - DEBUG - peer(68.108.189.129 : 12752) 
+Handshake initiated -----> (68.108.189.129 : 12752)
+
+Thread-27 - DEBUG - peer(92.223.89.197 : 51000) 
+SEND CONNECTION STATUS : (92.223.89.197 : 51000) ✅
+
+Thread-7 - DEBUG - peer(50.99.240.34 : 12261) 
+Handshake initiated -----> (50.99.240.34 : 12261)
+
+Thread-28 - DEBUG - peer(67.185.150.87 : 51413) 
+SEND CONNECTION STATUS : (67.185.150.87 : 51413) ✅
+
+Thread-26 - DEBUG - peer(73.215.182.151 : 49818) 
+SEND CONNECTION STATUS : (73.215.182.151 : 49818) ✅
+
+Thread-29 - DEBUG - peer(71.254.208.122 : 51413) 
+SEND CONNECTION STATUS : (71.254.208.122 : 51413) ✅
+
+Thread-2 - DEBUG - peer(89.26.241.83 : 3648) 
+Handshake initiated -----> (89.26.241.83 : 3648)
+
+Thread-30 - DEBUG - peer(79.69.250.85 : 51413) 
+SEND CONNECTION STATUS : (79.69.250.85 : 51413) ✅
+
+Thread-32 - DEBUG - peer(117.152.92.51 : 51740) 
+SEND CONNECTION STATUS : (117.152.92.51 : 51740) ✅
+
+Thread-33 - DEBUG - peer(85.12.61.43 : 52748) 
+SEND CONNECTION STATUS : (85.12.61.43 : 52748) ✅
+
+Thread-34 - DEBUG - peer(185.157.245.95 : 54671) 
+SEND CONNECTION STATUS : (185.157.245.95 : 54671) ✅
+
+Thread-6 - DEBUG - peer(193.36.224.46 : 11188) 
+Handshake initiated -----> (193.36.224.46 : 11188)
+
+Thread-36 - DEBUG - peer(24.69.170.17 : 56730) 
+SEND CONNECTION STATUS : (24.69.170.17 : 56730) ✅
+
+Thread-37 - DEBUG - peer(185.244.215.203 : 56897) 
+SEND CONNECTION STATUS : (185.244.215.203 : 56897) ✅
+
+Thread-35 - DEBUG - peer(173.49.50.226 : 54751) 
+SEND CONNECTION STATUS : (173.49.50.226 : 54751) ✅
+
+Thread-38 - DEBUG - peer(187.57.202.179 : 56990) 
+SEND CONNECTION STATUS : (187.57.202.179 : 56990) ✅
+
+Thread-40 - DEBUG - peer(154.3.44.121 : 60010) 
+SEND CONNECTION STATUS : (154.3.44.121 : 60010) ✅
+
+Thread-41 - DEBUG - peer(79.97.79.46 : 60202) 
+SEND CONNECTION STATUS : (79.97.79.46 : 60202) ✅
+
+Thread-11 - DEBUG - peer(105.99.114.57 : 22222) 
+Handshake initiated -----> (105.99.114.57 : 22222)
+
+Thread-42 - DEBUG - peer(89.187.162.198 : 61218) 
+SEND CONNECTION STATUS : (89.187.162.198 : 61218) ✅
+
+Thread-43 - DEBUG - peer(46.166.191.22 : 61335) 
+SEND CONNECTION STATUS : (46.166.191.22 : 61335) ✅
+
+Thread-27 - DEBUG - peer(92.223.89.197 : 51000) 
+Handshake initiated -----> (92.223.89.197 : 51000)
+
+Thread-18 - DEBUG - peer(37.235.103.187 : 29923) 
+Handshake initiated -----> (37.235.103.187 : 29923)
+
+Thread-45 - DEBUG - peer(93.102.159.250 : 63056) 
+SEND CONNECTION STATUS : (93.102.159.250 : 63056) ✅
+
+Thread-24 - DEBUG - peer(47.222.161.251 : 47244) 
+Handshake initiated -----> (47.222.161.251 : 47244)
+
+Thread-36 - DEBUG - peer(24.69.170.17 : 56730) 
+Handshake initiated -----> (24.69.170.17 : 56730)
+
+Thread-47 - DEBUG - peer(189.181.90.111 : 63970) 
+SEND CONNECTION STATUS : (189.181.90.111 : 63970) ✅
+
+Thread-46 - DEBUG - peer(184.161.207.165 : 63715) 
+SEND CONNECTION STATUS : (184.161.207.165 : 63715) ✅
+
+Thread-38 - DEBUG - peer(187.57.202.179 : 56990) 
+Handshake initiated -----> (187.57.202.179 : 56990)
+
+Thread-32 - DEBUG - peer(117.152.92.51 : 51740) 
+Handshake initiated -----> (117.152.92.51 : 51740)
+
+Thread-17 - DEBUG - peer(181.188.5.89 : 29879) 
+Handshake initiated -----> (181.188.5.89 : 29879)
+
+Thread-47 - DEBUG - peer(189.181.90.111 : 63970) 
+Handshake initiated -----> (189.181.90.111 : 63970)
+
+Thread-41 - DEBUG - peer(79.97.79.46 : 60202) 
+Handshake initiated -----> (79.97.79.46 : 60202)
+
+Thread-28 - DEBUG - peer(67.185.150.87 : 51413) 
+Handshake initiated -----> (67.185.150.87 : 51413)
+
+Thread-25 - DEBUG - peer(196.75.131.177 : 49046) 
+Handshake initiated -----> (196.75.131.177 : 49046)
+
+Thread-30 - DEBUG - peer(79.69.250.85 : 51413) 
+Handshake initiated -----> (79.69.250.85 : 51413)
+
+Thread-29 - DEBUG - peer(71.254.208.122 : 51413) 
+Handshake initiated -----> (71.254.208.122 : 51413)
+
+Thread-26 - DEBUG - peer(73.215.182.151 : 49818) 
+Handshake initiated -----> (73.215.182.151 : 49818)
+
+Thread-37 - DEBUG - peer(185.244.215.203 : 56897) 
+Handshake initiated -----> (185.244.215.203 : 56897)
+
+Thread-21 - DEBUG - peer(31.208.185.79 : 44411) 
+Handshake initiated -----> (31.208.185.79 : 44411)
+
+Thread-34 - DEBUG - peer(185.157.245.95 : 54671) 
+Handshake initiated -----> (185.157.245.95 : 54671)
+
+Thread-35 - DEBUG - peer(173.49.50.226 : 54751) 
+Handshake initiated -----> (173.49.50.226 : 54751)
+
+Thread-33 - DEBUG - peer(85.12.61.43 : 52748) 
+Handshake initiated -----> (85.12.61.43 : 52748)
+
+Thread-42 - DEBUG - peer(89.187.162.198 : 61218) 
+Handshake initiated -----> (89.187.162.198 : 61218)
+
+Thread-49 - DEBUG - peer(104.254.90.243 : 64620) 
+SEND CONNECTION STATUS : (104.254.90.243 : 64620) ✅
+
+Thread-50 - DEBUG - peer(192.158.226.34 : 64880) 
+SEND CONNECTION STATUS : (192.158.226.34 : 64880) ✅
+
+Thread-14 - DEBUG - peer(78.129.190.41 : 25138) 
+Handshake initiated -----> (78.129.190.41 : 25138)
+
+Thread-45 - DEBUG - peer(93.102.159.250 : 63056) 
+Handshake initiated -----> (93.102.159.250 : 63056)
+
+Thread-40 - DEBUG - peer(154.3.44.121 : 60010) 
+Handshake initiated -----> (154.3.44.121 : 60010)
+
+Thread-46 - DEBUG - peer(184.161.207.165 : 63715) 
+Handshake initiated -----> (184.161.207.165 : 63715)
+
+Thread-43 - DEBUG - peer(46.166.191.22 : 61335) 
+Handshake initiated -----> (46.166.191.22 : 61335)
+
+Thread-50 - DEBUG - peer(192.158.226.34 : 64880) 
+Handshake initiated -----> (192.158.226.34 : 64880)
+
+Thread-49 - DEBUG - peer(104.254.90.243 : 64620) 
+Handshake initiated -----> (104.254.90.243 : 64620)
+
+Thread-23 - DEBUG - peer(5.14.33.144 : 46758) 
+SEND CONNECTION STATUS : (5.14.33.144 : 46758) ❌ [Errno 111] Connection refused
+
+Thread-9 - DEBUG - peer(109.88.175.16 : 13284) 
+SEND CONNECTION STATUS : (109.88.175.16 : 13284) ✅
+
+Thread-2 - DEBUG - peer(89.26.241.83 : 3648) 
+Handshake not recived from (89.26.241.83 : 3648)
+
+Thread-14 - DEBUG - peer(78.129.190.41 : 25138) 
+Handshake not recived from (78.129.190.41 : 25138)
+
+Thread-43 - DEBUG - peer(46.166.191.22 : 61335) 
+Handshake not recived from (46.166.191.22 : 61335)
+
+Thread-18 - DEBUG - peer(37.235.103.187 : 29923) 
+Handshake not recived from (37.235.103.187 : 29923)
+
+Thread-9 - DEBUG - peer(109.88.175.16 : 13284) 
+Handshake initiated -----> (109.88.175.16 : 13284)
+
+Thread-27 - DEBUG - peer(92.223.89.197 : 51000) 
+Handshake not recived from (92.223.89.197 : 51000)
+
+Thread-40 - DEBUG - peer(154.3.44.121 : 60010) 
+Handshake not recived from (154.3.44.121 : 60010)
+
+Thread-12 - DEBUG - peer(84.17.45.112 : 22826) 
+SEND CONNECTION STATUS : (84.17.45.112 : 22826) ❌ [Errno 111] Connection refused
+
+Thread-13 - DEBUG - peer(154.21.216.184 : 24655) 
+SEND CONNECTION STATUS : (154.21.216.184 : 24655) ❌ [Errno 111] Connection refused
+
+Thread-4 - DEBUG - peer(71.231.0.24 : 6881) 
+SEND CONNECTION STATUS : (71.231.0.24 : 6881) ✅
+
+Thread-4 - DEBUG - peer(71.231.0.24 : 6881) 
+Handshake initiated -----> (71.231.0.24 : 6881)
+
+Thread-19 - DEBUG - peer(120.156.223.128 : 32089) 
+SEND CONNECTION STATUS : (120.156.223.128 : 32089) ✅
+
+Thread-19 - DEBUG - peer(120.156.223.128 : 32089) 
+Handshake initiated -----> (120.156.223.128 : 32089)
+
+Thread-41 - DEBUG - peer(79.97.79.46 : 60202) 
+Handshake recived   <----- (79.97.79.46 : 60202)
+
+Thread-41 - DEBUG - peer(79.97.79.46 : 60202) 
 Handshake validation : ✅
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-Handshake initiated -----> (192.168.0.106 : 42136)
+Thread-26 - DEBUG - peer(73.215.182.151 : 49818) 
+Handshake recived   <----- (73.215.182.151 : 49818)
 
-Thread-1 - DEBUG - peer(192.168.0.106 : 6881) 
-Handshake recived   <----- (192.168.0.106 : 6881)
-
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-sending message  -----> BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
-
-Thread-1 - DEBUG - peer(192.168.0.106 : 6881) 
+Thread-26 - DEBUG - peer(73.215.182.151 : 49818) 
 Handshake validation : ✅
 
-Thread-2 - DEBUG - peer(192.168.0.106 : 6881) 
+Thread-34 - DEBUG - peer(185.157.245.95 : 54671) 
+Handshake recived   <----- (185.157.245.95 : 54671)
+
+Thread-34 - DEBUG - peer(185.157.245.95 : 54671) 
+Handshake validation : ✅
+
+Thread-35 - DEBUG - peer(173.49.50.226 : 54751) 
+Handshake recived   <----- (173.49.50.226 : 54751)
+
+Thread-35 - DEBUG - peer(173.49.50.226 : 54751) 
+Handshake validation : ✅
+
+Thread-46 - DEBUG - peer(184.161.207.165 : 63715) 
+Handshake recived   <----- (184.161.207.165 : 63715)
+
+Thread-46 - DEBUG - peer(184.161.207.165 : 63715) 
+Handshake validation : ✅
+
+Thread-9 - DEBUG - peer(109.88.175.16 : 13284) 
+Handshake recived   <----- (109.88.175.16 : 13284)
+
+Thread-9 - DEBUG - peer(109.88.175.16 : 13284) 
+Handshake validation : ✅
+
+Thread-8 - DEBUG - peer(68.108.189.129 : 12752) 
+Handshake not recived from (68.108.189.129 : 12752)
+
+Thread-36 - DEBUG - peer(24.69.170.17 : 56730) 
+Handshake recived   <----- (24.69.170.17 : 56730)
+
+Thread-36 - DEBUG - peer(24.69.170.17 : 56730) 
+Handshake validation : ✅
+
+Thread-25 - DEBUG - peer(196.75.131.177 : 49046) 
+Handshake recived   <----- (196.75.131.177 : 49046)
+
+Thread-25 - DEBUG - peer(196.75.131.177 : 49046) 
+Handshake validation : ✅
+
+Thread-24 - DEBUG - peer(47.222.161.251 : 47244) 
+Handshake recived   <----- (47.222.161.251 : 47244)
+
+Thread-24 - DEBUG - peer(47.222.161.251 : 47244) 
+Handshake validation : ✅
+
+Thread-4 - DEBUG - peer(71.231.0.24 : 6881) 
+Handshake recived   <----- (71.231.0.24 : 6881)
+
+Thread-4 - DEBUG - peer(71.231.0.24 : 6881) 
+Handshake validation : ✅
+
+Thread-19 - DEBUG - peer(120.156.223.128 : 32089) 
+Handshake recived   <----- (120.156.223.128 : 32089)
+
+Thread-19 - DEBUG - peer(120.156.223.128 : 32089) 
+Handshake validation : ✅
+
+Thread-11 - DEBUG - peer(105.99.114.57 : 22222) 
+Handshake recived   <----- (105.99.114.57 : 22222)
+
+Thread-11 - DEBUG - peer(105.99.114.57 : 22222) 
+Handshake validation : ✅
+
+Thread-10 - DEBUG - peer(172.98.82.7 : 21733) 
+SEND CONNECTION STATUS : (172.98.82.7 : 21733) ❌ timed out
+
+Thread-15 - DEBUG - peer(109.236.60.140 : 25625) 
+SEND CONNECTION STATUS : (109.236.60.140 : 25625) ❌ timed out
+
+Thread-20 - DEBUG - peer(190.53.79.112 : 33057) 
+SEND CONNECTION STATUS : (190.53.79.112 : 33057) ❌ timed out
+
+Thread-16 - DEBUG - peer(212.102.45.48 : 26453) 
+SEND CONNECTION STATUS : (212.102.45.48 : 26453) ❌ timed out
+
+Thread-22 - DEBUG - peer(84.17.41.156 : 44822) 
+SEND CONNECTION STATUS : (84.17.41.156 : 44822) ❌ timed out
+
+Thread-31 - DEBUG - peer(192.145.124.92 : 51413) 
+SEND CONNECTION STATUS : (192.145.124.92 : 51413) ❌ timed out
+
+Thread-39 - DEBUG - peer(171.101.162.32 : 57060) 
+SEND CONNECTION STATUS : (171.101.162.32 : 57060) ❌ timed out
+
+Thread-3 - DEBUG - peer(66.130.88.157 : 6881) 
+Handshake not recived from (66.130.88.157 : 6881)
+
+Thread-48 - DEBUG - peer(184.170.246.164 : 64605) 
+SEND CONNECTION STATUS : (184.170.246.164 : 64605) ❌ timed out
+
+Thread-5 - DEBUG - peer(104.238.58.111 : 10182) 
+Handshake not recived from (104.238.58.111 : 10182)
+
+Thread-44 - DEBUG - peer(92.119.17.10 : 62601) 
+SEND CONNECTION STATUS : (92.119.17.10 : 62601) ❌ timed out
+
+Thread-7 - DEBUG - peer(50.99.240.34 : 12261) 
+Handshake not recived from (50.99.240.34 : 12261)
+
+Thread-6 - DEBUG - peer(193.36.224.46 : 11188) 
+Handshake not recived from (193.36.224.46 : 11188)
+
+Thread-17 - DEBUG - peer(181.188.5.89 : 29879) 
+Handshake not recived from (181.188.5.89 : 29879)
+
+Thread-38 - DEBUG - peer(187.57.202.179 : 56990) 
+Handshake not recived from (187.57.202.179 : 56990)
+
+Thread-47 - DEBUG - peer(189.181.90.111 : 63970) 
+Handshake not recived from (189.181.90.111 : 63970)
+
+Thread-49 - DEBUG - peer(104.254.90.243 : 64620) 
+Handshake not recived from (104.254.90.243 : 64620)
+
+Thread-30 - DEBUG - peer(79.69.250.85 : 51413) 
+Handshake not recived from (79.69.250.85 : 51413)
+
+Thread-33 - DEBUG - peer(85.12.61.43 : 52748) 
+Handshake not recived from (85.12.61.43 : 52748)
+
+Thread-29 - DEBUG - peer(71.254.208.122 : 51413) 
+Handshake not recived from (71.254.208.122 : 51413)
+
+Thread-28 - DEBUG - peer(67.185.150.87 : 51413) 
+Handshake not recived from (67.185.150.87 : 51413)
+
+Thread-32 - DEBUG - peer(117.152.92.51 : 51740) 
+Handshake not recived from (117.152.92.51 : 51740)
+
+Thread-45 - DEBUG - peer(93.102.159.250 : 63056) 
+Handshake not recived from (93.102.159.250 : 63056)
+
+Thread-37 - DEBUG - peer(185.244.215.203 : 56897) 
+Handshake not recived from (185.244.215.203 : 56897)
+
+Thread-21 - DEBUG - peer(31.208.185.79 : 44411) 
+Handshake not recived from (31.208.185.79 : 44411)
+
+Thread-42 - DEBUG - peer(89.187.162.198 : 61218) 
+Handshake not recived from (89.187.162.198 : 61218)
+
+Thread-50 - DEBUG - peer(192.158.226.34 : 64880) 
+Handshake not recived from (192.158.226.34 : 64880)
+
+Thread-54 - DEBUG - peer(71.231.0.24 : 6881) 
 recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
 
-MainThread - DEBUG - peer(192.168.0.106 : 6881) 
-sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+Thread-59 - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-recieved message <----- INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-sending message  -----> UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 8])
 
-MainThread - DEBUG - peer(192.168.0.106 : 6881) 
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 85])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 73])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 66])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 70])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 111])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 38])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 41])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 25])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 50])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 45])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 14])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 78])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 14])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 90])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 27])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 76])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 100])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 29])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-76 - DEBUG - peer(73.215.182.151 : 49818) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 12])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 12])
+
+Thread-84 - DEBUG - peer(185.157.245.95 : 54671) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 101])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 95])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 34])
+
+Thread-91 - DEBUG - peer(79.97.79.46 : 60202) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-76 - DEBUG - peer(73.215.182.151 : 49818) 
 recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
 
-MainThread - DEBUG - peer(192.168.0.106 : 6881) 
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- BITFIELD : (message length : 16), (message id : 5), (message paylaod : [bitfield length : 15])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 100])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 83])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 83])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 5])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 16])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 13])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 22])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 82])
+
+Thread-76 - DEBUG - peer(73.215.182.151 : 49818) 
+recieved message <----- CHOKE : (message length : 1), (message id : 0), (message paylaod : None)
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 66])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 100])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 72])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 61])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 54])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 48])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 3])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 19])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 47])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 36])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 52])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 103])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 102])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 37])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 46])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 36])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 41])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 42])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 86])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 18])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 40])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 20])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 40])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 87])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 13])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 94])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 24])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 15])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 6])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 21])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 62])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 64])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 1])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 18])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 105])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 56])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 63])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 11])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 56])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 78])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 92])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 42])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 5])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 92])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 47])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 68])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 49])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 83])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 76])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 73])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 19])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 30])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 82])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 41])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 65])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 59])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 38])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 55])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 57])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 72])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 110])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 87])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 78])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 57])
+
+Thread-61 - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 15])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 109])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 61])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 81])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 47])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 84])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 55])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 26])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 62])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 107])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 2])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 69])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 77])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 35])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 70])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 47])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 0])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 32])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 22])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 14])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 108])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 70])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 28])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 50])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 23])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 105])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 77])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 8])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 4])
+
+Thread-69 - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 68])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 104])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 102])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 47])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 28])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 33])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 11])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 44])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 41])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 46])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 53])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 13])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 17])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 74])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 9])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 62])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 12])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 34])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 105])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 109])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 82])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 34])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 34])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 63])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 75])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 109])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 31])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 33])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 42])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 13])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 66])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 42])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 68])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 108])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 45])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 95])
+
+Thread-75 - DEBUG - peer(196.75.131.177 : 49046) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 11])
+
+Thread-96 - DEBUG - peer(184.161.207.165 : 63715) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 111])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 4])
+
+Thread-85 - DEBUG - peer(173.49.50.226 : 54751) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 100])
+
+Thread-86 - DEBUG - peer(24.69.170.17 : 56730) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 102])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 27])
+
+Thread-74 - DEBUG - peer(47.222.161.251 : 47244) 
+recieved message <----- HAVE : (message length : 5), (message id : 4), (message paylaod : [piece index : 79])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(105.99.114.57 : 22222) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(105.99.114.57 : 22222) 
+recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
+
+MainThread - DEBUG - peer(105.99.114.57 : 22222) 
 sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-recieved message <----- REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+MainThread - DEBUG - peer(120.156.223.128 : 32089) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
 
-MainThread - DEBUG - peer(192.168.0.106 : 42136) 
-sending message  -----> PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+MainThread - DEBUG - peer(120.156.223.128 : 32089) 
+recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
 
-MainThread - DEBUG - peer(192.168.0.106 : 6881) 
+MainThread - DEBUG - peer(120.156.223.128 : 32089) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(120.156.223.128 : 32089) 
 recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 0, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- UNCHOKE : (message length : 1), (message id : 1), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 1, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 1, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 2, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 2, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 3, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 3, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 4, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 4, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 5, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 5, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 6, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 6, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 7, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 7, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 8, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 8, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 9, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 9, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 10, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 10, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 11, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 11, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 12, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- PIECE : (message length : 16393), (message id : 7), (message paylaod : [ piece index : 12, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 13, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(105.99.114.57 : 22222) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 13, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(120.156.223.128 : 32089) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 13, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(47.222.161.251 : 47244) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(196.75.131.177 : 49046) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(73.215.182.151 : 49818) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(185.157.245.95 : 54671) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(173.49.50.226 : 54751) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(24.69.170.17 : 56730) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(79.97.79.46 : 60202) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(184.161.207.165 : 63715) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(71.231.0.24 : 6881) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> REQUEST : (message length : 13), (message id : 6), (message paylaod : [ piece index : 14, block offest : 0, block length : 16384 ])
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+recieved message <----- CHOKE : (message length : 1), (message id : 0), (message paylaod : None)
+
+MainThread - DEBUG - peer(109.88.175.16 : 13284) 
+sending message  -----> INTERESTED : (message length : 1), (message id : 2), (message paylaod : None)
 

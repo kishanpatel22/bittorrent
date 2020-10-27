@@ -31,8 +31,6 @@ class swarm():
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
-        self.peers_list.append(peer('192.168.0.106', 6881, torrent))
-
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
@@ -53,13 +51,17 @@ class swarm():
             # client peer only need incase of seeding torrent
             self.client_peer = peer(self.torrent.client_IP, self.torrent.client_port, self.torrent)
             self.client_peer.initialize_seeding()
-  
+        
+        # swarm lock for required for updating the global state
+        self.swarm_lock = Lock()
+        
+
     """
         performs handshakes with all the peers 
     """
     def handshakes(self):
         handshake_thread_pool = []
-        for peer in self.peers_list[:1]:
+        for peer in self.peers_list:
             t = Thread(target = peer.initiate_handshake)
             t.start()
             handshake_thread_pool.append(t)
@@ -68,39 +70,38 @@ class swarm():
             handshake_thread.join()
         
         # used for EXCECUTION LOGGING
-        for peer in self.peers_list[:1]:
+        for peer in self.peers_list:
             handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
             if peer.handshake_flag:
                 self.swarm_logger.log(handshake_log + SUCCESS)
             else:
                 self.swarm_logger.log(handshake_log + FAILURE)
 
+    
     """
-        recieves the bifields from all the peers
+        initializes the particular peer bitfield state and also 
+        updates the swarm bitfield count state accordinly 
     """
-    def initialize_bitfields(self):
-        reponse_thread_pool = []
-        # recieved bitfields from given set of peers
-        for peer in self.peers_list[:1]:
-            # initialize the bitfields obtained from peers
-            t = Thread(target = peer.initialize_bitfield)
-            t.start()
-            reponse_thread_pool.append(t)
-
-        for reponse_thread in reponse_thread_pool:
-            reponse_thread.join()
+    def initialize_peer_bitfield(self, peer_index):
+        # recieve the peer bitfields 
+        peer_bitfield_pieces = self.peers_list[peer_index].initialize_bitfield()
         
-        # update the total bitfields recieved from all peers
-        for peer in self.peers_list[:1]:
-            self.update_bitfield_count(peer.bitfield_pieces)
-            # used for EXCECUTION LOGGING
-            init_bitfield_log  = 'INIT BITFIELD EVENT : ' + peer.unique_id + ' '
-            init_bitfield_log += 'has ' + str(len(peer.bitfield_pieces)) + ' torrent pieces'
-            self.swarm_logger.log(init_bitfield_log)
+        # lock while updating the global state of swarm
+        self.swarm_lock.acquire()
+        # update the bitfield count
+        self.update_bitfield_count(peer_bitfield_pieces) 
+        self.swarm_lock.release()
+         
+        # used for EXCECUTION LOGGING
+        peer = self.peers_list[peer_index]
+        init_bitfield_log  = 'INITIALIZE BITFIELD EVENT : ' + peer.unique_id 
+        init_bitfield_log += ' has ' + str(len(peer.bitfield_pieces)) + ' file pieces'
+        self.swarm_logger.log(init_bitfield_log)
         
-        
+               
     """
-        Updates bitfield values obtained from peers, global state of pieces is maintained
+        Updates bitfield values obtained from peers
+        global state of count of pieces available in the swarm
     """
     def update_bitfield_count(self, bitfield_pieces):
         for piece in bitfield_pieces:
@@ -108,7 +109,6 @@ class swarm():
                 self.bitfield_pieces_count[piece] += 1
             else:
                 self.bitfield_pieces_count[piece] = 1
-
 
     """
         The peer class must handle the downloaded file writing and reading 
@@ -124,13 +124,25 @@ class swarm():
        
     """ 
         function helps in downloading torrrent file from peers
+        implementation of rarest first algorithm as downloading stratergy
     """
     def download_file(self):
         if self.file_handler is None:
             self.swarm_logger.log('File handler not instantiated !')
-            return None
-        for i in [0]:
-            for peer in self.peers_list[:1]:
+            return 
+        
+        # initialize bitfields in asynchronous manner and start downlaod
+        for peer_index in range(len(self.peers_list)):
+            bitfield_thread = Thread(target = self.initialize_peer_bitfield, args=(peer_index, ))
+            bitfield_thread.start()
+
+        # start downloading using piece downloading stratergy 
+        self.random_download_stratergy()
+
+
+    def random_download_stratergy(self):
+        for i in range(self.torrent.pieces_count):
+            for peer in self.peers_list:
                 if(peer.download_piece(i)):
                     download_log = peer.unique_id + ' downloaded piece ' + str(i) + ' ' + SUCCESS
                     self.swarm_logger.log(download_log)
@@ -138,7 +150,8 @@ class swarm():
                 else:
                     download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
                     self.swarm_logger.log(download_log)
-   
+
+
     """
         function helps in seeding the file in swarm
     """
@@ -157,10 +170,8 @@ class swarm():
                 peer_object.add_file_handler(self.file_handler)
                 
                 # start uploading pieces to this peer
-                peer_object.upload_pieces()
+                Thread(target = peer_object.upload_pieces).start()
                 break
             else:
-                time.sleep(2)
-             
-
+                time.sleep(1)
 

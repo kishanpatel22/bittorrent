@@ -94,22 +94,19 @@ class torrent_client():
         in which peers are sharing file data
     """
     def download(self):
-        # does initial handshaking with all the peers 
-        self.swarm.handshakes()
-        
-        # initialize all the bitfields from peers
-        self.swarm.initialize_bitfields()
-        
         # download file initialization 
         download_file_path = self.client_state['downloading'] + self.torrent.torrent_metadata.file_name
         # create file handler for downloading data from peers
         file_handler = torrent_shared_file_handler(download_file_path, self.torrent)
-        # initilize the file handler for downloading
+        # initialize file handler for downloading
         file_handler.initialize_for_download()
          
-        # distribute the file handler among all the peers for reading/writing
+        # distribute file handler among all peers for reading/writing
         self.swarm.add_shared_file_handler(file_handler)
        
+        # does initial handshaking with all peers 
+        self.swarm.handshakes()
+        
         # lastly download the whole file
         self.swarm.download_file() 
 

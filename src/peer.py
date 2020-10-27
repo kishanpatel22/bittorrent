@@ -316,7 +316,8 @@ class peer():
             # used for EXCECUTION LOGGING
             self.peer_logger.log(validation_log)
             return None
-         
+        
+
     """
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
@@ -327,7 +328,7 @@ class peer():
     def initialize_bitfield(self):
         # recieve only if handshake is done successfully
         if not self.handshake_flag:
-            return None
+            return self.bitfield_pieces
             
         # loop for all the message that are recieved by the peer
         messages_begin_recieved = True
@@ -337,6 +338,9 @@ class peer():
             # if you no respone message is recieved 
             if response_message is None: 
                 messages_begin_recieved = False
+        
+        return self.bitfield_pieces
+
 
     """
         function handles any peer message that is recieved on the port
@@ -616,7 +620,6 @@ class peer():
     def upload_pieces(self):
         if not self.respond_handshake() :
             return None
-        
         # after handshake immediately send the bitfield response
         bitfield = create_bitfield_message(self.bitfield_pieces, self.torrent.pieces_count)
         self.send_message(bitfield)
@@ -629,5 +632,6 @@ class peer():
             # if no message from peer then stop
             if request_message is None: 
                 peer_requesting = False
+
 
 
