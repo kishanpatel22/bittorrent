@@ -3,6 +3,7 @@ from peer import peer
 from torrent_error import *
 from torrent_logger import *
 import time
+import random
 
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
@@ -41,7 +42,7 @@ class swarm():
         self.swarm_logger = torrent_logger('swarm', SWARM_LOG_FILE, DEBUG)
         
         # bitfield for pieces downloaded from peers
-        self.bitfield_pieces_downloaded = {i : 0 for i in range(torrent.pieces_count)}
+        self.bitfield_pieces_downloaded = set([])
             
         # file handler for downloading / uploading file data
         self.file_handler = None
@@ -80,7 +81,7 @@ class swarm():
     
     """
         initializes the particular peer bitfield state and also 
-        updates the swarm bitfield count state accordinly 
+        updates the swarm bitfield count state accordingly 
     """
     def initialize_peer_bitfield(self, peer_index):
         # recieve the peer bitfields 
@@ -120,6 +121,12 @@ class swarm():
         self.file_handler = file_handler
         for peer in self.peers_list:
             peer.add_file_handler(self.file_handler)
+    
+    """
+        function checks if the download is completed or not
+    """
+    def download_complete(self):
+        return len(self.bitfield_pieces_downloaded) == self.torrent.pieces_count
 
        
     """ 
@@ -131,26 +138,71 @@ class swarm():
             self.swarm_logger.log('File handler not instantiated !')
             return 
         
-        # initialize bitfields in asynchronous manner and start downlaod
+        # initialize bitfields asynchronously
         for peer_index in range(len(self.peers_list)):
             bitfield_thread = Thread(target = self.initialize_peer_bitfield, args=(peer_index, ))
             bitfield_thread.start()
+            bitfield_thread.join()
 
-        # start downloading using piece downloading stratergy 
-        self.random_download_stratergy()
+        # simultaneouly start downloading the file from peers
+        # download_thread = Thread(target = self.download_using_stratergies)
+        # download_thread.start()
+        self.download_using_stratergies()
+        
 
-
-    def random_download_stratergy(self):
-        for i in range(self.torrent.pieces_count):
-            for peer in self.peers_list:
-                if(peer.download_piece(i)):
-                    download_log = peer.unique_id + ' downloaded piece ' + str(i) + ' ' + SUCCESS
-                    self.swarm_logger.log(download_log)
-                    break
+    """
+        downloads the file from peers in swarm using some stratergies of peice
+        selection and peer selection respectively
+    """
+    def download_using_stratergies(self):
+        while not self.download_complete():
+            piece       = self.piece_selection_startergy()
+            if piece is not None:
+                peer_index  = self.peer_selection_startergy(piece)
+                is_piece_downloaded = self.peers_list[peer_index].download_piece(piece)
+                download_log  = 'download of piece ' + str(piece) + ' from peer ' 
+                download_log += self.peers_list[peer_index].unique_id + ''
+                if is_piece_downloaded:
+                    self.bitfield_pieces_downloaded.add(piece)
+                    download_log += SUCCESS
                 else:
-                    download_log = peer.unique_id + ' did not downloaded piece ' + str(i)  + ' ' + FAILURE
-                    self.swarm_logger.log(download_log)
+                    download_log += FAILURE
+                self.swarm_logger.log(download_log) 
 
+    """
+        piece selection stratergy is completely based on the bittorrent client
+        most used piece selection stratergies are random piece selection stratergy
+        and rarest first piece selection startergy
+    """
+    def piece_selection_startergy(self):
+        return self.rarest_piece_first()
+
+    """ 
+        rarest first piece selection stratergy is implemented as below
+    """
+    def rarest_piece_first(self):
+        try:
+            rarest_piece = min(self.bitfield_pieces_count, key=self.bitfield_pieces_count.get)
+            return rarest_piece
+        except:
+            return None
+
+    """
+        peer selection stratergy for selecting peer having particular piece
+        function returns the peer index from the list of peers in swarm
+    """
+    def peer_selection_startergy(self, piece):
+        return self.select_random_peer(piece)
+        
+    """
+        random peer selection is implemented as given below.
+    """
+    def select_random_peer(self, piece):
+        peers_having_piece = []
+        for peer_index in range(len(self.peers_list)):
+            if self.peers_list[peer_index].has_piece(piece):
+                peers_having_piece.append(peer_index)
+        return random.choice(peers_having_piece)
 
     """
         function helps in seeding the file in swarm
@@ -174,4 +226,7 @@ class swarm():
                 break
             else:
                 time.sleep(1)
+
+
+
 

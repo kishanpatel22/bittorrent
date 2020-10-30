@@ -592,6 +592,7 @@ class peer():
     def add_file_handler(self, file_handler):
         self.file_handler = file_handler
 
+    
     """
         function validates piece recieved and given the piece index.
         validation is comparing the sha1 hash of the recieved piece 
@@ -613,6 +614,7 @@ class peer():
             return False
         # return true if valid
         return True
+
 
     """
         function helps in uploading the torrent file with peer
