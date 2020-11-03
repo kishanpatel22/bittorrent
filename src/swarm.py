@@ -128,7 +128,6 @@ class swarm():
     def download_complete(self):
         return len(self.bitfield_pieces_downloaded) == self.torrent.pieces_count
 
-       
     """ 
         function helps in downloading torrrent file from peers
         implementation of rarest first algorithm as downloading stratergy
@@ -139,35 +138,32 @@ class swarm():
             return 
         
         # initialize bitfields asynchronously
+        # for peer_index in range(3):
         for peer_index in range(len(self.peers_list)):
             bitfield_thread = Thread(target = self.initialize_peer_bitfield, args=(peer_index, ))
             bitfield_thread.start()
-            bitfield_thread.join()
-
-        # simultaneouly start downloading the file from peers
-        # download_thread = Thread(target = self.download_using_stratergies)
-        # download_thread.start()
-        self.download_using_stratergies()
+            # self.initialize_peer_bitfield(peer_index)
         
+        # simultaneouly start downloading the file from peers
+        download_thread = Thread(target = self.download_using_stratergies)
+        download_thread.start()
+        # self.download_using_stratergies()
+
 
     """
         downloads the file from peers in swarm using some stratergies of peice
         selection and peer selection respectively
     """
     def download_using_stratergies(self):
+        i = 0
         while not self.download_complete():
-            piece       = self.piece_selection_startergy()
+            piece = self.piece_selection_startergy()
             if piece is not None:
-                peer_index  = self.peer_selection_startergy(piece)
-                is_piece_downloaded = self.peers_list[peer_index].download_piece(piece)
-                download_log  = 'download of piece ' + str(piece) + ' from peer ' 
-                download_log += self.peers_list[peer_index].unique_id + ''
+                peer_index = self.peer_selection_startergy(piece)
+                is_piece_downloaded = self.peers_list[peer_index].piece_downlaod_FSM(piece)
                 if is_piece_downloaded:
                     self.bitfield_pieces_downloaded.add(piece)
-                    download_log += SUCCESS
-                else:
-                    download_log += FAILURE
-                self.swarm_logger.log(download_log) 
+                    del self.bitfield_pieces_count[piece]
 
     """
         piece selection stratergy is completely based on the bittorrent client
@@ -178,14 +174,18 @@ class swarm():
         return self.rarest_piece_first()
 
     """ 
-        rarest first piece selection stratergy is implemented as below
+        rarest first piece selection stratergy always selects the rarest piece
+        in the swarm, note if there are multiple rarest pieces then the
+        function returns any random rarest piece.
     """
     def rarest_piece_first(self):
-        try:
-            rarest_piece = min(self.bitfield_pieces_count, key=self.bitfield_pieces_count.get)
-            return rarest_piece
-        except:
-            return None
+        rarest_piece = None
+        if len(self.bitfield_pieces_count) != 0:
+            rarest_piece_count = min(self.bitfield_pieces_count.values())
+            rarest_pieces = [piece for piece in self.bitfield_pieces_count if 
+                            self.bitfield_pieces_count[piece] == rarest_piece_count]
+            rarest_piece = random.choice(rarest_pieces)
+        return rarest_piece
 
     """
         peer selection stratergy for selecting peer having particular piece
@@ -200,7 +200,7 @@ class swarm():
     def select_random_peer(self, piece):
         peers_having_piece = []
         for peer_index in range(len(self.peers_list)):
-            if self.peers_list[peer_index].has_piece(piece):
+            if self.peers_list[peer_index].have_piece(piece):
                 peers_having_piece.append(peer_index)
         return random.choice(peers_having_piece)
 
@@ -226,7 +226,6 @@ class swarm():
                 break
             else:
                 time.sleep(1)
-
 
 
 

@@ -1,4 +1,8 @@
 from socket import *
+from select import *
+from threading import *
+from torrent_error import *
+from torrent_logger import *
 import sys
 
 """
@@ -6,7 +10,6 @@ import sys
     peer socket can peform
 
     Note that all the current socket operations written are blocking 
-    and can raise execption so inorder to test it always use try and except
 """
 
 # class for general peer socket 
@@ -23,12 +26,23 @@ class peer_socket():
         self.peer_sock.settimeout(5)
         
         # IP and port of the peer
-        self.IP     = peer_IP
-        self.port   = peer_port
-        
+        self.IP         = peer_IP
+        self.port       = peer_port
+        self.unique_id  = self.IP + ' ' + str(self.port)
+
         # the maximum peer request that seeder can handle
         self.max_peer_requests = 50
-    
+        
+        # variable for peer connection
+        self.peer_connection = True
+
+        # socket locks for synchronization 
+        self.socket_lock = Lock()
+        
+        # logger for peer socket
+        self.socket_logger = torrent_logger(self.unique_id, SOCKET_LOG_FILE, DEBUG)
+        
+
     """
         attempts to connect the peer using TCP connection 
     """
@@ -40,20 +54,24 @@ class peer_socket():
         function returns the exact length data as recieved else return None
     """
     def recieve_data(self, data_size):
+        if not self.peer_connection:
+            return 
         peer_raw_data = b''
         recieved_data_length = 0
         request_size = data_size
         
         #loop untill you recieve all the data from the peer
         while(recieved_data_length < data_size):
-            # attempt recieving request size data
+            # attempt recieving request data size in chunks
+            self.socket_lock.acquire()
             try:
                 chunk = self.peer_sock.recv(request_size)
             except:
-                return None
-            # when recieves returns 0 means the peer has disconnected
+                chunk = b''
+            finally:
+                self.socket_lock.release()
+            # when recieved length 0 means simply return 
             if len(chunk) == 0:
-                self.disconnect()
                 return None
             peer_raw_data += chunk
             request_size -=  len(chunk)
@@ -67,9 +85,12 @@ class peer_socket():
         function sends the complete message.
     """
     def send_data(self, raw_data):
-        data_length_send = 0    
+        if not self.peer_connection:
+            return 
+        data_length_send = 0
         while(data_length_send < len(raw_data)):
-            data_length_send += self.peer_sock.send(raw_data[data_length_send:])
+            with self.socket_lock:
+                data_length_send += self.peer_sock.send(raw_data[data_length_send:])
 
     """
         binds the socket that IP and port and starts listening over it
@@ -79,7 +100,8 @@ class peer_socket():
             self.peer_sock.bind((self.IP, self.port))
             self.peer_sock.listen(self.max_peer_requests)
         except Exception as err:
-            print('Seeding socket binding failed ! : ' + err.__str__())
+            binding_log = 'Seeding socket binding failed ! ' + self.unique_id + ' : '
+            self.socket_logger.log(binding_log + err.__str__())
             sys.exit(0)
 
     """
@@ -87,13 +109,20 @@ class peer_socket():
         return connection socket and ip address of incoming connection
     """
     def accept_connection(self):
-        return self.peer_sock.accept()
+        try:
+            connection = self.peer_sock.accept()
+        except Exception as err:
+            connection_log = 'Socket connection error for ' + self.unique_id + ' : ' 
+            torrent_error(connection_log + err.__str__()) 
+        # successfully return connection
+        return connection
 
     """
         disconnects the socket
     """
     def disconnect(self):
         self.peer_sock.close() 
+        self.peer_connection = False
        
     """
         context manager for exit
