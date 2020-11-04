@@ -79,7 +79,6 @@ class peer():
         for i in range(self.torrent.pieces_count):
             self.bitfield_pieces.add(i)
 
-
     """
         function attempts to recieve any external TCP connection
         returns the connection socket and address if connection 
@@ -97,25 +96,25 @@ class peer():
             self.peer_logger.log(connection_log)
             return None
 
-
     """
         attempts to connect the peer using TCP connection 
         returns success/failure for the peer connection
     """
     def send_connection(self):
         connection_log = 'SEND CONNECTION STATUS : ' + self.unique_id + ' '
-        try:
-            self.peer_sock.request_connection()
+        connection_status = None
+        if self.peer_sock.request_connection():
             # user for EXCECUTION LOGGING
             connection_log += SUCCESS
-            self.peer_logger.log(connection_log)
-            return True
-        except Exception as err_msg:
+            connection_status = True
+        else:
             # user for EXCECUTION LOGGING
-            connection_log += FAILURE + ' ' + err_msg.__str__()
-            self.peer_logger.log(connection_log)
-            return False
-    
+            connection_log += FAILURE 
+            connection_status = False
+         
+        self.peer_logger.log(connection_log)
+        return connection_status
+
     """
         disconnects the peer socket connection
     """
@@ -188,13 +187,12 @@ class peer():
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
  
-    
     """
         functions helps in initiating handshake with peer connection
         functions returns success/failure result of handshake 
     """
     def initiate_handshake(self):
-        # only do handshake if not done earlier and connection established with peer
+        # only do handshake if not earlier and established TCP connection
         if not self.handshake_flag and self.send_connection():
             # send handshake message
             handshake_request = self.send_handshake()
@@ -213,7 +211,6 @@ class peer():
             return True
         # already attempted handshake with the peer
         return False
- 
 
     """
         function helps in responding to incoming handshakes
@@ -238,18 +235,15 @@ class peer():
         # handshake already done
         return False 
 
-
     """
         the function helps in building the handshake message
     """
     def build_handshake_message(self):
         info_hash = self.torrent.torrent_metadata.info_hash
         peer_id   = self.torrent.peer_id
-
         # create a handshake object instance
         return handshake(info_hash, peer_id)
  
-    
     """
         function helps in sending the handshake message to the peer
         function returns the handshake request that is made 
@@ -267,7 +261,6 @@ class peer():
         # handshake request that is made
         return handshake_request
    
-
     """
         function helps in recieving the hanshake message from peer
         function returns handshake recieved on success else returns None
@@ -287,7 +280,6 @@ class peer():
         
         # raw handshake message recieved 
         return raw_handshake_response
-
 
     """
         function helps in performing handshake validation of recieved 
@@ -309,7 +301,6 @@ class peer():
             self.peer_logger.log(validation_log)
             return None
         
-
     """
         function helps in initializing the bitfield values obtained from 
         peer note that his function must be immediately be called after 
@@ -318,10 +309,12 @@ class peer():
         have messages in any order that condition is below implementation
     """
     def initialize_bitfield(self):
+        # peer connection not established
+        if not self.peer_sock.peer_connection_active():
+            return self.bitfield_pieces
         # recieve only if handshake is done successfully
         if not self.handshake_flag:
             return self.bitfield_pieces
-            
         # loop for all the message that are recieved by the peer
         messages_begin_recieved = True
         while(messages_begin_recieved):
@@ -330,8 +323,25 @@ class peer():
             # if you no respone message is recieved 
             if response_message is None: 
                 messages_begin_recieved = False
-        
+        # returns bitfield obtained by the peer
         return self.bitfield_pieces
+
+    """
+        returns the string format information about the handshake process
+    """
+    def get_handshake_log(self):
+        log = 'HANDSHAKE with ' + self.unique_id + ' : '
+        if self.handshake_flag:
+            log += SUCCESS + '\n'
+        else:
+            log += FAILURE + '\n'
+        peer_bitfield_count = len(self.bitfield_pieces)
+        log += 'COUNT BITFIELDs with ' + self.unique_id + ' : '
+        if peer_bitfield_count == 0:
+            log += 'did not recieved !'
+        else:
+            log += str(peer_bitfield_count) + ' pieces'
+        return log
 
 
     """
@@ -357,7 +367,6 @@ class peer():
         # REACT to the message accordingly
         self.handle_message(decoded_message)
         return decoded_message
-
 
     """
         The function is used to handle the decoded message. 
@@ -575,7 +584,6 @@ class peer():
         
         while exchange_messages:
             
-            print(self.state)
             # client state 0    : (client = not interested,  peer = choking)
             if(self.state == DSTATE0):
                 self.send_interested()
@@ -620,7 +628,6 @@ class peer():
         
         # loop untill you download all the blocks in the piece
         while self.can_download() and block_offset < piece_length:
-            
             # find out how much max length of block that can be requested
             if piece_length - block_offset >= self.max_block_length:
                 block_length = self.max_block_length
@@ -649,10 +656,6 @@ class peer():
         
         # validate the piece and update the peer downloaded bitfield
         if(not self.validate_piece(recieved_piece, piece_index)):
-            # used for EXCECUTION LOGGING
-            download_log  = self.unique_id + 'unable to downloaded piece ' 
-            download_log += str(piece_index) + ' : piece validation failed ' + FAILURE 
-            self.peer_logger.log(download_log)
             return False
         
         # used for EXCECUTION LOGGING
@@ -665,32 +668,23 @@ class peer():
     
     """ 
         piece can be only downloaded only upon given conditions
+        -> the connection still exits 
         -> handshake done by peer and client successfully
-        -> client is interested
-        -> peer is not choking client
+        -> state of client can download the file
         function returns true if all above condition are satisfied else false
     """
     def can_download(self):
+        # socket connection still active to recieve/send
+        if not self.peer_sock.peer_connection_active():
+            return False
         # if peer has not done handshake piece will never be downloaded
         if not self.handshake_flag:
             return False
-        # if client is not interested then peice will never be downloaded
-        if not self.state.am_interested:
-            return False
-        
-        # if peer is choking the client it will not respond to client requests
-        if self.state.peer_choking:
-            interested_request = interested()
-             
-            # what we can do in this case is send interested request to the peer
-            self.send_message(interested_request)
-            response_message = self.handle_response()
-        
         # finally check if peer is interested and peer is not choking
-        if self.state.am_interested and not self.state.peer_choking:
-            return True
-        else:
+        if self.state != DSTATE2:
             return False
+        # all conditions satisfied 
+        return True
 
     """
         function returns true or false depending upon peer has piece or not
@@ -718,6 +712,11 @@ class peer():
         # compare the length of the piece recieved
         piece_length = self.torrent.get_piece_length(piece_index)
         if (len(piece) != piece_length):
+            # used for EXCECUTION LOGGING
+            download_log  = self.unique_id + 'unable to downloaded piece ' 
+            download_log += str(piece_index) + ' due to validation failure : ' 
+            download_log += 'incorrect lenght piece recieved ' + FAILURE
+            self.peer_logger.log(download_log)
             return False
 
         piece_hash = hashlib.sha1(piece).digest()
@@ -726,6 +725,11 @@ class peer():
         
         # compare the pieces hash with torrent file piece hash
         if piece_hash != torrent_piece_hash:
+            # used for EXCECUTION LOGGING
+            download_log  = self.unique_id + 'unable to downloaded piece ' 
+            download_log += str(piece_index) + ' duw to validation failure : ' 
+            download_log += 'info hash of piece not matched ' + FAILURE
+            self.peer_logger.log(download_log)
             return False
         # return true if valid
         return True

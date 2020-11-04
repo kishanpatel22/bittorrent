@@ -1,0 +1,21 @@
+Thread-9 - DEBUG - 154.21.22.184 14396 
+Socket connection failed for 154.21.22.184 14396 : [Errno 111] Connection refused
+
+Thread-13 - DEBUG - 205.251.138.164 23417 
+Socket connection failed for 205.251.138.164 23417 : [Errno 111] Connection refused
+
+Thread-33 - DEBUG - 154.29.131.180 55683 
+Socket connection failed for 154.29.131.180 55683 : [Errno 111] Connection refused
+
+Thread-26 - DEBUG - 69.40.115.232 51413 
+Socket connection failed for 69.40.115.232 51413 : [Errno 111] Connection refused
+
+Thread-17 - DEBUG - 190.53.79.112 33057 
+Socket connection failed for 190.53.79.112 33057 : timed out
+
+Thread-14 - DEBUG - 185.245.87.196 25625 
+Socket connection failed for 185.245.87.196 25625 : timed out
+
+Thread-27 - DEBUG - 198.8.80.100 51417 
+Socket connection failed for 198.8.80.100 51417 : timed out
+

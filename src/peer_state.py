@@ -41,6 +41,10 @@ class peer_state():
             return False
         return True
     
+    # overaloading != operation for comparsion with states
+    def  __ne__(self, other):
+        return not self.__eq__(other)
+
     def __str__(self):
         peer_state_log  = '[ client choking : '     + str(self.am_choking)
         peer_state_log += ', client interested : '  + str(self.am_interested) 

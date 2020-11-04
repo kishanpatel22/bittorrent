@@ -23,7 +23,8 @@ class peer_socket():
             # initializing using the constructor argument socket
             self.peer_sock = psocket
         
-        self.peer_sock.settimeout(5)
+        self.timeout = 1
+        self.peer_sock.settimeout(self.timeout)
         
         # IP and port of the peer
         self.IP         = peer_IP
@@ -34,7 +35,7 @@ class peer_socket():
         self.max_peer_requests = 50
         
         # variable for peer connection
-        self.peer_connection = True
+        self.peer_connection = False
 
         # socket locks for synchronization 
         self.socket_lock = Lock()
@@ -42,12 +43,6 @@ class peer_socket():
         # logger for peer socket
         self.socket_logger = torrent_logger(self.unique_id, SOCKET_LOG_FILE, DEBUG)
         
-
-    """
-        attempts to connect the peer using TCP connection 
-    """
-    def request_connection(self):
-        self.peer_sock.connect((self.IP, self.port))
 
     """
         function returns raw data of given data size which is recieved 
@@ -60,17 +55,14 @@ class peer_socket():
         recieved_data_length = 0
         request_size = data_size
         
-        #loop untill you recieve all the data from the peer
+        # loop untill you recieve all the data from the peer
         while(recieved_data_length < data_size):
-            # attempt recieving request data size in chunks
-            self.socket_lock.acquire()
-            try:
-                chunk = self.peer_sock.recv(request_size)
-            except:
-                chunk = b''
-            finally:
-                self.socket_lock.release()
-            # when recieved length 0 means simply return 
+            # attempt recieving requested data size in chunks
+            chunk = b''
+            reader_sockets, writer_sockets, error_sockets = select([self.peer_sock], [], [], self.timeout)
+            if self.peer_sock in reader_sockets:
+                with self.socket_lock:
+                    chunk = self.peer_sock.recv(request_size)
             if len(chunk) == 0:
                 return None
             peer_raw_data += chunk
@@ -82,15 +74,20 @@ class peer_socket():
    
     """
         function helps send raw data by the socket
-        function sends the complete message.
+        function sends the complete message, returns success/failure depending
+        upon if it has successfully send the data
     """
     def send_data(self, raw_data):
         if not self.peer_connection:
             return 
         data_length_send = 0
         while(data_length_send < len(raw_data)):
-            with self.socket_lock:
+            reader_sockets, writer_sockets, error_sockets = select([], [self.peer_sock], [], self.timeout)
+            if self.peer_sock in writer_sockets:
                 data_length_send += self.peer_sock.send(raw_data[data_length_send:])
+            else:
+                self.disconnect()
+                return
 
     """
         binds the socket that IP and port and starts listening over it
@@ -105,6 +102,20 @@ class peer_socket():
             sys.exit(0)
 
     """
+        attempts to connect the peer using TCP connection 
+    """
+    def request_connection(self):
+        try:
+            self.peer_sock.connect((self.IP, self.port))
+            self.peer_connection = True
+        except Exception as err:
+            self.peer_connection = False
+            connection_log = 'Socket connection failed for ' + self.unique_id + ' : '
+            self.socket_logger.log(connection_log + err.__str__())
+        return self.peer_connection
+
+
+    """
         accepts an incomming connection
         return connection socket and ip address of incoming connection
     """
@@ -116,6 +127,12 @@ class peer_socket():
             torrent_error(connection_log + err.__str__()) 
         # successfully return connection
         return connection
+
+    """
+        checks if the peer connection is active or not
+    """
+    def peer_connection_active(self):
+        return self.peer_connection
 
     """
         disconnects the socket

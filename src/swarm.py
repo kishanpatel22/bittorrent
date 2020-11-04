@@ -55,54 +55,10 @@ class swarm():
         
         # swarm lock for required for updating the global state
         self.swarm_lock = Lock()
-        
 
     """
-        performs handshakes with all the peers 
-    """
-    def handshakes(self):
-        handshake_thread_pool = []
-        for peer in self.peers_list:
-            t = Thread(target = peer.initiate_handshake)
-            t.start()
-            handshake_thread_pool.append(t)
-        
-        for handshake_thread in handshake_thread_pool:
-            handshake_thread.join()
-        
-        # used for EXCECUTION LOGGING
-        for peer in self.peers_list:
-            handshake_log = 'HANDSHAKE EVENT : ' + peer.unique_id + ' '
-            if peer.handshake_flag:
-                self.swarm_logger.log(handshake_log + SUCCESS)
-            else:
-                self.swarm_logger.log(handshake_log + FAILURE)
-
-    
-    """
-        initializes the particular peer bitfield state and also 
-        updates the swarm bitfield count state accordingly 
-    """
-    def initialize_peer_bitfield(self, peer_index):
-        # recieve the peer bitfields 
-        peer_bitfield_pieces = self.peers_list[peer_index].initialize_bitfield()
-        
-        # lock while updating the global state of swarm
-        self.swarm_lock.acquire()
-        # update the bitfield count
-        self.update_bitfield_count(peer_bitfield_pieces) 
-        self.swarm_lock.release()
-         
-        # used for EXCECUTION LOGGING
-        peer = self.peers_list[peer_index]
-        init_bitfield_log  = 'INITIALIZE BITFIELD EVENT : ' + peer.unique_id 
-        init_bitfield_log += ' has ' + str(len(peer.bitfield_pieces)) + ' file pieces'
-        self.swarm_logger.log(init_bitfield_log)
-        
-               
-    """
-        Updates bitfield values obtained from peers
-        global state of count of pieces available in the swarm
+        Updates bitfield count values obtained from peers in swarm
+        global state of count of different pieces available in swarm
     """
     def update_bitfield_count(self, bitfield_pieces):
         for piece in bitfield_pieces:
@@ -110,6 +66,23 @@ class swarm():
                 self.bitfield_pieces_count[piece] += 1
             else:
                 self.bitfield_pieces_count[piece] = 1
+    
+    """
+        function performs the initial connection with peer by doing handshakes 
+        initializing bitfields and updating the global bitfield count
+    """
+    def connect_to_peer(self, peer_index):
+        # perfrom handshake with peer
+        self.peers_list[peer_index].initiate_handshake()
+        # recieve the bitfields from peer
+        peer_bitfield_pieces = self.peers_list[peer_index].initialize_bitfield()
+        self.swarm_lock.acquire()
+        # update the bitfield count value in swarm
+        self.update_bitfield_count(peer_bitfield_pieces) 
+        self.swarm_lock.release()
+        # used for EXCECUTION LOGGING
+        self.swarm_logger.log(self.peers_list[peer_index].get_handshake_log())
+         
 
     """
         The peer class must handle the downloaded file writing and reading 
@@ -123,6 +96,17 @@ class swarm():
             peer.add_file_handler(self.file_handler)
     
     """
+        functions checks if the file handler has been added or not
+    """
+    def have_file_handler(self):
+        if self.file_handler is None:
+            download_log  = 'Cannot download file : '
+            download_log += ' file handler not instantiated ! ' + FAILURE
+            self.swarm_logger.log(download_log)
+            return False
+        return True
+
+    """
         function checks if the download is completed or not
     """
     def download_complete(self):
@@ -133,21 +117,17 @@ class swarm():
         implementation of rarest first algorithm as downloading stratergy
     """
     def download_file(self):
-        if self.file_handler is None:
-            self.swarm_logger.log('File handler not instantiated !')
-            return 
+        if not self.have_file_handler():
+            return False
         
         # initialize bitfields asynchronously
-        # for peer_index in range(3):
         for peer_index in range(len(self.peers_list)):
-            bitfield_thread = Thread(target = self.initialize_peer_bitfield, args=(peer_index, ))
-            bitfield_thread.start()
-            # self.initialize_peer_bitfield(peer_index)
+            connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
+            connect_peer_thread.start()
         
         # simultaneouly start downloading the file from peers
         download_thread = Thread(target = self.download_using_stratergies)
         download_thread.start()
-        # self.download_using_stratergies()
 
 
     """
@@ -155,7 +135,6 @@ class swarm():
         selection and peer selection respectively
     """
     def download_using_stratergies(self):
-        i = 0
         while not self.download_complete():
             piece = self.piece_selection_startergy()
             if piece is not None:

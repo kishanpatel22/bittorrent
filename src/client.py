@@ -104,9 +104,6 @@ class torrent_client():
         # distribute file handler among all peers for reading/writing
         self.swarm.add_shared_file_handler(file_handler)
        
-        # does initial handshaking with all peers 
-        self.swarm.handshakes()
-        
         # lastly download the whole file
         self.swarm.download_file() 
 
