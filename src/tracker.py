@@ -30,12 +30,15 @@ class tracker_data():
             'info_hash' : torrent.torrent_metadata.info_hash,
             'peer_id'   : torrent.peer_id,
             'port'      : torrent.client_port,
-            'uploaded'  : torrent.uploaded,
-            'downloaded': torrent.downloaded,
-            'left'      : torrent.left,
+            'uploaded'  : torrent.statistics.num_pieces_uploaded,
+            'downloaded': torrent.statistics.num_pieces_downloaded,
+            'left'      : torrent.statistics.num_pieces_left,
             'compact'   : self.compact
         }
-       
+        self.interval   = None
+        self.complete   = None
+        self.incomplete = None
+        self.peers_list = [] 
 
 
 """
@@ -49,7 +52,6 @@ class http_torrent_tracker(tracker_data):
     def __init__(self, torrent, tracker_url):
         super().__init__(torrent)
         self.tracker_url = tracker_url
-       
 
     # attempts to connect to HTTP tracker
     # returns true if conncetion is established false otherwise

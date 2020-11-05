@@ -1,3 +1,4 @@
+import sys
 import time
 import struct
 import hashlib
@@ -33,8 +34,8 @@ class peer():
         # unique peer ID recieved from peer
         self.peer_id = None
 
-        # maximum download block message length (default - 16 KB)
-        self.max_block_length = 16 * (2 ** 10)
+        # maximum download block message length 
+        self.max_block_length = torrent.block_length
         
         # handshake flag with peer
         self.handshake_flag = False
@@ -64,6 +65,12 @@ class peer():
                                   PIECE         : self.recieved_piece,
                                   CANCEL        : self.recieved_cancel,
                                   PORT          : self.recieved_port }
+
+        # keep alive timeout : 30 second
+        self.keep_alive_timeout = 0.5 * 60
+        # keep alive timer
+        self.keep_alive_timer = None
+
     
     """
         initializes the socket for seeding the torrent
@@ -85,17 +92,8 @@ class peer():
         if recieved else returns None
     """
     def recieve_connection(self):
-        connection_log = 'RECIEVE CONNECTION STATUS : ' 
-        try:
-            connection = self.peer_sock.accept_connection()
-            connection_log += SUCCESS
-            self.peer_logger.log(connection_log)
-            return connection 
-        except Exception as err:
-            connection_log += FAILURE + ' ' + err.__str__()
-            self.peer_logger.log(connection_log)
-            return None
-
+        return self.peer_sock.accept_connection()
+    
     """
         attempts to connect the peer using TCP connection 
         returns success/failure for the peer connection
@@ -119,6 +117,7 @@ class peer():
         disconnects the peer socket connection
     """
     def close_peer_connection(self):
+        self.state.set_null()
         self.peer_sock.disconnect()
 
     """
@@ -141,7 +140,6 @@ class peer():
     def send_message(self, peer_request):
         if self.handshake_flag:
             self.send(peer_request.message())
-            
             # used for EXCECUTION LOGGING
             peer_request_log = 'sending message  -----> ' + peer_request.__str__() 
             self.peer_logger.log(peer_request_log)
@@ -183,7 +181,8 @@ class peer():
         message_payload = self.recieve(payload_length)
         if message_payload is None:
             return None
-       
+        
+        self.keep_alive_timer = time.time()
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
  
@@ -216,9 +215,11 @@ class peer():
         function helps in responding to incoming handshakes
     """
     def respond_handshake(self):
+        # initial the keep alive timer
+        self.keep_alive_timer = time.time()
         if not self.handshake_flag:
-            # recieve handshake response 
             raw_handshake_response = self.recieve_handshake()
+            # case where timeout occured 
             if raw_handshake_response is None:
                 return False
             # validate the hanshake message response
@@ -351,7 +352,7 @@ class peer():
         and reacted, else returns None
     """
     def handle_response(self):
-        # RECIEVE message from peer 
+        # recieve messages from the peer
         peer_response_message = self.recieve_message()
         # if there is no response from the peer
         if peer_response_message is None:
@@ -389,11 +390,10 @@ class peer():
         recieved keepalive      : indicates peer is still alive in file sharing
     """
     def recieved_keep_alive(self, keep_alive_message):
-        # informs that peer is alive
-        # TODO : implement timer and reset the timer when keep alive is recieved
-        pass
+         # reset the timer when keep alive is recieved
+         self.keep_alive_timer = time.time()
 
-
+    
     """
         recieved choke          : client is choked by the peer 
                                   peer will not response to clinet requests
@@ -419,7 +419,6 @@ class peer():
         recieved interested     : peer is interested in downloading from client 
     """
     def recieved_interested(self, interested_message):
-        # TODO : implementation coming soon 
         # the peer is interested in client
         self.state.set_peer_interested()
 
@@ -453,29 +452,26 @@ class peer():
         recieved request        : peer has requested some piece from client
     """
     def recieved_request(self, request_message):
-        # check that and accordingly reply to the peer
-        if self.state.am_choking or not self.state.peer_interested:
-            self.peer_logger.log(self.unique_id + ' dropping the request message!')
-            return None
-
         # extract block requested
         piece_index     = request_message.piece_index
         block_offset    = request_message.block_offset
         block_length    = request_message.block_length
-        # read the datablock 
-        data_block = self.file_handler.read_block(piece_index, block_offset, block_length)
-        
-        # create response piece message and send it the peer
-        response_message = piece(piece_index, block_offset, data_block)
-        self.send_message(response_message)
+        # validate the block requested exits in file
+        if self.torrent.validate_piece_length(piece_index, block_offset, block_length):
+            # read the datablock 
+            data_block = self.file_handler.read_block(piece_index, block_offset, block_length)
+            # create response piece message and send it the peer
+            response_message = piece(piece_index, block_offset, data_block)
+            self.send_message(response_message)
+        else:
+            request_log = self.unique_id + ' dropping request since invalid block requested !' 
+            self.peer_logger.log(request_log)
 
-    
     """
         recieved piece          : peer has responed with the piece to client
                                   after recieving any piece, it is written into file
     """
     def recieved_piece(self, piece_message):
-        
         # extract the piece index, block offset and data recieved from peer  
         piece_index     = piece_message.piece_index
         block_offset    = piece_message.block_offset
@@ -573,36 +569,34 @@ class peer():
         self.send_message(piece(piece_index, block_offset, block_data))
 
 
-
     """
         downloading finite state machine(FSM) for bittorrent client 
         the below function implements the FSM for downloading piece from peer
     """
     def piece_downlaod_FSM(self, piece_index):
+        # initializing keep alive timer
+        self.keep_alive_timer = time.time()
+        # download status of piece
         download_status = False
+        # exchanges message with 
         exchange_messages = True
-        
         while exchange_messages:
-            
-            # client state 0    : (client = not interested,  peer = choking)
+            # checking for timeouts in states 
+            if(self.check_keep_alive_timeout()):
+                self.state.set_null()
+            # client state 0    : (client = not interested, peer = choking)
             if(self.state == DSTATE0):
                 self.send_interested()
-            
-            # client state 1    : (client = interested,      peer = choking)
+            # client state 1    : (client = interested,     peer = choking)
             elif(self.state == DSTATE1):
-                # recieve message 
                 response_message = self.handle_response()
-
-            # client state 2    : (client = interested,      peer = not choking)
+            # client state 2    : (client = interested,     peer = not choking)
             elif(self.state == DSTATE2):
-                # download the piece when in this state 
-                download_status = self.__download_piece(piece_index)
+                download_status = self.download_piece(piece_index)
                 exchange_messages = False
-
-            # TODO : think of sending uninterested messages in this state of FSM
-            else:
+            # client state 3    : (clinet = None,           peer = None)
+            elif(self.state == DSTATE3):
                 exchange_messages = False
-        
         return download_status
 
 
@@ -611,23 +605,24 @@ class peer():
         function returns success/failure depending upon that piece is 
         downloaed successfully and validated successfully
     """
-    def __download_piece(self, piece_index):
-        if not self.have_piece(piece_index):
+    def download_piece(self, piece_index):
+        if not self.have_piece(piece_index) or not self.download_possible():
             return False
 
         # recieved piece data from the peer
         recieved_piece = b''  
-
         # block offset for downloading the piece
         block_offset = 0
         # block length 
         block_length = 0
-        
         # piece length for torrent 
         piece_length = self.torrent.get_piece_length(piece_index)
         
+        # torrent statistics starting the timer
+        self.torrent.statistics.state_time()
+        
         # loop untill you download all the blocks in the piece
-        while self.can_download() and block_offset < piece_length:
+        while self.download_possible() and block_offset < piece_length:
             # find out how much max length of block that can be requested
             if piece_length - block_offset >= self.max_block_length:
                 block_length = self.max_block_length
@@ -641,14 +636,8 @@ class peer():
 
             # recieve response message 
             response_message = self.handle_response()
-            if response_message is None:
-                # used for EXCECUTION LOGGING
-                download_log  = self.unique_id + 'unable to downloaded piece ' 
-                download_log += str(piece_index) + ' : no response for request ' + FAILURE 
-                self.peer_logger.log(download_log)
-                return False
 
-            if response_message.message_id == PIECE:
+            if response_message and response_message.message_id == PIECE:
                 # if the message recieved was a piece message
                 recieved_piece += response_message.block
                 # increament offset according to size of data block recieved
@@ -658,12 +647,19 @@ class peer():
         if(not self.validate_piece(recieved_piece, piece_index)):
             return False
         
+        # torrent statistics stopping the timer
+        self.torrent.statistics.stop_time()
+        # update the torrent statistics for downloading
+        self.torrent.statistics.update_download_rate(piece_index, piece_length)
+
         # used for EXCECUTION LOGGING
         download_log  = self.unique_id + ' downloaded piece : '
         download_log += str(piece_index) + ' ' + SUCCESS  
         self.peer_logger.log(download_log)
-
+        
         # successfully downloaded and validated piece 
+        self.peer_logger.log(str(self.torrent.statistics))
+
         return True
     
     """ 
@@ -671,9 +667,10 @@ class peer():
         -> the connection still exits 
         -> handshake done by peer and client successfully
         -> state of client can download the file
+        -> timeout has not occured
         function returns true if all above condition are satisfied else false
     """
-    def can_download(self):
+    def download_possible(self):
         # socket connection still active to recieve/send
         if not self.peer_sock.peer_connection_active():
             return False
@@ -682,6 +679,8 @@ class peer():
             return False
         # finally check if peer is interested and peer is not choking
         if self.state != DSTATE2:
+            return False
+        if self.check_keep_alive_timeout():
             return False
         # all conditions satisfied 
         return True
@@ -702,7 +701,6 @@ class peer():
     def add_file_handler(self, file_handler):
         self.file_handler = file_handler
 
-    
     """
         function validates piece recieved and given the piece index.
         validation is comparing the sha1 hash of the recieved piece 
@@ -715,7 +713,8 @@ class peer():
             # used for EXCECUTION LOGGING
             download_log  = self.unique_id + 'unable to downloaded piece ' 
             download_log += str(piece_index) + ' due to validation failure : ' 
-            download_log += 'incorrect lenght piece recieved ' + FAILURE
+            download_log += 'incorrect lenght ' + str(len(piece)) + ' piece recieved '
+            download_log += FAILURE
             self.peer_logger.log(download_log)
             return False
 
@@ -727,32 +726,99 @@ class peer():
         if piece_hash != torrent_piece_hash:
             # used for EXCECUTION LOGGING
             download_log  = self.unique_id + 'unable to downloaded piece ' 
-            download_log += str(piece_index) + ' duw to validation failure : ' 
+            download_log += str(piece_index) + ' due to validation failure : ' 
             download_log += 'info hash of piece not matched ' + FAILURE
             self.peer_logger.log(download_log)
             return False
         # return true if valid
         return True
 
-
+       
     """
-        function helps in uploading the torrent file with peer
+        uploading finite state machine(FSM) for bittorrent client (seeding)
+        the below function implements the FSM for uploading pieces to peer
     """
-    def upload_pieces(self):
-        if not self.respond_handshake() :
-            return None
+    def piece_upload_FSM(self):
+        if not self.initial_seeder_messages():
+            return 
+        # initializing keep alive timer
+        self.keep_alive_timer = time.time()
+        # download status of piece
+        download_status = False
+        # exchanges message with 
+        exchange_messages = True
+        while exchange_messages:
+            # checking for timeouts in states 
+            if(self.check_keep_alive_timeout()):
+                self.state.set_null()
+            # client state 0    : (client = not interested, peer = choking)
+            if(self.state == USTATE0):
+                response_message = self.handle_response()
+            # client state 1    : (client = interested,     peer = choking)
+            elif(self.state == USTATE1):
+                self.send_unchoke()
+            # client state 2    : (client = interested,     peer = not choking)
+            elif(self.state == USTATE2):
+                self.upload_pieces()
+                exchange_messages = False
+            # client state 4    : (clinet = None,           peer = None)
+            elif(self.state == USTATE4):
+                exchange_messages = False
+       
+    """
+        function does initial handshake and bitfield sending for the peer
+    """
+    def initial_seeder_messages(self):
+        if not self.respond_handshake():
+            return False
         # after handshake immediately send the bitfield response
         bitfield = create_bitfield_message(self.bitfield_pieces, self.torrent.pieces_count)
         self.send_message(bitfield)
+        return True
         
-        peer_requesting = True
-        while peer_requesting:
-            time.sleep(1)
+    """
+        function helps in uploading the torrent file with peer, the function 
+        exchanges the request/piece messages with peer and helps peer get the 
+        pieces of the file that client has in the seeding file
+    """
+    def upload_pieces(self):
+        while self.upload_possible():
             # handle all the request messages
             request_message = self.handle_response()
-            # if no message from peer then stop
-            if request_message is None: 
-                peer_requesting = False
 
+    """ 
+        piece can be only uploaded only upon given conditions
+        -> the connection still exits 
+        -> handshake done by client and peer successfully
+        -> state of client can download the file
+        -> timeout has not occured
+        function returns true if all above condition are satisfied else false
+    """
+    def upload_possible(self):
+        # socket connection still active to recieve/send
+        if not self.peer_sock.peer_connection_active():
+            return False
+        # if peer has not done handshake piece will never be downloaded
+        if not self.handshake_flag:
+            return False
+        # finally check if peer is interested and peer is not choking
+        if self.state != USTATE2:
+            return False
+        if self.check_keep_alive_timeout():
+            return False
+        # all conditions satisfied 
+        return True
 
-
+ 
+    """
+        function checks for timeouts incase of no keep alive recieved from peer
+    """
+    def check_keep_alive_timeout(self):
+        if(time.time() - self.keep_alive_timer >= self.keep_alive_timeout):
+            keep_alive_log  = self.unique_id + ' peer keep alive timeout ! ' + FAILURE 
+            keep_alive_log += ' disconnecting the peer connection!'
+            self.close_peer_connection()
+            self.peer_logger.log(keep_alive_log)
+            return True
+        else:
+            return False

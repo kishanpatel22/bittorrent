@@ -23,7 +23,7 @@ class peer_socket():
             # initializing using the constructor argument socket
             self.peer_sock = psocket
         
-        self.timeout = 1
+        self.timeout = 3
         self.peer_sock.settimeout(self.timeout)
         
         # IP and port of the peer
@@ -58,11 +58,10 @@ class peer_socket():
         # loop untill you recieve all the data from the peer
         while(recieved_data_length < data_size):
             # attempt recieving requested data size in chunks
-            chunk = b''
-            reader_sockets, writer_sockets, error_sockets = select([self.peer_sock], [], [], self.timeout)
-            if self.peer_sock in reader_sockets:
-                with self.socket_lock:
-                    chunk = self.peer_sock.recv(request_size)
+            try:
+                chunk = self.peer_sock.recv(request_size)
+            except:
+                chunk = b''
             if len(chunk) == 0:
                 return None
             peer_raw_data += chunk
@@ -79,15 +78,17 @@ class peer_socket():
     """
     def send_data(self, raw_data):
         if not self.peer_connection:
-            return 
+            return False
         data_length_send = 0
         while(data_length_send < len(raw_data)):
-            reader_sockets, writer_sockets, error_sockets = select([], [self.peer_sock], [], self.timeout)
-            if self.peer_sock in writer_sockets:
+            try:
+                # attempting to send data 
                 data_length_send += self.peer_sock.send(raw_data[data_length_send:])
-            else:
+            except:
+                # the TCP connection is broken
                 self.disconnect()
-                return
+                return False
+        return True
 
     """
         binds the socket that IP and port and starts listening over it
@@ -123,8 +124,9 @@ class peer_socket():
         try:
             connection = self.peer_sock.accept()
         except Exception as err:
-            connection_log = 'Socket connection error for ' + self.unique_id + ' : ' 
-            torrent_error(connection_log + err.__str__()) 
+            connection = None
+            connection_log = 'Socket connection for ' + self.unique_id + ' : ' 
+            self.socket_logger.log(connection_log + str(err))
         # successfully return connection
         return connection
 

@@ -1,9 +1,9 @@
-import sys
-import os
 import hashlib
 import random as rd
-from datetime import datetime
-from socket import *
+
+# module problems torrent statistics 
+from torrent_statistics import *
+
 
 """
     The actual infomation about the file that is being shared among the peers
@@ -24,13 +24,14 @@ class torrent():
         self.client_IP = ''
             
         # downloaded and uploaded values 
-        self.uploaded = 0 
-        self.downloaded = 0
-        self.left = 0    
-        
+        self.statistics = torrent_statistics()
+            
+        # pieces divided into chunks of fixed block size
+        self.block_length   = 16 * (2 ** 10) 
+            
         # if the client wants to upload the file 
         if self.client_state['seeding'] != None:
-            self.downloaded = self.torrent_metadata.file_size
+            self.statistics.num_pieces_downloaded = self.torrent_metadata.file_size
 
         # the count of the number pieces that the files is made of
         self.pieces_count = int(len(self.torrent_metadata.pieces) / 20)
@@ -40,14 +41,22 @@ class torrent():
     
     
     # gets the length of the piece given the piece index
-    # note that the code handles the case when last piece index is requested
     def get_piece_length(self, piece_index):
         # check if piece if the last piece of file
         if piece_index == self.pieces_count - 1:
             return self.torrent_metadata.file_size - self.torrent_metadata.piece_length * (piece_index)
         else:
             return self.torrent_metadata.piece_length
-   
+  
+
+    # get validates piece length of given piece
+    def validate_piece_length(self, piece_index, block_offset, block_length):
+        if block_length > self.block_length:
+            return False
+        elif block_length + block_offset > self.get_piece_length(piece_index):
+            return False
+        return True
+        
 
     # logs the torrent information of torrent
     def __str__(self):
@@ -65,8 +74,6 @@ class torrent():
         torrent_log += 'No. of Pieces   : ' + str(self.pieces_count)                            + '\n'
         torrent_log += 'Client port     : ' + str(self.client_port)                             + '\n'
         torrent_log += 'Client peer ID  : ' + str(self.peer_id)                                 + '\n'
-        torrent_log += 'Downloaded      : ' + str(self.downloaded)                              + '\n'
-        torrent_log += 'Uploadaed       : ' + str(self.uploaded)                                + '\n'
         
         return torrent_log
 

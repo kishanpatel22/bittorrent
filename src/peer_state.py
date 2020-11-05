@@ -28,6 +28,13 @@ class peer_state():
         self.peer_interested = True
     def set_peer_not_interested(self):
         self.peer_interested = False
+    
+
+    def set_null(self):
+        self.am_choking         = None
+        self.am_interested      = None
+        self.peer_choking       = None
+        self.peer_interested    = None
 
     # overaloading == operation for comparsion with states
     def __eq__(self, other): 
@@ -53,8 +60,9 @@ class peer_state():
         return peer_state_log
 
 
-
-# Initializing the downloading states for BTP
+"""
+        Initializing the downloading states for BTP FSM
+"""
 # initial state     : client = not interested,  peer = choking
 DSTATE0 = peer_state()
 
@@ -66,6 +74,29 @@ DSTATE1.am_interested   = True
 DSTATE2 = peer_state()
 DSTATE2.am_interested   = True
 DSTATE2.peer_choking    = False
+
+# client state 3    : client : None,            peer = None
+DSTATE3 = peer_state()
+DSTATE3.set_null()
+
+"""
+        Initializing the uploading states for BTP FSM
+"""
+# initial state     : client = choking,         peer = not interested
+USTATE0 = peer_state()
+
+# client state 1    : client = choking,         peer = interested
+USTATE1 = peer_state()
+USTATE1.peer_interested = True
+   
+# client state 2    : client = not choking,     peer = interested
+USTATE2 = peer_state()
+USTATE1.peer_interested = True
+USTATE2.am_choking = False
+
+# client state 3    : client : None,            peer = None
+USTATE3 = peer_state()
+USTATE3.set_null()
 
 
 

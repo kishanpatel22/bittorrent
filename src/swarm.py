@@ -32,6 +32,7 @@ class swarm():
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
+        self.peers_list.append(peer('192.168.0.106', self.torrent.client_port, self.torrent))
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
@@ -121,11 +122,12 @@ class swarm():
             return False
         
         # initialize bitfields asynchronously
-        for peer_index in range(len(self.peers_list)):
+        # for peer_index in range(len(self.peers_list)):
+        for peer_index in range(1):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
             connect_peer_thread.start()
         
-        # simultaneouly start downloading the file from peers
+        # asynchornously start downloading pieces of file from peers
         download_thread = Thread(target = self.download_using_stratergies)
         download_thread.start()
 
@@ -135,7 +137,8 @@ class swarm():
         selection and peer selection respectively
     """
     def download_using_stratergies(self):
-        while not self.download_complete():
+        i = 0
+        while not self.download_complete() and i < 4:
             piece = self.piece_selection_startergy()
             if piece is not None:
                 peer_index = self.peer_selection_startergy(piece)
@@ -143,6 +146,7 @@ class swarm():
                 if is_piece_downloaded:
                     self.bitfield_pieces_downloaded.add(piece)
                     del self.bitfield_pieces_count[piece]
+                    i = i + 1
 
     """
         piece selection stratergy is completely based on the bittorrent client
@@ -171,7 +175,8 @@ class swarm():
         function returns the peer index from the list of peers in swarm
     """
     def peer_selection_startergy(self, piece):
-        return self.select_random_peer(piece)
+        # return self.select_random_peer(piece)
+        return self.select_specific_peer(piece)
         
     """
         random peer selection is implemented as given below.
@@ -182,11 +187,28 @@ class swarm():
             if self.peers_list[peer_index].have_piece(piece):
                 peers_having_piece.append(peer_index)
         return random.choice(peers_having_piece)
+    
+    """
+        selects the specific peer in the list(used only for testing)
+    """
+    def select_specific_peer(self, piece):
+        peer_index = 0
+        return peer_index
+        
+    """
+        selects the top fours peer having maximum download rates
+        sort the peers in by the rate of downloading and select top four
+    """
+    def top_four_peers(self, piece):
+        # TODO : implementation is left
+        pass
+
 
     """
         function helps in seeding the file in swarm
     """
     def seed_file(self):
+        self.swarm_logger.log('Seeding start by client at ' + self.client_peer.unique_id)
         seeding_file_forever = True
         while seeding_file_forever:
             recieved_connection = self.client_peer.recieve_connection()
@@ -194,17 +216,15 @@ class swarm():
                 # extract the connection socket and IP address of connection
                 peer_socket, peer_address = recieved_connection
                 peer_IP, peer_port = peer_address
-                
                 # make peer class object  
                 peer_object = peer(peer_IP, peer_port, self.torrent, peer_socket)
                 peer_object.set_bitfield() 
                 peer_object.add_file_handler(self.file_handler)
                 
+                peer_object.respond_handshake()
                 # start uploading pieces to this peer
-                Thread(target = peer_object.upload_pieces).start()
-                break
+                # Thread(target = peer_object.piece_upload_FSM).start()
             else:
                 time.sleep(1)
-
 
 
