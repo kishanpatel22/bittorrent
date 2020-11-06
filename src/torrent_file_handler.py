@@ -121,7 +121,6 @@ class torrent_file_reader(torrent_metadata):
             files_dictionary = self.torrent_file_extract['info']['files']
             files = [(file_data['length'], file_data['path']) for file_data in files_dictionary]
             file_size = 0
-            print(files)
             for file_length, file_path in files:
                 file_size += file_length
         else : 
@@ -139,7 +138,6 @@ class torrent_file_reader(torrent_metadata):
     # Note that in the given function the metadata of pieces is kept
     # in bytes class since the decode cannot decode the SHA1 hash
     def extract_torrent_metadata(self, torrent_file_raw_extract):
-
         # torrent metadata is ordered dictionary 
         torrent_extract = OrderedDict()
         
@@ -156,7 +154,7 @@ class torrent_file_reader(torrent_metadata):
             elif type(value) == list and new_key == 'path':
                 torrent_extract[new_key] = value[0].decode(self.encoding)
             # url list parameter
-            elif type(value) == list and new_key == 'url-list':
+            elif type(value) == list and new_key == 'url-list' or new_key == 'collections':
                 torrent_extract[new_key] = list(map(lambda x : x.decode(self.encoding), value))
             # if type of value is of type list
             elif type(value) == list :

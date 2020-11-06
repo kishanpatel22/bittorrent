@@ -73,7 +73,8 @@ class torrent_statistics():
 
     def __str__(self):
         torrent_stats_log  = 'TORRENT STATISTICS : \n' 
-        torrent_stats_log += 'A) downloading : [ downloading rate = ' 
+        torrent_stats_log += 'A) downloaded ' + str(len(self.downloaded)) + ' pieces '
+        torrent_stats_log += '[ downloading rate = ' 
         torrent_stats_log += str(round(self.download_rate, 2)) + ' Kbps'
         torrent_stats_log += ', avg downloading rate = ' 
         torrent_stats_log += str(round(self.avg_download_rate, 2)) + ' Kbps'
@@ -88,5 +89,4 @@ class torrent_statistics():
         torrent_stats_log += str(round(self.max_upload_rate, 2)) + ' Kbps ]'
 
         return torrent_stats_log
-
 

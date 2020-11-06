@@ -1,3 +1,4 @@
+from copy import deepcopy
 from threading import *
 from peer import peer
 from torrent_error import *
@@ -21,14 +22,13 @@ class swarm():
 
     def __init__(self, peers_data, torrent):
         # initialize the peers class with peer data recieved
-        self.torrent    = torrent 
+        self.torrent    = deepcopy(torrent)
         self.interval   = peers_data['interval']
         self.seeders    = peers_data['seeders']
         self.leechers   = peers_data['leechers']
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
-        self.peers_list.append(peer('127.0.0.1', self.torrent.client_port, self.torrent))
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
@@ -118,8 +118,7 @@ class swarm():
             return False
         
         # initialize bitfields asynchronously
-        # for peer_index in range(len(self.peers_list)):
-        for peer_index in range(1):
+        for peer_index in range(len(self.peers_list)):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
             connect_peer_thread.start()
         
@@ -169,8 +168,10 @@ class swarm():
         function returns the peer index from the list of peers in swarm
     """
     def peer_selection_startergy(self, piece):
-        # return self.select_random_peer(piece)
-        return self.select_specific_peer(piece)
+        if len(self.bitfield_pieces_downloaded) <= 4:
+            return self.select_random_peer(piece)
+        else:
+            return self.top_peer(piece)
         
     """
         random peer selection is implemented as given below.
@@ -193,11 +194,18 @@ class swarm():
         selects the top fours peer having maximum download rates
         sort the peers in by the rate of downloading and select top four
     """
-    def top_four_peers(self, piece):
-        # TODO : implementation is left
-        pass
+    def top_peer(self, piece):
+        self.peers_list = sorted(self.peers_list, key=self.peer_comparator, reverse=True)
+        for peer_index in range(len(self.peers_list)):
+            if self.peers_list[peer_index].have_piece(piece):
+                return peer_index
 
-
+    """
+        comparator function for sorting the peer with highest downloading rate
+    """
+    def peer_comparator(self, peer):
+        return peer.torrent.statistics.avg_download_rate
+    
     """
         function helps in seeding the file in swarm
     """

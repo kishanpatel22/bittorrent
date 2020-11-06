@@ -21,6 +21,7 @@ class file_io():
     
     # writes file with all values to 0(null) given the size of file
     def write_null_values(self, data_size):
+        self.move_descriptor_position(0)
         while(data_size > 0):
             if data_size >= self.max_write_buffer:
                 data_size = data_size - self.max_write_buffer
@@ -81,9 +82,13 @@ class torrent_shared_file_handler():
 
 
     """
-        function helps in writing a block for file given piece index and block offset
+        function helps in writing a block from piece message recieved
     """
-    def write_block(self, piece_index, block_offset, data_block):
+    def write_block(self, piece_message):
+        # extract the piece index, block offset and data recieved from peer  
+        piece_index     = piece_message.piece_index
+        block_offset    = piece_message.block_offset
+        data_block      = piece_message.block
         
         # initialize the file descriptor at given piece index and block offset
         self.initalize_file_descriptor(piece_index, block_offset)

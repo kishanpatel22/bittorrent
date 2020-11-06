@@ -3,6 +3,7 @@ import time
 import struct
 import hashlib
 from threading import *
+from copy import deepcopy
 
 # user defined libraries 
 from torrent_error import torrent_error
@@ -23,7 +24,7 @@ class peer():
         # peer IP, port and torrent instance
         self.IP         = peer_IP
         self.port       = peer_port
-        self.torrent    = torrent
+        self.torrent    = deepcopy(torrent)
         
         # initialize the peer_state
         self.state = peer_state()
@@ -140,10 +141,11 @@ class peer():
     """
     def send_message(self, peer_request):
         if self.handshake_flag:
-            self.send(peer_request.message())
             # used for EXCECUTION LOGGING
             peer_request_log = 'sending message  -----> ' + peer_request.__str__() 
             self.peer_logger.log(peer_request_log)
+            # send the message 
+            self.send(peer_request.message())
 
     """
         functions helpes in recieving peer wire protocol messages. Note that 
@@ -478,15 +480,9 @@ class peer():
                                   after recieving any piece, it is written into file
     """
     def recieved_piece(self, piece_message):
-        # extract the piece index, block offset and data recieved from peer  
-        piece_index     = piece_message.piece_index
-        block_offset    = piece_message.block_offset
-        data_recieved   = piece_message.block
-        
         # write the block of piece into the file
-        self.file_handler.write_block(piece_index, block_offset, data_recieved) 
-
-
+        self.file_handler.write_block(piece_message) 
+     
     """ 
         recieved cancel         : message to cancel a block request from client
     """
@@ -623,7 +619,6 @@ class peer():
         block_length = 0
         # piece length for torrent 
         piece_length = self.torrent.get_piece_length(piece_index)
-        
         # torrent statistics starting the timer
         self.torrent.statistics.state_time()
         
@@ -639,22 +634,27 @@ class peer():
             request_message = request(piece_index, block_offset, block_length)
             # send request message to peer
             self.send_message(request_message)
-
             # recieve response message 
             response_message = self.handle_response()
 
             if response_message and response_message.message_id == PIECE:
-                # if the message recieved was a piece message
-                recieved_piece += response_message.block
-                # increament offset according to size of data block recieved
-                block_offset += len(response_message.block)
+                if self.validate_request_piece_messages(request_message, response_message):
+                    # if the message recieved was a piece message
+                    recieved_piece += response_message.block
+                    # increament offset according to size of data block recieved
+                    block_offset += len(response_message.block)
+        
+        # torrent statistics stopping the timer
+        self.torrent.statistics.stop_time()
+        
+        # check for connection timeout
+        if self.check_keep_alive_timeout():
+            return False
         
         # validate the piece and update the peer downloaded bitfield
         if(not self.validate_piece(recieved_piece, piece_index)):
             return False
-        
-        # torrent statistics stopping the timer
-        self.torrent.statistics.stop_time()
+
         # update the torrent statistics for downloading
         self.torrent.statistics.update_download_rate(piece_index, piece_length)
 
@@ -665,9 +665,9 @@ class peer():
         
         # successfully downloaded and validated piece 
         self.peer_logger.log(str(self.torrent.statistics))
-
         return True
-    
+
+
     """ 
         piece can be only downloaded only upon given conditions
         -> the connection still exits 
@@ -706,6 +706,19 @@ class peer():
     """
     def add_file_handler(self, file_handler):
         self.file_handler = file_handler
+    
+
+    """
+        function validates if correct block was recieved from peer for the request
+    """
+    def validate_request_piece_messages(self, request, piece):
+        if request.piece_index != piece.piece_index:
+            return False
+        if request.block_offset != piece.block_offset:
+            return False
+        if request.block_length != len(piece.block):
+            return False
+        return True
 
     """
         function validates piece recieved and given the piece index.
