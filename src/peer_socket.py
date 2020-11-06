@@ -19,7 +19,11 @@ class peer_socket():
         if psocket is None:
             # initializing a peer socket for TCP communiction 
             self.peer_sock = socket(AF_INET, SOCK_STREAM)
+            # peer connection
+            self.peer_connection = False
         else:
+            # peer connection
+            self.peer_connection = True
             # initializing using the constructor argument socket
             self.peer_sock = psocket
         
@@ -33,9 +37,6 @@ class peer_socket():
 
         # the maximum peer request that seeder can handle
         self.max_peer_requests = 50
-        
-        # variable for peer connection
-        self.peer_connection = False
 
         # socket locks for synchronization 
         self.socket_lock = Lock()
@@ -121,12 +122,15 @@ class peer_socket():
         return connection socket and ip address of incoming connection
     """
     def accept_connection(self):
+        connection_log = ''
         try:
             connection = self.peer_sock.accept()
+            connection_log += 'Socket connection recieved !'
         except Exception as err:
             connection = None
-            connection_log = 'Socket connection for ' + self.unique_id + ' : ' 
-            self.socket_logger.log(connection_log + str(err))
+            connection_log = 'Socket accept connection for seeder ' + self.unique_id + ' : ' 
+            connection_log += str(err)
+        self.socket_logger.log(connection_log)
         # successfully return connection
         return connection
 
@@ -148,3 +152,4 @@ class peer_socket():
     """
     def __exit__(self):
         self.disconnect()
+

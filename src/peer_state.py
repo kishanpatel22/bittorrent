@@ -91,7 +91,7 @@ USTATE1.peer_interested = True
    
 # client state 2    : client = not choking,     peer = interested
 USTATE2 = peer_state()
-USTATE1.peer_interested = True
+USTATE2.peer_interested = True
 USTATE2.am_choking = False
 
 # client state 3    : client : None,            peer = None

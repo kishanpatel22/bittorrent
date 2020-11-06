@@ -66,8 +66,8 @@ class peer():
                                   CANCEL        : self.recieved_cancel,
                                   PORT          : self.recieved_port }
 
-        # keep alive timeout : 30 second
-        self.keep_alive_timeout = 0.5 * 60
+        # keep alive timeout : 10 second
+        self.keep_alive_timeout = 10
         # keep alive timer
         self.keep_alive_timer = None
 
@@ -131,7 +131,8 @@ class peer():
         function sends the complete message to peer
     """
     def send(self, raw_data):
-        self.peer_sock.send_data(raw_data)
+        if not self.peer_sock.send_data(raw_data):
+            self.peer_logger.log('Unable to send data to the peer !')
     
     """
         function helps in sending peer messgae given peer wire message 
@@ -182,6 +183,7 @@ class peer():
         if message_payload is None:
             return None
         
+        # keep alive timer updated 
         self.keep_alive_timer = time.time()
         # return peer wire message object given the three parameters
         return peer_wire_message(message_length, message_id, message_payload)
@@ -215,26 +217,30 @@ class peer():
         function helps in responding to incoming handshakes
     """
     def respond_handshake(self):
-        # initial the keep alive timer
-        self.keep_alive_timer = time.time()
-        if not self.handshake_flag:
-            raw_handshake_response = self.recieve_handshake()
-            # case where timeout occured 
-            if raw_handshake_response is None:
-                return False
-            # validate the hanshake message response
-            handshake_response = self.handshake_validation(raw_handshake_response)
-            if handshake_response is None:
-                return False 
-            # extract the peer id
-            self.peer_id = handshake_response.client_peer_id
-            # send handshake message after validation 
-            self.send_handshake()
-            self.handshake_flag = True
-            # handshake done successfully
+        # if handshake already done then return True
+        if self.handshake_flag:
             return True
-        # handshake already done
-        return False 
+        # keep alive timer
+        self.keep_alive_timer = time.time()
+        # check if you recieve any handshake message from the peer
+        while not self.check_keep_alive_timeout():
+            raw_handshake_response = self.recieve_handshake()
+            if raw_handshake_response is not None:
+                break
+        # case where timeout occured and couldn't recieved message
+        if raw_handshake_response is None:
+            return False
+        # validate the hanshake message response
+        handshake_response = self.handshake_validation(raw_handshake_response)
+        if handshake_response is None:
+            return False 
+        # extract the peer id
+        self.peer_id = handshake_response.client_peer_id
+        # send handshake message after validation 
+        self.send_handshake()
+        self.handshake_flag = True
+        # handshake done successfully
+        return True
 
     """
         the function helps in building the handshake message
@@ -594,7 +600,7 @@ class peer():
             elif(self.state == DSTATE2):
                 download_status = self.download_piece(piece_index)
                 exchange_messages = False
-            # client state 3    : (clinet = None,           peer = None)
+            # client state 3    : (client = None,           peer = None)
             elif(self.state == DSTATE3):
                 exchange_messages = False
         return download_status
@@ -732,15 +738,23 @@ class peer():
             return False
         # return true if valid
         return True
-
-       
+    
+    """
+        function does initial handshake and immediately sends bitfields to peer
+    """
+    def initial_seeding_messages(self):
+        if not self.respond_handshake():
+            return False
+        # after handshake immediately send the bitfield response
+        bitfield = create_bitfield_message(self.bitfield_pieces, self.torrent.pieces_count)
+        self.send_message(bitfield)
+        return True
+    
     """
         uploading finite state machine(FSM) for bittorrent client (seeding)
         the below function implements the FSM for uploading pieces to peer
     """
     def piece_upload_FSM(self):
-        if not self.initial_seeder_messages():
-            return 
         # initializing keep alive timer
         self.keep_alive_timer = time.time()
         # download status of piece
@@ -761,21 +775,10 @@ class peer():
             elif(self.state == USTATE2):
                 self.upload_pieces()
                 exchange_messages = False
-            # client state 4    : (clinet = None,           peer = None)
-            elif(self.state == USTATE4):
+            # client state 3    : (client = None,           peer = None)
+            elif(self.state == USTATE3):
                 exchange_messages = False
        
-    """
-        function does initial handshake and bitfield sending for the peer
-    """
-    def initial_seeder_messages(self):
-        if not self.respond_handshake():
-            return False
-        # after handshake immediately send the bitfield response
-        bitfield = create_bitfield_message(self.bitfield_pieces, self.torrent.pieces_count)
-        self.send_message(bitfield)
-        return True
-        
     """
         function helps in uploading the torrent file with peer, the function 
         exchanges the request/piece messages with peer and helps peer get the 
@@ -808,7 +811,6 @@ class peer():
             return False
         # all conditions satisfied 
         return True
-
  
     """
         function checks for timeouts incase of no keep alive recieved from peer
@@ -822,3 +824,4 @@ class peer():
             return True
         else:
             return False
+

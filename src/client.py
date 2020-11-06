@@ -82,10 +82,9 @@ class torrent_client():
         upload_file_path = self.client_state['seeding'] 
         # create file handler for downloading data from peers
         file_handler = torrent_shared_file_handler(upload_file_path, self.torrent)
-        
         # add the file handler  
         self.swarm.add_shared_file_handler(file_handler)
-       
+        # start seeding the file 
         self.swarm.seed_file()
 
 
@@ -100,10 +99,8 @@ class torrent_client():
         file_handler = torrent_shared_file_handler(download_file_path, self.torrent)
         # initialize file handler for downloading
         file_handler.initialize_for_download()
-         
         # distribute file handler among all peers for reading/writing
         self.swarm.add_shared_file_handler(file_handler)
-       
         # lastly download the whole file
         self.swarm.download_file() 
 

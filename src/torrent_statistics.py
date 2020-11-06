@@ -26,9 +26,9 @@ class torrent_statistics():
         self.event_start_time       = 0         # start time of event
         self.event_end_time         = 0         # end time of event
         
-        self.num_pieces_downloaded  = 0
-        self.num_pieces_uploaded    = 0
-        self.num_pieces_left        = 0
+        self.num_pieces_downloaded  = 0         # pieces downloaded
+        self.num_pieces_uploaded    = 0         # pieces uplaoded
+        self.num_pieces_left        = 0         # pieces left
 
 
     def state_time(self):
@@ -50,7 +50,6 @@ class torrent_statistics():
         # update the downloaded piece set
         self.downloaded.add(piece_index)
         
-        print('Lenght of downloaded pieces is  = ', len(self.downloaded))
         # update the avg download rate
         self.total_download_rate += self.download_rate
         self.avg_download_rate = self.total_download_rate / len(self.downloaded)
@@ -89,6 +88,5 @@ class torrent_statistics():
         torrent_stats_log += str(round(self.max_upload_rate, 2)) + ' Kbps ]'
 
         return torrent_stats_log
-
 
 

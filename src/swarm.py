@@ -25,14 +25,10 @@ class swarm():
         self.interval   = peers_data['interval']
         self.seeders    = peers_data['seeders']
         self.leechers   = peers_data['leechers']
-        
-        # keep track of upload and download speed
-        self.upload_speed   = None
-        self.download_speed = None
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
-        self.peers_list.append(peer('192.168.0.106', self.torrent.client_port, self.torrent))
+        self.peers_list.append(peer('127.0.0.1', self.torrent.client_port, self.torrent))
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
@@ -137,8 +133,7 @@ class swarm():
         selection and peer selection respectively
     """
     def download_using_stratergies(self):
-        i = 0
-        while not self.download_complete() and i < 4:
+        while not self.download_complete():
             piece = self.piece_selection_startergy()
             if piece is not None:
                 peer_index = self.peer_selection_startergy(piece)
@@ -146,7 +141,6 @@ class swarm():
                 if is_piece_downloaded:
                     self.bitfield_pieces_downloaded.add(piece)
                     del self.bitfield_pieces_count[piece]
-                    i = i + 1
 
     """
         piece selection stratergy is completely based on the bittorrent client
@@ -208,7 +202,8 @@ class swarm():
         function helps in seeding the file in swarm
     """
     def seed_file(self):
-        self.swarm_logger.log('Seeding start by client at ' + self.client_peer.unique_id)
+        seeding_log = 'Seeding started by client at ' + self.client_peer.unique_id
+        self.swarm_logger.log(seeding_log)
         seeding_file_forever = True
         while seeding_file_forever:
             recieved_connection = self.client_peer.recieve_connection()
@@ -220,11 +215,19 @@ class swarm():
                 peer_object = peer(peer_IP, peer_port, self.torrent, peer_socket)
                 peer_object.set_bitfield() 
                 peer_object.add_file_handler(self.file_handler)
-                
-                peer_object.respond_handshake()
-                # start uploading pieces to this peer
-                # Thread(target = peer_object.piece_upload_FSM).start()
+                # start uploading file pieces to this peer
+                Thread(target = self.upload_file, args=(peer_object,)).start()
             else:
                 time.sleep(1)
+
+    """
+        function helps in uploading the file pieces to given peer when requested
+    """
+    def upload_file(self, peer):
+        # initial seeding messages
+        if not peer.initial_seeding_messages():
+            return 
+        # after inital messages start exchanging uploading message
+        peer.piece_upload_FSM()
 
 
