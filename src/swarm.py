@@ -114,9 +114,9 @@ class swarm():
         implementation of rarest first algorithm as downloading stratergy
     """
     def download_file(self):
+        # check if file handler is initialized
         if not self.have_file_handler():
             return False
-        
         # initialize bitfields asynchronously
         for peer_index in range(len(self.peers_list)):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
@@ -136,10 +136,14 @@ class swarm():
             piece = self.piece_selection_startergy()
             if piece is not None:
                 peer_index = self.peer_selection_startergy(piece)
+                self.torrent.statistics.state_time()
                 is_piece_downloaded = self.peers_list[peer_index].piece_downlaod_FSM(piece)
+                self.torrent.statistics.stop_time()
                 if is_piece_downloaded:
+                    self.torrent.statistics.update_download_rate(piece, self.torrent.torrent_metadata.piece_length)
                     self.bitfield_pieces_downloaded.add(piece)
                     del self.bitfield_pieces_count[piece]
+                    self.swarm_logger.log(self.torrent.statistics.get_download_statistics())
 
     """
         piece selection stratergy is completely based on the bittorrent client

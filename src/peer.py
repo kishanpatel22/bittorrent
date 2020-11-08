@@ -619,8 +619,6 @@ class peer():
         block_length = 0
         # piece length for torrent 
         piece_length = self.torrent.get_piece_length(piece_index)
-        # torrent statistics starting the timer
-        self.torrent.statistics.state_time()
         
         # loop untill you download all the blocks in the piece
         while self.download_possible() and block_offset < piece_length:
@@ -630,22 +628,11 @@ class peer():
             else:
                 block_length = piece_length - block_offset
             
-            # create a request message for given piece index and block offset
-            request_message = request(piece_index, block_offset, block_length)
-            # send request message to peer
-            self.send_message(request_message)
-            # recieve response message 
-            response_message = self.handle_response()
-
-            if response_message and response_message.message_id == PIECE:
-                if self.validate_request_piece_messages(request_message, response_message):
-                    # if the message recieved was a piece message
-                    recieved_piece += response_message.block
-                    # increament offset according to size of data block recieved
-                    block_offset += len(response_message.block)
-        
-        # torrent statistics stopping the timer
-        self.torrent.statistics.stop_time()
+            block_data = self.download_block(piece_index, block_offset, block_length)
+            if block_data:
+                # increament offset according to size of data block recieved
+                recieved_piece += block_data
+                block_offset   += block_length
         
         # check for connection timeout
         if self.check_keep_alive_timeout():
@@ -654,19 +641,46 @@ class peer():
         # validate the piece and update the peer downloaded bitfield
         if(not self.validate_piece(recieved_piece, piece_index)):
             return False
-
-        # update the torrent statistics for downloading
-        self.torrent.statistics.update_download_rate(piece_index, piece_length)
-
+        
         # used for EXCECUTION LOGGING
         download_log  = self.unique_id + ' downloaded piece : '
         download_log += str(piece_index) + ' ' + SUCCESS  
         self.peer_logger.log(download_log)
         
         # successfully downloaded and validated piece 
-        self.peer_logger.log(str(self.torrent.statistics))
         return True
 
+    
+    """
+        function helps in downlaoding given block of the piece from peer
+        function returns block of data if requested block is successfully 
+        downloaded else returns None 
+    """
+    def download_block(self, piece_index, block_offset, block_length):
+        # create a request message for given piece index and block offset
+        request_message = request(piece_index, block_offset, block_length)
+        # send request message to peer
+        self.send_message(request_message)
+        
+        # torrent statistics starting the timer
+        self.torrent.statistics.state_time()
+        # recieve response message and handle the response
+        response_message = self.handle_response()
+        # torrent statistics stopping the timer
+        self.torrent.statistics.stop_time()
+        
+        # if the message recieved was a piece message
+        if not response_message or response_message.message_id != PIECE:
+            return None
+        # validate if correct response is recieved for the piece message
+        if not self.validate_request_piece_messages(request_message, response_message):
+            return None
+
+        # update the torrent statistics for downloading
+        self.torrent.statistics.update_download_rate(piece_index, block_length)
+
+        # successfully downloaded and validated block of piece
+        return response_message.block
 
     """ 
         piece can be only downloaded only upon given conditions

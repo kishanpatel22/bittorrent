@@ -24,7 +24,7 @@ class torrent():
         self.client_IP = ''
             
         # downloaded and uploaded values 
-        self.statistics = torrent_statistics()
+        self.statistics = torrent_statistics(self.torrent_metadata)
             
         # pieces divided into chunks of fixed block size
         self.block_length   = 16 * (2 ** 10) 
