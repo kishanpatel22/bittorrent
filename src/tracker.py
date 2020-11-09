@@ -182,7 +182,7 @@ class udp_torrent_tracker(tracker_data):
 
         # create a socket for sending request and recieving responses
         self.tracker_sock = socket(AF_INET, SOCK_DGRAM) 
-        self.tracker_sock.settimeout(10)
+        self.tracker_sock.settimeout(5)
 
         # connection payload for UDP tracker connection request
         connection_payload = self.build_connection_payload()
@@ -408,11 +408,15 @@ class torrent_tracker():
     def __init__(self, torrent):
         # the responding tracker instance for client
         self.client_tracker = None
+        
         # connection status of the trackers
         self.connection_success         = 1 
         self.connection_failure         = 2
         self.connection_not_attempted   = 3
         
+        # trackers loggers object
+        self.trackers_logger = torrent_logger('trackers', TRACKER_LOG_FILE, DEBUG)
+
         # get all the trackers list of the torrent data
         self.trackers_list = []
         self.trackers_connection_status = []
@@ -428,7 +432,6 @@ class torrent_tracker():
             # append the connection status 
             self.trackers_connection_status.append(self.connection_not_attempted)
 
-
     # the torrent tracker requests for the list of peers 
     # Note : function attempts to connect to tracker for given all the tracker
     #        instances and any tracker url reponse is recieved that is retunred
@@ -443,8 +446,12 @@ class torrent_tracker():
             else:
                 self.trackers_connection_status[i] = self.connection_failure
         
+        # log the information about connecting to trackers
+        self.trackers_logger.log(str(self))
+        
         # returns tracker instance for which successful connection was established
         return self.client_tracker
+        
 
     
     # logs the tracker connections information 
@@ -489,6 +496,5 @@ class torrent_tracker():
             trackers_table.rows.append([not_attempted_log, 'not attempted connection '])
 
         return str(trackers_table)
-
 
 

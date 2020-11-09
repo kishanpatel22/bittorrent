@@ -37,7 +37,7 @@ class swarm():
         self.bitfield_pieces_count = dict()
 
         # selecting the top N peers / pieces
-        self.top_n = 4
+        self.top_n = self.torrent.client_request['max peers']
 
         # peers logger object
         self.swarm_logger = torrent_logger('swarm', SWARM_LOG_FILE, DEBUG)
@@ -51,7 +51,7 @@ class swarm():
         self.file_handler = None
         
         # check if the torrent file is for seeding
-        if torrent.client_state['seeding'] != None:
+        if torrent.client_request['seeding'] != None:
             # client peer only need incase of seeding torrent
             self.client_peer = peer(self.torrent.client_IP, self.torrent.client_port, self.torrent)
             self.client_peer.initialize_seeding()
@@ -69,24 +69,7 @@ class swarm():
                 self.bitfield_pieces_count[piece] += 1
             else:
                 self.bitfield_pieces_count[piece] = 1
-    
-    """
-        function performs the initial connection with peer by doing handshakes 
-        initializing bitfields and updating the global bitfield count
-    """
-    def connect_to_peer(self, peer_index):
-        # perfrom handshake with peer
-        self.peers_list[peer_index].initiate_handshake()
-        # recieve the bitfields from peer
-        peer_bitfield_pieces = self.peers_list[peer_index].initialize_bitfield()
-        self.swarm_lock.acquire()
-        # update the bitfield count value in swarm
-        self.update_bitfield_count(peer_bitfield_pieces) 
-        self.swarm_lock.release()
-        # used for EXCECUTION LOGGING
-        self.swarm_logger.log(self.peers_list[peer_index].get_handshake_log())
-         
-
+ 
     """
         The peer class must handle the downloaded file writing and reading 
         thus peer class must have the file handler for this purpose.
@@ -110,6 +93,22 @@ class swarm():
         return True
 
     """
+        function performs the initial connection with peer by doing handshakes 
+        initializing bitfields and updating the global bitfield count
+    """
+    def connect_to_peer(self, peer_index):
+        # perfrom handshake with peer
+        self.peers_list[peer_index].initiate_handshake()
+        # recieve the bitfields from peer
+        peer_bitfield_pieces = self.peers_list[peer_index].initialize_bitfield()
+        self.swarm_lock.acquire()
+        # update the bitfield count value in swarm
+        self.update_bitfield_count(peer_bitfield_pieces) 
+        self.swarm_lock.release()
+        # used for EXCECUTION LOGGING
+        self.swarm_logger.log(self.peers_list[peer_index].get_handshake_log())
+         
+    """
         function checks if the download is completed or not
     """
     def download_complete(self):
@@ -130,7 +129,6 @@ class swarm():
         # asynchornously start downloading pieces of file from peers
         download_thread = Thread(target = self.download_using_stratergies)
         download_thread.start()
-
 
     """
         downloads the file from peers in swarm using some stratergies of peice
@@ -176,7 +174,6 @@ class swarm():
             # release the lock after downloading
             self.swarm_lock.release() 
 
-
     """
         piece selection stratergy is completely based on the bittorrent client
         most used piece selection stratergies are random piece selection stratergy
@@ -184,7 +181,6 @@ class swarm():
     """
     def piece_selection_startergy(self):
         return self.rarest_pieces_first()
-
 
     """ 
         rarest first piece selection stratergy always selects the rarest piece
@@ -241,9 +237,8 @@ class swarm():
         sort the peers in by the rate of downloading and selects top four
     """
     def top_peers(self):
+        # sort the peer list according peer comparator
         self.peers_list = sorted(self.peers_list, key=self.peer_comparator, reverse=True)
-        for i in range(4):
-            print(self.peers_list[i].torrent.statistics.avg_download_rate)
         # top 4 peer index
         return [peer_index for peer_index in range(self.top_n)]
 

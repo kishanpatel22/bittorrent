@@ -15,10 +15,10 @@ from beautifultable import BeautifulTable
 
 class torrent():
 
-    def __init__(self, torrent_metadata, client_state):
+    def __init__(self, torrent_metadata, client_request):
         # store the orginal metadata extracted from the file
         self.torrent_metadata   = torrent_metadata
-        self.client_state       = client_state
+        self.client_request     = client_request
 
         # torrent peer port reserved for bittorrent, this will be used 
         # for listening to the peer request for uploading (seeding)
@@ -35,7 +35,7 @@ class torrent():
         self.piece_length = torrent_metadata.piece_length
 
         # if the client wants to upload the file 
-        if self.client_state['seeding'] != None:
+        if self.client_request['seeding'] != None:
             self.statistics.num_pieces_downloaded = self.torrent_metadata.file_size
 
         # the count of the number pieces that the files is made of
@@ -64,9 +64,9 @@ class torrent():
     # logs the torrent information of torrent
     def __str__(self):
         column_header =  'CLIENT TORRENT DATA\n (client state = '
-        if self.client_state['downloading'] != None:
+        if self.client_request['downloading'] != None:
             column_header += 'downloading)\n'
-        if self.client_state['seeding'] != None:
+        if self.client_request['seeding'] != None:
             column_header += 'seeding)\n'
         
         torrent_file_table = BeautifulTable()

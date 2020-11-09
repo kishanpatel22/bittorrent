@@ -17,27 +17,43 @@ def main(user_arguments):
     # contact the trackers
     client.contact_trackers()
     
-    """ 
     # initialize the swarm of peers
     client.initialize_swarm()
     
     # download the file from the swarm
     client.event_loop()
-    """
-
+        
 
 if __name__ == '__main__':
+    bittorrent_description  = 'KP-Bittorrent Client implementation in python3'
+    bittorrent_epilog  = 'Report bugs to : <https://github.com/kishanpatel22/bittorrent/issues>\n'
+    bittorrent_epilog += 'Contribute open source : <https://github.com/kishanpatel22/bittorrent>'
+
     # argument parser for bittorrent
-    parser = argparse.ArgumentParser(description="Parses command.")
+    parser = argparse.ArgumentParser(description=bittorrent_description, epilog=bittorrent_epilog)
     parser.add_argument(TORRENT_FILE_PATH, help='unix file path of torrent file')
     parser.add_argument("-d", "--" + DOWNLOAD_DIR_PATH, help="unix directory path of downloading file")
     parser.add_argument("-s", "--" + SEEDING_DIR_PATH, help="unix directory path for the seeding file")
+    parser.add_argument("-m", "--" + MAX_PEERS, help="maximum peers participating in upload/download of file")
+    parser.add_argument("-l", "--" + RATE_LIMIT, help="upload / download limits in Kbps")
 
     # get the user input option after parsing the command line argument
     options = vars(parser.parse_args(sys.argv[1:]))
     
     if(options[DOWNLOAD_DIR_PATH] is None and options[SEEDING_DIR_PATH] is None):
-        print('Bittorrent client works only with either download or upload arguments !')
-        sys.exit(1)
-        
+        print('KP-Bittorrent works with either download or upload arguments, try using --help')
+        sys.exit()
+    
+    if options[MAX_PEERS] and int(options[MAX_PEERS]) > 10:
+        print("KP-Bittorrent client doesn't support more than 10 peer connection !")
+        sys.exit()
+    
+    if options[RATE_LIMIT] and int(options[RATE_LIMIT]) <= 0:
+        print("KP-Bittorrent client upload / download rate must always greater than 0 Kbps")
+        sys.exit()
+
+    # call the main function
     main(options)
+
+
+
