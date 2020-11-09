@@ -1,10 +1,18 @@
-#!/usr/bin/python3
-
 import sys
+
+# torrent file hander module for reading .torrent files
 from torrent_file_handler import torrent_file_reader
+
+# tracker module for making tracker request and recieving peer data
 from tracker import torrent_tracker
+
+# torrent module holds all the information about the file
 from torrent import *
+
+# swarm module controls the operations over the multiple peers
 from swarm import swarm
+
+# share file handler module provides file I/O interface
 from shared_file_handler import torrent_shared_file_handler
 
 TORRENT_FILE_PATH = 'torrent_file_path'
@@ -16,7 +24,7 @@ SEEDING_DIR_PATH  = 'seeding_directory_path'
     download the files from other peers which are participating in sharing
 """
 
-class torrent_client():
+class bittorrent_client():
     """
         initialize the BTP client with torrent file and user arguments 
         reads the torrent file and creates torrent class object
@@ -40,7 +48,6 @@ class torrent_client():
         # make torrent class instance from torrent data extracted from torrent file
         self.torrent = torrent(self.torrent_info.get_data(), self.client_state)
         print(self.torrent)
-   
     
     """
         functions helps in contacting the trackers requesting for 
@@ -53,6 +60,8 @@ class torrent_client():
         # get active tracker object from the list the trackers
         self.active_tracker = self.trackers_list.request_connection()
 
+        print(self.trackers_list)
+        print(self.active_tracker)
 
     """
         function initilizes swarm from the active tracker connection 

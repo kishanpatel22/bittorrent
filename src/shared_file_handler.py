@@ -1,4 +1,5 @@
 import os
+from threading import *
 
 """
     General file input and output class, provides read and write data options
@@ -7,9 +8,9 @@ import os
 class file_io():
     # initializes the file descripter
     def __init__(self, file_path):
+        # file descriptor
         self.file_descriptor = os.open(file_path, os.O_RDWR | os.O_CREAT) 
-        self.max_write_buffer = 1024
-    
+
     # writes in file given bitstream
     def write(self, byte_stream):
         os.write(self.file_descriptor, byte_stream)   
@@ -21,11 +22,14 @@ class file_io():
     
     # writes file with all values to 0(null) given the size of file
     def write_null_values(self, data_size):
+        # maximum write buffer
+        max_write_buffer = (2 ** 14)
+        # move the file descriptor position
         self.move_descriptor_position(0)
         while(data_size > 0):
-            if data_size >= self.max_write_buffer:
-                data_size = data_size - self.max_write_buffer
-                data = b'\x00' * self.max_write_buffer
+            if data_size >= max_write_buffer:
+                data_size = data_size - max_write_buffer
+                data = b'\x00' * max_write_buffer
             else:
                 data = b'\x00' * data_size
                 data_size = 0
@@ -58,6 +62,8 @@ class torrent_shared_file_handler():
         # initlizes the file input/output object instance 
         self.download_file = file_io(self.download_file_path)
         
+        # shared file lock
+        self.shared_file_lock = Lock()
     
     # initialize the file before downloading 
     # function writes all null values in the file 
@@ -73,7 +79,7 @@ class torrent_shared_file_handler():
 
     # initialize the file descriptor given the piece index and block offset
     def initalize_file_descriptor(self, piece_index, block_offset):
-
+        
         # calulcate the position in file using piece index and offset
         file_descriptor_position = self.calculate_file_position(piece_index, block_offset)
 
@@ -90,24 +96,34 @@ class torrent_shared_file_handler():
         block_offset    = piece_message.block_offset
         data_block      = piece_message.block
         
+        self.shared_file_lock.acquire()
+
         # initialize the file descriptor at given piece index and block offset
         self.initalize_file_descriptor(piece_index, block_offset)
 
         # write the block of data into the file
         self.download_file.write(data_block)
 
+        self.shared_file_lock.release()
+
+
     """
         function helps in reading a block for file given piece index and block offset
         function returns the block of bytes class data that is read
     """
     def read_block(self, piece_index, block_offset, block_size):
-
+            
+        self.shared_file_lock.acquire()
+        
         # initialize the file descriptor at given piece index and block offset
         self.initalize_file_descriptor(piece_index, block_offset)
         
         # read the block of data into the file
         data_block  = self.download_file.read(block_size)
 
+        self.shared_file_lock.release()
+        
+        # return the read block of data
         return data_block
     
 

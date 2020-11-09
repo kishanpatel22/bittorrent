@@ -291,8 +291,6 @@ class bitfield(peer_wire_message):
 
     def __str__(self):
         message  = 'BITFIELD : '
-        message += '(message length : ' + str(self.message_length)  + '), '
-        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [bitfield length : ' + str(len(self.pieces_info)) + '])'
         return message
 
@@ -320,8 +318,6 @@ class request(peer_wire_message):
 
     def __str__(self):
         message  = 'REQUEST : '
-        message += '(message length : ' + str(self.message_length)  + '), '
-        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [ '
         message += 'piece index : '     + str(self.piece_index)     + ', '
         message += 'block offest : '    + str(self.block_offset)    + ', '
@@ -350,8 +346,6 @@ class piece(peer_wire_message):
 
     def __str__(self):
         message  = 'PIECE : '
-        message += '(message length : ' + str(self.message_length)  + '), '
-        message += '(message id : '     + str(self.message_id)      + '), '
         message += '(message paylaod : [ '
         message += 'piece index : '     + str(self.piece_index)     + ', '
         message += 'block offest : '    + str(self.block_offset)    + ', '

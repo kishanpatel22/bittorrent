@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 import sys
 import argparse
-from client import *
 
+# bittorrent client module for P2P sharing
+from client import *
 
 """
     Client bittorrent protocol implementation in python
@@ -11,17 +12,18 @@ from client import *
 def main(user_arguments):
    
     # create torrent client object 
-    client = torrent_client(user_arguments)
+    client = bittorrent_client(user_arguments)
     
     # contact the trackers
     client.contact_trackers()
     
+    """ 
     # initialize the swarm of peers
     client.initialize_swarm()
     
     # download the file from the swarm
     client.event_loop()
-
+    """
 
 
 if __name__ == '__main__':

@@ -4,6 +4,8 @@ import random as rd
 # module problems torrent statistics 
 from torrent_statistics import *
 
+# module for printing data in Tabular format
+from beautifultable import BeautifulTable
 
 """
     The actual infomation about the file that is being shared among the peers
@@ -28,7 +30,10 @@ class torrent():
             
         # pieces divided into chunks of fixed block size
         self.block_length   = 16 * (2 ** 10) 
-            
+        
+        # piece length of torrent file
+        self.piece_length = torrent_metadata.piece_length
+
         # if the client wants to upload the file 
         if self.client_state['seeding'] != None:
             self.statistics.num_pieces_downloaded = self.torrent_metadata.file_size
@@ -48,7 +53,6 @@ class torrent():
         else:
             return self.torrent_metadata.piece_length
   
-
     # get validates piece length of given piece
     def validate_piece_length(self, piece_index, block_offset, block_length):
         if block_length > self.block_length:
@@ -57,24 +61,36 @@ class torrent():
             return False
         return True
         
-
     # logs the torrent information of torrent
     def __str__(self):
-        torrent_log  =  'CLIENT TORRENT DATA : (client state = ' 
+        column_header =  'CLIENT TORRENT DATA\n (client state = '
         if self.client_state['downloading'] != None:
-            torrent_log += 'downloading)\n'
+            column_header += 'downloading)\n'
         if self.client_state['seeding'] != None:
-            torrent_log += 'seeding)\n'
-
-        torrent_log += 'File name       : ' + str(self.torrent_metadata.file_name)              + '\n'
-        torrent_log += 'File size       : ' + str(self.torrent_metadata.file_size)    + ' B'    + '\n'
-        torrent_log += 'Piece length    : ' + str(self.torrent_metadata.piece_length) + ' B'    + '\n'
-        torrent_log += 'Info hash       : ' + str(self.torrent_metadata.info_hash)              + '\n'
-        torrent_log += 'Files           : ' + str(self.torrent_metadata.files)                  + '\n'
-        torrent_log += 'No. of Pieces   : ' + str(self.pieces_count)                            + '\n'
-        torrent_log += 'Client port     : ' + str(self.client_port)                             + '\n'
-        torrent_log += 'Client peer ID  : ' + str(self.peer_id)                                 + '\n'
+            column_header += 'seeding)\n'
         
-        return torrent_log
+        torrent_file_table = BeautifulTable()
+        torrent_file_table.columns.header = [column_header, "DATA VALUE"]
+        
+        # file name
+        torrent_file_table.rows.append(['File name', str(self.torrent_metadata.file_name)])
+        # file size
+        torrent_file_table.rows.append(['File size', str(self.torrent_metadata.file_size)])
+        # piece length 
+        torrent_file_table.rows.append(['Piece length', str(self.torrent_metadata.piece_length)])
+        # info hash
+        torrent_file_table.rows.append(['Info hash', '20 Bytes file info hash value'])
+        # files (multiple file torrents)
+        if self.torrent_metadata.files:
+            torrent_file_table.rows.append(['Files', str(len(self.torrent_metadata.files))])
+        else:
+            torrent_file_table.rows.append(['Files', str(self.torrent_metadata.files)])
+        # number of pieces in file 
+        torrent_file_table.rows.append(['Number of Pieces', str(self.pieces_count)])
+        # client port
+        torrent_file_table.rows.append(['Client port', str(self.client_port)])
+        torrent_file_table.rows.append(['Client peer ID', str(self.peer_id)])
+        
+        return str(torrent_file_table)
 
 

@@ -1,22 +1,22 @@
-#!/usr/bin/python3
-
 import sys
 
-# import bencodepy for reading the torrent metadata
+# bencodepy module for reading the torrent metadata
 import bencodepy
 
-# metadata format in the torrent file
+# Ordered Dictionary module  
 from collections import OrderedDict 
 
-# hashlib for generating sha1 hash values
+# hashlib module for generating sha1 hash values
 import hashlib
 
-# torrent logger for execution logging
+# torrent logger module for execution logging
 from torrent_logger import *
 
-# user defined class for rasing torrent execptions
+# torrent error module for handling the exception
 from torrent_error import *
 
+# module for printing data in Tabular format
+from beautifultable import BeautifulTable
 
 """
     Torrent file hanlders contain code related to torrent file reading and
@@ -39,17 +39,6 @@ class torrent_metadata():
         self.pieces         = pieces                    # bytes  : sha1 hash concatination of file
         self.info_hash      = info_hash                 # sha1 hash of the info metadata
         self.files          = files                     # list   : [length, path] (multifile torrent)
-
-    # logs the meta data of torrent
-    def __str__(self):
-        logging_info =  'TORRENT FILE METADATA : '                         + '\n'
-        logging_info += 'Trackers List : ' + str(self.trackers_url_list)   + '\n'
-        logging_info += 'File name     : ' + str(self.file_name)           + '\n'
-        logging_info += 'File size     : ' + str(self.file_size)    + ' B' + '\n'
-        logging_info += 'Piece length  : ' + str(self.piece_length) + ' B' + '\n'
-        logging_info += 'Files         : ' + str(self.files)               + '\n'
-        logging_info += '\n'
-        return logging_info
 
 
 """
@@ -83,7 +72,7 @@ class torrent_file_reader(torrent_metadata):
             self.torrent_file_logger.log(torrent_read_log)
         except Exception as err:
             # used for EXCECUTION LOGGING
-            torrent_read_log = 'Torrent file decoding failed ! ' + FAILURE + err.__str__()
+            torrent_read_log = 'Torrent file decoding failure ! ' + FAILURE + str(err)
             self.torrent_file_logger.log(torrent_read_log)
             sys.exit()
         
@@ -111,7 +100,6 @@ class torrent_file_reader(torrent_metadata):
         # info hash generated for trackers
         info_hash    = self.generate_info_hash()
             
-
         # files is list of tuple of size and path in case of multifile torrent
         files = None
 
@@ -158,7 +146,10 @@ class torrent_file_reader(torrent_metadata):
                 torrent_extract[new_key] = list(map(lambda x : x.decode(self.encoding), value))
             # if type of value is of type list
             elif type(value) == list :
-                torrent_extract[new_key] = list(map(lambda x : x[0].decode(self.encoding), value))
+                try:
+                    torrent_extract[new_key] = list(map(lambda x : x[0].decode(self.encoding), value))
+                except:
+                    torrent_extract[new_key] = value
             # if type of value if of types byte
             elif type(value) == bytes and new_key != 'pieces':
                 torrent_extract[new_key] = value.decode(self.encoding)
@@ -167,7 +158,6 @@ class torrent_file_reader(torrent_metadata):
 
         # torrent extracted metadata
         return torrent_extract
-
 
     # info_hash from the torrent file
     def generate_info_hash(self):
@@ -178,7 +168,6 @@ class torrent_file_reader(torrent_metadata):
         sha1_hash.update(bencodepy.encode(raw_info))
         return sha1_hash.digest()
     
-
     # return the torrent instance 
     def get_data(self):
         return torrent_metadata(self.trackers_url_list, self.file_name, 
@@ -187,14 +176,32 @@ class torrent_file_reader(torrent_metadata):
     
     # provides torrent file full information
     def __str__(self):
-        torrent_file_log  = 'TORRENT FILE READ CONTAINS DATA : '                + '\n'
-        torrent_file_log += 'Trackers List  : ' + self.trackers_url_list[0]     + '\n'
-        for tracker_url in self.trackers_url_list[1:]:
-            torrent_file_log += '                 ' + tracker_url               + '\n'
-        torrent_file_log += 'File name      : ' + str(self.file_name)           + '\n'
-        torrent_file_log += 'File size      : ' + str(self.file_size)    + ' B' + '\n'
-        torrent_file_log += 'Piece length   : ' + str(self.piece_length) + ' B' + '\n'
-        torrent_file_log += 'Info hash      : ' + str(self.info_hash)           + '\n'
-        torrent_file_log += 'Files          : ' + str(self.files)               + '\n'
-        return torrent_file_log
+        torrent_file_table = BeautifulTable()
+        torrent_file_table.columns.header = ["TORRENT FILE DATA", "DATA VALUE"]
+        
+        tracker_urls = self.trackers_url_list[0]
+        if len(self.trackers_url_list) < 3:
+            for tracker_url in self.trackers_url_list[1:]:
+                tracker_urls += '\n' + tracker_url 
+        else:
+            tracker_urls += '\n... ' 
+            tracker_urls += str(len(self.trackers_url_list)-1) + ' more tracker urls !' 
+        
+        # tracker urls
+        torrent_file_table.rows.append(['Tracker List', tracker_urls])
+        # file name
+        torrent_file_table.rows.append(['File name', str(self.file_name)])
+        # file size
+        torrent_file_table.rows.append(['File size', str(self.file_size) + ' B'])
+        # piece length 
+        torrent_file_table.rows.append(['Piece length', str(self.piece_length) + ' B'])
+        # info hash 
+        torrent_file_table.rows.append(['Info Hash', '20 Bytes file info hash value'])
+        # files (multiple file torrents)
+        if self.files:
+            torrent_file_table.rows.append(['Files', str(len(self.files))])
+        else:
+            torrent_file_table.rows.append(['Files', str(self.files)])
+        
+        return str(torrent_file_table)
 

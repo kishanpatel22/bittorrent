@@ -5,22 +5,22 @@ import sys
 TORRENT_LOG_DIR = './torrent_logs/'
 
 # logging file names
-TRACKER_LOG = 'tracker.log'
-TORRENT_LOG = 'torrent.log'
-PEER_LOG    = 'peer.log'
-SWARM_LOG   = 'swarm.log'
-SOCKET_LOG  = 'socket.log'
-FILE_LOG    = 'file.log'
-
+TRACKER_LOG         = 'tracker.log'
+TORRENT_LOG         = 'torrent.log'
+PEER_LOG            = 'peer.log'
+SWARM_LOG           = 'swarm.log'
+SOCKET_LOG          = 'socket.log'
+FILE_LOG            = 'file.log'
+TORRENT_STATS_LOG   = 'torrent_statistics.log'
 
 # files paths required by the logger
-TRACKER_LOG_FILE    = TORRENT_LOG_DIR + TRACKER_LOG
-TORRENT_LOG_FILE    = TORRENT_LOG_DIR + TORRENT_LOG
-PEER_LOG_FILE       = TORRENT_LOG_DIR + PEER_LOG
-SWARM_LOG_FILE      = TORRENT_LOG_DIR + SWARM_LOG
-SOCKET_LOG_FILE     = TORRENT_LOG_DIR + SOCKET_LOG
-FILE_LOG_FILE       = TORRENT_LOG_DIR + FILE_LOG
-
+TRACKER_LOG_FILE        = TORRENT_LOG_DIR + TRACKER_LOG
+TORRENT_LOG_FILE        = TORRENT_LOG_DIR + TORRENT_LOG
+PEER_LOG_FILE           = TORRENT_LOG_DIR + PEER_LOG
+SWARM_LOG_FILE          = TORRENT_LOG_DIR + SWARM_LOG
+SOCKET_LOG_FILE         = TORRENT_LOG_DIR + SOCKET_LOG
+FILE_LOG_FILE           = TORRENT_LOG_DIR + FILE_LOG
+TORRENT_STATS_LOG_FILE  = TORRENT_LOG_DIR + TORRENT_STATS_LOG
 
 # different logging levels provided
 DEBUG       = logging.DEBUG

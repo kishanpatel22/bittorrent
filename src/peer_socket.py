@@ -87,7 +87,6 @@ class peer_socket():
                 data_length_send += self.peer_sock.send(raw_data[data_length_send:])
             except:
                 # the TCP connection is broken
-                self.disconnect()
                 return False
         return True
 

@@ -42,12 +42,18 @@ class torrent_statistics():
         self.expected_download_completion_time = 0.0
 
 
-    def state_time(self):
+    def start_time(self):
         self.event_start_time = time.time()
      
     def stop_time(self):
         self.event_end_time = time.time()
     
+    def update_start_time(self, time_t):
+        self.event_start_time = time_t
+
+    def update_end_time(self, time_t):
+        self.event_end_time = time_t
+
     """
         function updates the statistics after downloading 
         given piece index with given piece size
@@ -55,6 +61,7 @@ class torrent_statistics():
     def update_download_rate(self, piece_index, piece_size):
         # calculate the time for downloading
         time = self.event_end_time - self.event_start_time
+
         piece_size_kb = piece_size / (2 ** 10)
         self.download_rate = round(piece_size_kb / time, 2)
         
@@ -93,13 +100,17 @@ class torrent_statistics():
         download_log += 'Time remaining : ' + str(self.expected_download_completion_time) + ')'
         return download_log
 
+    
+    """
+        function returns the upload statistics of the torrent file
+    """
+    def get_upload_statistics(self):
+        upload_log += 'uploaded  : [ upload rate = ' 
+        upload_log += str(self.upload_rate) + ' Kbps'
+        upload_log += ', avg uploading rate = '
+        upload_log += str(self.avg_upload_rate) + ' Kbps'
+        upload_log += ', max uploading rate = ' 
+        upload_log += str(self.max_upload_rate) + ' Kbps ]'
+        return upload_log
 
-    def __str__(self):
-        torrent_stats_log += 'B) uploaded   : [ upload rate = ' 
-        torrent_stats_log += str(self.upload_rate) + ' Kbps'
-        torrent_stats_log += ', avg uploading rate = '
-        torrent_stats_log += str(self.avg_upload_rate) + ' Kbps'
-        torrent_stats_log += ', max uploading rate = ' 
-        torrent_stats_log += str(self.max_upload_rate) + ' Kbps ]'
-        return torrent_stats_log
 

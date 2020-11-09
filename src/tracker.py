@@ -4,10 +4,19 @@ import requests
 import bencodepy
 import random as rd
 import struct
+
+
+# torrent logger module for execution logging
 from torrent_logger import *
+
+# torrent error module for handling the exception
 from torrent_error import *
+
+# module for printing data in Tabular format
+from beautifultable import BeautifulTable
+
+# socket module for tracker requests
 from socket import *
-from torrent_file_handler import torrent_metadata
 
 """
     Trackers are required to obtain the list of peers currently participating
@@ -20,7 +29,6 @@ from torrent_file_handler import torrent_metadata
     Tracker class stores the information that is needed for communicating with
     the tracker URL servers. The request paramters are included as given below
 """
-
 class tracker_data():
     # contructs the tracker request data 
     def __init__(self, torrent):
@@ -41,6 +49,7 @@ class tracker_data():
         self.peers_list = [] 
 
 
+
 """
     Class HTTP torrent tracker helps the client communicate to any HTTP torrent 
     tracker. However the base class containing data of torrent remains the 
@@ -52,6 +61,8 @@ class http_torrent_tracker(tracker_data):
     def __init__(self, torrent, tracker_url):
         super().__init__(torrent)
         self.tracker_url = tracker_url
+        # tracker logger 
+        self.tracker_logger = torrent_logger(self.tracker_url, TRACKER_LOG_FILE, DEBUG)
 
     # attempts to connect to HTTP tracker
     # returns true if conncetion is established false otherwise
@@ -67,9 +78,8 @@ class http_torrent_tracker(tracker_data):
             return True
         except Exception as error_msg:
             # cannont establish a connection with the tracker
-            print('Error is : ', error_msg)
+            self.tracker_logger.log(self.tracker_url + ' connection failed !' + FAILURE) 
             return False
-
 
     # extract the important information for the HTTP response dictionary 
     def parse_http_tracker_response(self, raw_response_dict):
@@ -106,25 +116,32 @@ class http_torrent_tracker(tracker_data):
         if b'tracker id' in raw_response_dict:
             self.tracker_id = raw_response_dict[b'tracker id']
 
-
     # API function for creating the getting the peer data recivied by HTTP tracker
     def get_peers_data(self):
         peer_data = {'interval' : self.interval, 'peers' : self.peers_list,
                      'leechers' : self.incomplete, 'seeders'  : self.complete}
         return peer_data
 
-
     # logs the information obtained by the HTTP tracker 
     def __str__(self):
-        tracker_log =  'HTTP TRACKER RESPONSE :'                       + '\n'
-        tracker_log += 'HTTP Tracker URL : ' + self.tracker_url        + '\n'
-        tracker_log += 'Interval         : ' + str(self.interval)      + '\n'
-        tracker_log += 'Leechers         : ' + str(self.incomplete)    + '\n'
-        tracker_log += 'Seeders          : ' + str(self.complete)      + '\n'
-        tracker_log += 'Peers            : (peer IP : peer port)'      + '\n'
-        for peer_IP, peer_port in self.peers_list:
-            tracker_log += '                   ' + peer_IP + ' : ' + str(peer_port) + '\n'
-        return tracker_log
+        tracker_table = BeautifulTable()
+        tracker_table.columns.header = ["HTTP TRACKER RESPONSE DATA", "DATA VALUE"]
+        
+        # http tracker URL
+        tracker_table.rows.append(['HTTP tracker URL', self.tracker_url])
+        # interval 
+        tracker_table.rows.append(['Interval', str(self.interval)])
+        # number of leeachers
+        tracker_table.rows.append(['Number of leechers', str(self.incomplete)])
+        # number of seeders
+        tracker_table.rows.append(['Number of seeders', str(self.complete)])
+        # number of peers recieved
+        peer_data  = '(' +  self.peers_list[0][0] + ' : '
+        peer_data += str(self.peers_list[0][1]) + ')\n'
+        peer_data += '... ' + str(len(self.peers_list) - 1) + ' more peers'
+        tracker_table.rows.append(['Peers in swarm', peer_data])
+
+        return str(tracker_table)
 
 
 """
@@ -140,6 +157,8 @@ class udp_torrent_tracker(tracker_data):
         super().__init__(torrent)
         # extract the tracker hostname and tracker port number
         self.tracker_url, self.tracker_port = self.parse_udp_tracker_url(tracker_url)
+        # tracker logger 
+        self.tracker_logger = torrent_logger(self.tracker_url, TRACKER_LOG_FILE, DEBUG)
         
         # connection id : initially a magic number
         self.connection_id = 0x41727101980                       
@@ -187,11 +206,10 @@ class udp_torrent_tracker(tracker_data):
                 return True
             else:
                 return False
-
         except Exception as error_msg:
+            self.tracker_logger.log(self.tracker_url + str(error_msg) + FAILURE)
             # close the socket if the response is not obtained
             self.tracker_sock.close()
-            print('Error is ', error_msg)
             return False
             
 
@@ -280,19 +298,18 @@ class udp_torrent_tracker(tracker_data):
     # UDP beign an unreliable protocol the function attemps 
     # some trails for requests the annouce response 
     def udp_announce_request(self, announce_payload):
-        trails = 0
         raw_announce_data = None
+        trails = 0
         while(trails < 8):
-            print('announce request to ' + self.tracker_url + ', trail number ' + str(trails))
             # try connection request after some interval of time
-            # time.sleep(15 * (2 ** trails))
             try:
                 self.tracker_sock.sendto(announce_payload, (self.tracker_url, self.tracker_port))    
                 # recieve the raw announce data
                 raw_announce_data, conn = self.tracker_sock.recvfrom(2048)
                 break
-            except Exception as error_msg:
-                print('Error is : ', error_msg)
+            except:
+                error_log = self.tracker_url + ' failed announce request attempt ' + str(trails + 1)
+                self.tracker_logger.log(error_log + FAILURE)
             trails = trails + 1
         return raw_announce_data
 
@@ -358,16 +375,24 @@ class udp_torrent_tracker(tracker_data):
     
     # logs the information obtained by the HTTP tracker 
     def __str__(self):
-        logging_info =  'UDP TRACKER RESPONSE :'                 + '\n'
-        logging_info += 'UDP Tracker URL : '+ self.tracker_url   + '\n'
-        logging_info += 'Interval        : '+ str(self.interval) + '\n'
-        logging_info += 'Leechers        : '+ str(self.leechers) + '\n'
-        logging_info += 'Seeders         : '+ str(self.seeders)  + '\n'
-        logging_info += 'Peers           : (peer IP : peer port)'  + '\n'
-        for peer_IP, peer_port in self.peers_list:
-            logging_info += '                  ' + peer_IP + ' : ' + str(peer_port) + '\n'
-        logging_info += '\n'
-        return logging_info
+        tracker_table = BeautifulTable()
+        tracker_table.columns.header = ["UDP TRACKER RESPONSE DATA", "DATA VALUE"]
+        
+        # http tracker URL
+        tracker_table.rows.append(['UDP tracker URL', self.tracker_url])
+        # interval 
+        tracker_table.rows.append(['Interval', str(self.interval)])
+        # number of leeachers
+        tracker_table.rows.append(['Number of leechers', str(self.leechers)])
+        # number of seeders
+        tracker_table.rows.append(['Number of seeders', str(self.seeders)])
+        # number of peers recieved
+        peer_data  = '(' + self.peers_list[0][0] + ' : '
+        peer_data += str(self.peers_list[0][1]) + ')\n'
+        peer_data += '... ' + str(len(self.peers_list) - 1) + ' more peers'
+        tracker_table.rows.append(['Peers in swarm', peer_data])
+
+        return str(tracker_table)
 
 
 
@@ -388,9 +413,6 @@ class torrent_tracker():
         self.connection_failure         = 2
         self.connection_not_attempted   = 3
         
-        # tracker logger 
-        self.tracker_logger = torrent_logger('tracker', TRACKER_LOG_FILE, DEBUG)
-
         # get all the trackers list of the torrent data
         self.trackers_list = []
         self.trackers_connection_status = []
@@ -421,27 +443,52 @@ class torrent_tracker():
             else:
                 self.trackers_connection_status[i] = self.connection_failure
         
-        # used for EXCECUTION LOGGING
-        self.tracker_logger.log(self.__str__())
-        self.tracker_logger.log(self.client_tracker.__str__())        
-
         # returns tracker instance for which successful connection was established
         return self.client_tracker
 
     
     # logs the tracker connections information 
     def __str__(self):
-        trackers_log  = 'TRACKERS CONNECTION STATUS :'                    + '\n'
-        trackers_log += 'Connection Status' + '\t\t\t\t' + 'Trackers URL' + '\n'
-        # log all the trackers and corresponding status connection
+        trackers_table = BeautifulTable()
+        trackers_table.columns.header = ["TRACKERS LIST", "CONNECTION STATUS"]
+    
+        successful_tracker_url = None
+
+        unsuccessful_tracker_url = None
+        unsuccessful_tracker_url_count = 0
+
+        not_attempted_tracker_url = None
+        not_attempted_tracker_url_count = 0
+
+        # trackers and corresponding status connection
         for i, status in enumerate(self.trackers_connection_status):
             if(status == self.connection_success):
-                trackers_log += SUCCESS + ' Tracker connection success ! '+ '\t\t'
+                successful_tracker_url = self.trackers_list[i].tracker_url
             elif(status == self.connection_failure):
-                trackers_log += FAILURE + ' Tracker connection failure ! '+ '\t\t'
+                unsuccessful_tracker_url = self.trackers_list[i].tracker_url
+                unsuccessful_tracker_url_count += 1
             else:
-                trackers_log += '++ Tracker connection not attempted !'   + '\t\t'
-            trackers_log += self.trackers_list[i].tracker_url             + '\n'
+                not_attempted_tracker_url = self.trackers_list[i].tracker_url
+                not_attempted_tracker_url_count += 1
         
-        return trackers_log
+        successful_log = successful_tracker_url
+        trackers_table.rows.append([successful_log, 'successful connection ' + SUCCESS])
+        
+        if unsuccessful_tracker_url:
+            unsuccessful_log = unsuccessful_tracker_url
+            if unsuccessful_tracker_url_count > 1:
+                unsuccessful_log += '\n ... ' + str(unsuccessful_tracker_url_count)
+                unsuccessful_log += ' connections '
+            trackers_table.rows.append([unsuccessful_log, 'failed connection ' + FAILURE])
+               
+        if not_attempted_tracker_url:
+            not_attempted_log = not_attempted_tracker_url
+            if not_attempted_tracker_url_count > 1:
+                not_attempted_log += '\n ... ' + str(not_attempted_tracker_url_count)
+                not_attempted_log += ' connections '
+            trackers_table.rows.append([not_attempted_log, 'not attempted connection '])
+
+        return str(trackers_table)
+
+
 

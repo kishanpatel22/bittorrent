@@ -1,10 +1,11 @@
+import sys
+import time
+import random
 from copy import deepcopy
 from threading import *
 from peer import peer
 from torrent_error import *
 from torrent_logger import *
-import time
-import random
 
 """
     Implementation of Peer Wire Protocol as mentioned in RFC of BTP/1.0
@@ -35,9 +36,14 @@ class swarm():
         # bitfields from all peers
         self.bitfield_pieces_count = dict()
 
+        # selecting the top N peers / pieces
+        self.top_n = 4
+
         # peers logger object
         self.swarm_logger = torrent_logger('swarm', SWARM_LOG_FILE, DEBUG)
-        
+        # torrent stats logger object
+        self.torrent_stats_logger = torrent_logger('torrent_statistics', TORRENT_STATS_LOG_FILE, DEBUG)
+
         # bitfield for pieces downloaded from peers
         self.bitfield_pieces_downloaded = set([])
             
@@ -121,7 +127,6 @@ class swarm():
         for peer_index in range(len(self.peers_list)):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
             connect_peer_thread.start()
-        
         # asynchornously start downloading pieces of file from peers
         download_thread = Thread(target = self.download_using_stratergies)
         download_thread.start()
@@ -133,17 +138,44 @@ class swarm():
     """
     def download_using_stratergies(self):
         while not self.download_complete():
-            piece = self.piece_selection_startergy()
-            if piece is not None:
-                peer_index = self.peer_selection_startergy(piece)
-                self.torrent.statistics.state_time()
-                is_piece_downloaded = self.peers_list[peer_index].piece_downlaod_FSM(piece)
-                self.torrent.statistics.stop_time()
-                if is_piece_downloaded:
-                    self.torrent.statistics.update_download_rate(piece, self.torrent.torrent_metadata.piece_length)
-                    self.bitfield_pieces_downloaded.add(piece)
-                    del self.bitfield_pieces_count[piece]
-                    self.swarm_logger.log(self.torrent.statistics.get_download_statistics())
+            # select the pieces and peers for downloading
+            pieces = self.piece_selection_startergy()
+            peer_indices = self.peer_selection_startergy()
+            # asynchornously download the rarest pieces from the top four peers
+            downloading_thread_pool = []
+            for i in range(min(len(pieces), len(peer_indices))):
+                piece = pieces[i]
+                peer_index = peer_indices[i]
+                downloading_thread = Thread(target=self.download_piece, args=(piece, peer_index, ))
+                downloading_thread_pool.append(downloading_thread)
+                downloading_thread.start()
+            # wait untill you finish the downloading of the pieces
+            for downloading_thread in downloading_thread_pool:
+                downloading_thread.join()
+
+    """
+        function downloads piece given the peer index and updates the 
+        of downloaded pieces from the peers in swarm
+    """
+    def download_piece(self, piece, peer_index):
+        start_time = time.time()
+        is_piece_downloaded = self.peers_list[peer_index].piece_downlaod_FSM(piece)
+        end_time = time.time()
+        if is_piece_downloaded:
+            # acquire lock for update the global data items
+            self.swarm_lock.acquire() 
+            # update the bifields pieces downloaded
+            self.bitfield_pieces_downloaded.add(piece)
+            # delete the pieces from the count of pieces
+            del self.bitfield_pieces_count[piece]
+            # update the torrent statistics
+            self.torrent.statistics.update_start_time(start_time)
+            self.torrent.statistics.update_end_time(end_time)
+            self.torrent.statistics.update_download_rate(piece, self.torrent.piece_length)
+            self.torrent_stats_logger.log(self.torrent.statistics.get_download_statistics())
+            # release the lock after downloading
+            self.swarm_lock.release() 
+
 
     """
         piece selection stratergy is completely based on the bittorrent client
@@ -151,58 +183,69 @@ class swarm():
         and rarest first piece selection startergy
     """
     def piece_selection_startergy(self):
-        return self.rarest_piece_first()
+        return self.rarest_pieces_first()
+
 
     """ 
         rarest first piece selection stratergy always selects the rarest piece
         in the swarm, note if there are multiple rarest pieces then the
         function returns any random rarest piece.
     """
-    def rarest_piece_first(self):
-        rarest_piece = None
-        if len(self.bitfield_pieces_count) != 0:
-            rarest_piece_count = min(self.bitfield_pieces_count.values())
-            rarest_pieces = [piece for piece in self.bitfield_pieces_count if 
-                            self.bitfield_pieces_count[piece] == rarest_piece_count]
-            rarest_piece = random.choice(rarest_pieces)
-        return rarest_piece
+    def rarest_pieces_first(self):
+        # check if bitfields are recieved else wait for some time
+        while(len(self.bitfield_pieces_count) == 0):
+            time.sleep(5)
+        # get the rarest count of the pieces
+        rarest_piece_count = min(self.bitfield_pieces_count.values())
+        # find all the pieces with the rarest piece
+        rarest_pieces = [piece for piece in self.bitfield_pieces_count if 
+                         self.bitfield_pieces_count[piece] == rarest_piece_count] 
+        # shuffle among the random pieces 
+        random.shuffle(rarest_pieces)
+        # rarest pieces
+        return rarest_pieces[:self.top_n]
 
     """
         peer selection stratergy for selecting peer having particular piece
         function returns the peer index from the list of peers in swarm
     """
-    def peer_selection_startergy(self, piece):
-        if len(self.bitfield_pieces_downloaded) <= 4:
-            return self.select_random_peer(piece)
+    def peer_selection_startergy(self):
+        # select random peers untill you have some pieces
+        if len(self.bitfield_pieces_downloaded) < 4:
+            return self.select_random_peers()
+        # select the top peers with high download rates
         else:
-            return self.top_peer(piece)
-        
+            return self.top_peers()
+
     """
         random peer selection is implemented as given below.
     """
-    def select_random_peer(self, piece):
-        peers_having_piece = []
-        for peer_index in range(len(self.peers_list)):
-            if self.peers_list[peer_index].have_piece(piece):
-                peers_having_piece.append(peer_index)
-        return random.choice(peers_having_piece)
+    def select_random_peers(self):
+        peer_indices = []
+        # select all the peers that have pieces to offer
+        for index in range(len(self.peers_list)):
+            if len(self.peers_list[index].bitfield_pieces) != 0:
+                peer_indices.append(index)
+        random.shuffle(peer_indices)
+        return peer_indices[:self.top_n]
     
     """
-        selects the specific peer in the list(used only for testing)
+        selects the specific peer in the list(used only for testing of seeding)
     """
-    def select_specific_peer(self, piece):
+    def select_specific_peer(self):
         peer_index = 0
         return peer_index
         
     """
         selects the top fours peer having maximum download rates
-        sort the peers in by the rate of downloading and select top four
+        sort the peers in by the rate of downloading and selects top four
     """
-    def top_peer(self, piece):
+    def top_peers(self):
         self.peers_list = sorted(self.peers_list, key=self.peer_comparator, reverse=True)
-        for peer_index in range(len(self.peers_list)):
-            if self.peers_list[peer_index].have_piece(piece):
-                return peer_index
+        for i in range(4):
+            print(self.peers_list[i].torrent.statistics.avg_download_rate)
+        # top 4 peer index
+        return [peer_index for peer_index in range(self.top_n)]
 
     """
         comparator function for sorting the peer with highest downloading rate

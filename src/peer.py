@@ -133,8 +133,10 @@ class peer():
     """
     def send(self, raw_data):
         if not self.peer_sock.send_data(raw_data):
-            self.peer_logger.log('Unable to send data to the peer !')
-    
+            send_log = self.unique_id +  ' peer connection closed ! ' + FAILURE
+            self.peer_logger.log(send_log)
+            self.close_peer_connection()
+
     """
         function helps in sending peer messgae given peer wire message 
         class object as an argument to the function
@@ -576,6 +578,9 @@ class peer():
         the below function implements the FSM for downloading piece from peer
     """
     def piece_downlaod_FSM(self, piece_index):
+        # if the peer doesn't have the piece
+        if not self.have_piece(piece_index):
+            return False
         # initializing keep alive timer
         self.keep_alive_timer = time.time()
         # download status of piece
@@ -663,7 +668,7 @@ class peer():
         self.send_message(request_message)
         
         # torrent statistics starting the timer
-        self.torrent.statistics.state_time()
+        self.torrent.statistics.start_time()
         # recieve response message and handle the response
         response_message = self.handle_response()
         # torrent statistics stopping the timer
