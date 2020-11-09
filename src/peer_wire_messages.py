@@ -352,7 +352,6 @@ class piece(peer_wire_message):
         message += 'block length : '    + str(len(self.block))      + ' ])'
         return message
 
-
 """
     function helps in creating the bitfield message given the bitfield set
 """

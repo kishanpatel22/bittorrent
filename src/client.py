@@ -66,7 +66,6 @@ class bittorrent_client():
         if user_arguments[MAX_PEERS]:
             self.client_request['max peers'] = int(user_arguments[MAX_PEERS])
 
-
         # make torrent class instance from torrent data extracted from torrent file
         self.torrent = torrent(self.torrent_info.get_data(), self.client_request)
          

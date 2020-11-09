@@ -30,6 +30,7 @@ class swarm():
     
         # create a peer instance for all the peers recieved 
         self.peers_list = []
+        # self.peers_list.append(peer('34.238.166.126', 6881, torrent))
         for peer_IP, peer_port in peers_data['peers']:
             self.peers_list.append(peer(peer_IP, peer_port, torrent))
         
@@ -123,6 +124,7 @@ class swarm():
         if not self.have_file_handler():
             return False
         # initialize bitfields asynchronously
+        # for peer_index in range(1):
         for peer_index in range(len(self.peers_list)):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
             connect_peer_thread.start()
@@ -206,6 +208,9 @@ class swarm():
         function returns the peer index from the list of peers in swarm
     """
     def peer_selection_startergy(self):
+        # testing the seeding on AWS cloud
+        # return [self.select_specific_peer()]
+
         # select random peers untill you have some pieces
         if len(self.bitfield_pieces_downloaded) < 4:
             return self.select_random_peers()
