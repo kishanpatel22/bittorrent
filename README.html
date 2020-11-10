@@ -42,13 +42,13 @@ inorder to reduce load on their servers. Example - ubantu iso files.</p></li>
 spend by the cittizens.</p></li>
 </ul>
 
-<p><strong>Fun Fact</strong> - BitTorrent had 100 million users and a greater share of network 
-  bandwidth than Netflix and Hulu combined.</p>
+<p><strong>Fun Fact</strong> - In 2011, BitTorrent had 100 million users and a greater share 
+  of network bandwidth than Netflix and Hulu combined.</p>
 
 <h2>Bittorrent Client</h2>
 
 <ul>
-<li><p>Bittorrent protocol is application layer protocol, since it replies on the
+<li><p><strong>Bittorrent protocol is application layer protocol</strong>, since it replies on the
 services provided by the lower 4 levels of TCP/IP Internet model for sharing
 the data. It is the application layer where the Bittorrent Client is written
 such that following a set of rules or protocols it will exchange the data
@@ -56,4 +56,51 @@ among the peers(ends hosts).</p></li>
 <li><p>In the project, I have made bittorrent client application program in
 python3, which follows the Bittorrent protocols for downloading and
 uploading files among serveral peers. </p></li>
+</ul>
+
+<h2>Bittorrent File distribution process entities</h2>
+
+<p>| Entity Names      | Significance                                                                                              |
+|-------------------|-----------------------------------------------------------------------------------------------------------|
+| <strong>.torrent file</strong> | contains details of trackers, file name, size, info hash, etc regarding file being distributed            |
+| <strong>Tracker</strong>       | It keeps the state of file being being shared by which peers and what part of files each peer have        |
+| <strong>peers</strong>         | End systems which may or may not have compelete file but are participating the file distribution          |
+| <strong>BTP/1.0</strong>       | protocol that end system need to follow inorder to distribute the file among other peers                  |</p>
+
+<ul>
+<li><p>Peers participating in file sharing lead into dense graph like structure
+called <strong>swarm</strong>. The peers are classified into two types leechers(one who
+download only) and seeders(one who upload only).</p></li>
+<li><p>The large file being distributed is <strong>divided into number of pieces</strong> which
+inturn is divided into number of different chunks. The data chunks are
+actually shared among the peers by which the whole file gets downloaded.</p>
+
+<p><img src="./images/file_pieces.png" alt="File downloaded by bittorrent" title="" /></p></li>
+</ul>
+
+<h3>Bittorrent tasks</h3>
+
+<ul>
+<li><p><strong>.torrent reading</strong> : Get .torrent file after that read the .torrent file and 
+decode the bencoded information. From the extracted information get Tracker URLs.</p></li>
+<li><p><strong>Tracker request</strong> : Communicate with the trackers inorder to know which peers 
+are participating in the download. The tracker response contains the peer 
+information which are currently in the swarm.</p></li>
+<li><p><strong>BTP</strong> : communicate with all the peers and using peer wire messages(PWM)
+and download file pieces from the peers and wirte the pieces in file.</p></li>
+</ul>
+
+<h3>Reading torrent files</h3>
+
+<ul>
+<li><p>Files have extention .torrent and contain data about trackers to
+contact, along with some additional information about the orginal file.</p></li>
+<li><p>Torrent files are bencoded thus one requires to parse the torrent file and
+extract the information about the orginal file being download. Thus
+bittorrent client needs write a parser for decoding torrent files.</p></li>
+<li><p>Torrent files can be generated for single/multiple files being distributed.
+The given below image is output of the torrent parser in case of single file 
+torrents.</p>
+
+<p><img src="./images/torrent_parsing.png" alt="Torrent file reader" title="" /></p></li>
 </ul>

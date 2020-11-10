@@ -40,8 +40,8 @@
 * Government of UK used Bittorrent to distribute the details of the tax money
   spend by the cittizens.
 
-**Fun Fact** - BitTorrent had 100 million users and a greater share of network 
-  bandwidth than Netflix and Hulu combined.
+**Fun Fact** - In 2011, BitTorrent had 100 million users and a greater share 
+  of network bandwidth than Netflix and Hulu combined.
 
 ## Bittorrent Client 
 
@@ -56,13 +56,65 @@
   uploading files among serveral peers. 
 
 
+## Run the bittorent client
+
+* In the source folder run the main.py python3 file, 
+
+
+
 ## Bittorrent File distribution process entities
 
-| Entity            | Significance                                                                                              |
+| Entity Names      | Significance                                                                                              |
 |-------------------|-----------------------------------------------------------------------------------------------------------|
-| **.torrent file** | contains details of trackers, along with file name, size, info hash, etc regarding file being distributed |
-| **Tracker**       | It keeps the state of the file being being shared by which peers and what part of files each peer have    |
-| **peers**         | The end systems which may or may not have compelete file but are participating the file distribution      |
-| **BTP**           | The protocol that the end system need to follow inorder to distribute the file among other peers          |
+| **.torrent file** | contains details of trackers, file name, size, info hash, etc regarding file being distributed            |
+| **Tracker**       | It keeps the state of file being being shared by which peers and what part of files each peer have        |
+| **peers**         | End systems which may or may not have compelete file but are participating the file distribution          |
+| **BTP/1.0**       | protocol that end system need to follow inorder to distribute the file among other peers                  |
+
+* Peers participating in file sharing lead into dense graph like structure
+  called **swarm**. The peers are classified into two types leechers(one who
+  download only) and seeders(one who upload only).
+
+* The large file being distributed is **divided into number of pieces** which
+  inturn is divided into number of different chunks/blocks. The data chunks/blocks 
+  are actually shared among the peers by which the whole file gets downloaded.
+
+  ![File downloaded by bittorrent](./images/file_pieces.png)
+
+### Bittorrent tasks
+
+* **.torrent reading** : Get .torrent file after that read the .torrent file and 
+  decode the bencoded information. From the extracted information get Tracker URLs, 
+  file size, name, piece length, info hash, files(if any), etc.
+
+* **Tracker request** : Communicate with the trackers inorder to know which peers 
+  are participating in the download. The tracker response contains the peer 
+  information which are currently in the swarm.
+
+* **BTP** : communicate with all the peers and using peer wire messages(PWM)
+  and download file pieces from the peers and wirte the pieces in file.
+
+
+### Reading torrent files 
+
+* Files have extention .torrent and contain data about trackers to
+  contact, along with some additional information about the orginal file.
+
+* Torrent files are bencoded thus one requires to parse the torrent file and
+  extract the information about the orginal file being download. Thus
+  bittorrent client needs write a parser for decoding torrent files.
+
+* Torrent files can be generated for single/multiple files being distributed.
+  The given below image is output of the torrent parser in case of single file 
+  torrents.
+    
+<img src="./images/torrent_parsing.png" alt="torrent parsing" height=300 width=1200>
+
+
+
+
+
+
+
 
 

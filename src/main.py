@@ -22,7 +22,7 @@ def main(user_arguments):
     
     # download the file from the swarm
     client.event_loop()
-        
+
 
 if __name__ == '__main__':
     bittorrent_description  = 'KP-Bittorrent Client implementation in python3'

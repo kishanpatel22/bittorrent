@@ -152,7 +152,10 @@ class torrent_file_reader(torrent_metadata):
                     torrent_extract[new_key] = value
             # if type of value if of types byte
             elif type(value) == bytes and new_key != 'pieces':
-                torrent_extract[new_key] = value.decode(self.encoding)
+                try:
+                    torrent_extract[new_key] = value.decode(self.encoding)
+                except:
+                    torrent_extract[new_key] = value
             else :
                 torrent_extract[new_key] = value
 
