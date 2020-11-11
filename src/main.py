@@ -16,13 +16,13 @@ def main(user_arguments):
     
     # contact the trackers
     client.contact_trackers()
-    
+    """ 
     # initialize the swarm of peers
     client.initialize_swarm()
     
     # download the file from the swarm
     client.event_loop()
-
+    """
 
 if __name__ == '__main__':
     bittorrent_description  = 'KP-Bittorrent Client implementation in python3'
@@ -44,8 +44,8 @@ if __name__ == '__main__':
         print('KP-Bittorrent works with either download or upload arguments, try using --help')
         sys.exit()
     
-    if options[MAX_PEERS] and int(options[MAX_PEERS]) > 10:
-        print("KP-Bittorrent client doesn't support more than 10 peer connection !")
+    if options[MAX_PEERS] and int(options[MAX_PEERS]) > 50:
+        print("KP-Bittorrent client doesn't support more than 50 peer connection !")
         sys.exit()
     
     if options[RATE_LIMIT] and int(options[RATE_LIMIT]) <= 0:

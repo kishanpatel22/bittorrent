@@ -1,0 +1,51 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "146a3e2cc6bf2444e96fcd29856f52043e13450a759a9c8a1d21b1750209646e"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.6"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "argparse": {
+            "hashes": [
+                "sha256:62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4",
+                "sha256:c31647edb69fd3d465a847ea3157d37bed1f95f19760b11a47aa91c04b666314"
+            ],
+            "index": "pypi",
+            "version": "==1.4.0"
+        },
+        "beautifultable": {
+            "hashes": [
+                "sha256:9f2e632d5af050f2e15a288e5e30fce1cadd636eda5963bbecb81fa6ace45134",
+                "sha256:bd4c020f66f4ab573c3376f55a7ffccfeaac98edfa7bb31d1ffedfc55c5c9473"
+            ],
+            "index": "pypi",
+            "version": "==1.0.0"
+        },
+        "bencodepy": {
+            "hashes": [
+                "sha256:af472134d73ea58edab3c2cb2f2cf61eb9d783908284c3d2d5b1cfd38df864b8"
+            ],
+            "index": "pypi",
+            "version": "==0.9.5"
+        },
+        "wcwidth": {
+            "hashes": [
+                "sha256:beb4802a9cebb9144e99086eff703a642a13d6a0052920003a230f3294bbe784",
+                "sha256:c4d647b99872929fdb7bdcaa4fbe7f01413ed3d98077df798530e5b04f116c83"
+            ],
+            "version": "==0.2.5"
+        }
+    },
+    "develop": {}
+}
