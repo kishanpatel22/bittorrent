@@ -9,6 +9,7 @@ verify_ssl = true
 beautifultable = "*"
 argparse = "*"
 bencodepy = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"

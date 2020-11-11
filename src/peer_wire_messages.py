@@ -382,7 +382,7 @@ class peer_message_decoder():
 
     # initialize peer_message_decoder with given peer wire message instance
     def decode(self, peer_message):
-
+        
         # deocdes the given peer_message
         if peer_message.message_id == KEEP_ALIVE :
             self.peer_decoded_message = keep_alive()
@@ -424,7 +424,9 @@ class peer_message_decoder():
 
         elif peer_message.message_id == PORT :           
             self.peer_decoded_message = None
-
+        else:
+            self.peer_decoded_message = None
+        
         # returns the peer decoded message
         return self.peer_decoded_message
 

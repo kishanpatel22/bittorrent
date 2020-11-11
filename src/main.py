@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 import sys
 import argparse
 
@@ -16,13 +15,13 @@ def main(user_arguments):
     
     # contact the trackers
     client.contact_trackers()
-    """ 
+    
     # initialize the swarm of peers
     client.initialize_swarm()
     
     # download the file from the swarm
     client.event_loop()
-    """
+
 
 if __name__ == '__main__':
     bittorrent_description  = 'KP-Bittorrent Client implementation in python3'

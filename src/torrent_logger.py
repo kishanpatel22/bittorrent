@@ -57,20 +57,23 @@ class torrent_logger():
         verbose_string += '%(message)s'
         
         # verbose formatter for logging
-        verbose_formatter = logging.Formatter(verbose_string)
+        self.verbose_formatter = logging.Formatter(verbose_string)
         
         # file handler for logging into file
         file_handler = logging.FileHandler(self.file_name)
-        file_handler.setFormatter(verbose_formatter)
+        file_handler.setFormatter(self.verbose_formatter)
         self.logger.addHandler(file_handler)
-        
-        # console handler for logging into stdout
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(verbose_formatter)
-        self.logger.addHandler(console_handler)
         
         # set the verbosity level accordingly
         self.logger.setLevel(self.verbosity_level)
+    
+
+    # logs adds console hanlder for printing on screen
+    def set_console_logging(self):
+        # console handler for logging into stdout
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(self.verbose_formatter)
+        self.logger.addHandler(console_handler)
 
 
     # logs the data into the file stream and standard output console

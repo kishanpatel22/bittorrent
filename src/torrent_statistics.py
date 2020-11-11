@@ -99,7 +99,6 @@ class torrent_statistics():
         download_log += '(Average downloading rate : ' + str(self.avg_download_rate) + ' Kbps  '
         download_log += 'Time remaining : ' + str(self.expected_download_completion_time) + ')'
         return download_log
-
     
     """
         function returns the upload statistics of the torrent file

@@ -34,7 +34,6 @@ class file_io():
                 data = b'\x00' * data_size
                 data_size = 0
             self.write(data)
-    
         
     # moves the file descripter to the given index position from start of file
     def move_descriptor_position(self, index_position):

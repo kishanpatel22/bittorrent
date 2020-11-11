@@ -2,6 +2,7 @@ import sys
 import time
 import random
 from copy import deepcopy
+from datetime import timedelta
 from threading import *
 from peer import peer
 from torrent_error import *
@@ -44,13 +45,17 @@ class swarm():
         self.swarm_logger = torrent_logger('swarm', SWARM_LOG_FILE, DEBUG)
         # torrent stats logger object
         self.torrent_stats_logger = torrent_logger('torrent_statistics', TORRENT_STATS_LOG_FILE, DEBUG)
+        self.torrent_stats_logger.set_console_logging()
 
         # bitfield for pieces downloaded from peers
         self.bitfield_pieces_downloaded = set([])
-            
+                
         # file handler for downloading / uploading file data
         self.file_handler = None
-        
+    
+        # minimum pieces to recieve randomly
+        self.minimum_pieces = 10
+
         # check if the torrent file is for seeding
         if torrent.client_request['seeding'] != None:
             # client peer only need incase of seeding torrent
@@ -108,13 +113,26 @@ class swarm():
         self.swarm_lock.release()
         # used for EXCECUTION LOGGING
         self.swarm_logger.log(self.peers_list[peer_index].get_handshake_log())
-         
+    
+    """
+        function checks if there are any active connections in swarm
+    """
+    def have_active_connections(self):
+        for peer in self.peers_list:
+            if peer.peer_sock.peer_connection_active():
+                return True
+        return False
+      
     """
         function checks if the download is completed or not
     """
     def download_complete(self):
+        if not self.have_active_connections():
+            connections_log = 'Disconnecting ! no active connections left in swarm' 
+            self.torrent_stats_logger.log(connections_log)
+            sys.exit()
         return len(self.bitfield_pieces_downloaded) == self.torrent.pieces_count
-
+   
     """ 
         function helps in downloading torrrent file from peers
         implementation of rarest first algorithm as downloading stratergy
@@ -137,6 +155,7 @@ class swarm():
         selection and peer selection respectively
     """
     def download_using_stratergies(self):
+        download_start_time = time.time()
         while not self.download_complete():
             # select the pieces and peers for downloading
             pieces = self.piece_selection_startergy()
@@ -152,6 +171,15 @@ class swarm():
             # wait untill you finish the downloading of the pieces
             for downloading_thread in downloading_thread_pool:
                 downloading_thread.join()
+        download_end_time = time.time()
+        
+        # used for EXCECUTION LOGGING
+        download_log  = 'File downloading time : '
+        download_log += str(timedelta(seconds=(download_end_time - download_start_time))) 
+        download_log += ' Average download rate : ' 
+        download_log += str(self.torrent.statistics.avg_download_rate) + ' Kbps\n'
+        download_log += 'Happy Bittorrenting !'
+        self.torrent_stats_logger.log(download_log)
 
     """
         function downloads piece given the peer index and updates the 
@@ -212,7 +240,7 @@ class swarm():
         # return [self.select_specific_peer()]
 
         # select random peers untill you have some pieces
-        if len(self.bitfield_pieces_downloaded) < 4:
+        if len(self.bitfield_pieces_downloaded) < self.minimum_pieces:
             return self.select_random_peers()
         # select the top peers with high download rates
         else:
@@ -251,6 +279,8 @@ class swarm():
         comparator function for sorting the peer with highest downloading rate
     """
     def peer_comparator(self, peer):
+        if not peer.peer_sock.peer_connection_active():
+            return -sys.maxsize
         return peer.torrent.statistics.avg_download_rate
     
     """

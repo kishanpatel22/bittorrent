@@ -6,24 +6,46 @@
     KP-Bittorrent client 
 </h1>
 
-## Installation and Build :wrench:
+## Installation and Build :hammer_and_wrench:
 
-* Clone is repository on your local machine and step in the main directory
+* Clone is repository on your local unix machine and step in the main directory
 ```
     $ git clone https://github.com/kishanpatel22/bittorrent.git
     $ cd bittorrent
 ```
 
-* Enter the virtual enviornment and install all dependencies (make sure you have pipenv installed)
+* If you don't have pipenv package then install it using command, else ignore below command
+
+```
+    $ pip3 install pipenv
+```
+
+* Enter the virtual enviornment and install all dependencies 
 ```
     $ pipenv shell
     $ pipenv install --dev
 ```
 
-## Run
+## Run :computer:
+
+* Change directory to source in bittorrent folder and inorder to display help options 
+```
+    $ cd src
+    $ python3 main.py --help
+```
+
+* Example for downloading torrent file given destination path for downloading file
+```
+    $ python3 main.py input_file.torrent -d destination_path/
+```
+
+* Example for seeding torrent file given given destination path of existing file
+```
+    $ python3 main.py input_file.torrent -s existing_file_path/
+```
 
 
-
+## Motivation 
 
 * Downloading movie, music perhaps game or very large size software if pretty
   fun activity using **Bittorrent communication protocol** which helps in
@@ -64,7 +86,7 @@
 **Fun Fact** - In 2011, BitTorrent had 100 million users and a greater share 
   of network bandwidth than Netflix and Hulu combined.
 
-## Bittorrent Client 
+## [Bittorrent Client](https://en.wikipedia.org/wiki/BitTorrent)
 
 * **Bittorrent protocol is application layer protocol**, since it replies on the
   services provided by the lower 4 levels of TCP/IP Internet model for sharing
@@ -83,7 +105,7 @@
 | **.torrent file** | contains details of trackers, file name, size, info hash, etc regarding file being distributed            |
 | **Tracker**       | It keeps state of the peers which are active in swarm and what part of files each peer has                |
 | **peers**         | End systems which may or may not have compelete file but are participating the file distribution          |
-| **BTP/1.0**       | protocol that end system need to follow inorder to distribute the file among other peers                  |
+| **PWP**           | protocol that end system need to follow inorder to distribute the file among other peers                  |
 
 * Peers participating in file sharing lead into dense graph like structure
   called **swarm**. The peers are classified into two types leechers(one who
@@ -93,7 +115,7 @@
   inturn is divided into number of different chunks/blocks. The data chunks/blocks 
   are actually shared among the peers by which the whole file gets downloaded.
 
-  Distribution large file in pieces                             |
+  Distribution of large file in pieces                          |
   :------------------------------------------------------------:|
   ![File downloaded by bittorrent](./images/file_pieces.png)    |
 
@@ -108,9 +130,9 @@
   peers are participating in the download. The tracker response contains the peer 
   information which are currently in the swarm.
 
-* **PWP** : Peer wire Protocol (PWP) is used to communicate with all the peers 
-  and using peer wire messages(PWM) and download file pieces from the peers.
-
+* [**PWP**](#peer-wire-protocol) : Peer wire Protocol (PWP) is used to communicate 
+  with all the peers and using peer wire messages(PWM) and download file pieces 
+  from the peers.
 
 ### [Reading torrent files](https://wiki.theory.org/index.php/BitTorrentSpecification#Metainfo_File_Structure)
 
@@ -167,10 +189,116 @@
 
 * A typical tracker response contains random 50 or less peers in the swarm along 
   with some additional parametes as given below. 
-  Torrent file bencoded data                            |
+  
+  Tracker Response                                      |
   :----------------------------------------------------:|
   ![Tracker response](./images/tracker_response.png)    |
 
 
+## [Peer Wire Protocol(PWP)](https://wiki.theory.org/BitTorrentSpecification#Peer_wire_protocol_.28TCP.29)
 
+* According to BTP/1.0 PWP facilitates the exchange of pieces of the file. The
+  Bittorrent Client maintains the **state information** for each connection 
+  that it has with a remote peer.
+
+  States            |  Signifance
+  :----------------:|:-------------------------:
+  am choking        | client is choking the peer
+  peer choking      | peer is choking the client
+  am interested     | client interested in peer
+  peer interested   | peer interested in client
+ 
+* Choking here means peer or client being choked will not recieve messages for 
+  their request until unchoke message is recieved.
+  
+  peer choking                                                 | peer unchoking
+  :-----------------------------------------------------------:|:-------------------------:
+  <img src="./images/peer_choking.jpeg" height=300 width=300>  | <img src="./images/peer_unchoking.jpeg" height=250 width=300>
+
+* Initial state of client for **downloading** will be **peer choking = 1** and 
+  **client interested = 0**, similarly for **uploading** the state will be 
+  **client choking = 1** and **peer interested = 0**. Now we start
+  communicating with peer with these states using **Peer Wire Messages** (PWM)
+
+#### [Peer Wire Messages](http://jonas.nitro.dk/bittorrent/bittorrent-rfc.html#anchor20)
+
+* All the peer wire message are send over TCP connection which provides inorder
+  and reliable bidirectional data communication.
+
+* **Question : The peer IP and port addresses recieved from tracker will be
+  behind the NATED gateway how are you going to establish TCP connection ?**
+
+
+  Message           |  Signifance
+  :----------------:|:-------------------------:
+  handshake         | Initial message to be shared after TCP connection
+  keep alive        | message indicating that the peer connection is still active
+  choke             | peer is choking client
+  unchoke           | peer is unchoking client
+  interested        | peer is interested in client
+  uninterested      | peer is uninterested in client
+  bitfield          | pieces that peer has
+  have              | piece that peer has
+  request           | request for piece to peer
+  piece             | piece data response from peer
+
+* Along with these there are few more PWM which are not discussed since they
+  are not implemented in the code. The ideal sequence or exchange of message
+  after establishing successful TCP connection are given below
+
+|Message Sequnece |   Client side     |     to/from      |    Peer side        |
+|-----------------|-------------------|------------------|---------------------|
+|1                | Handshake request |      --->        |                     |
+|2                |                   |      <---        | Handshake response  |
+|3                |                   |      <---        | Bitfield            |
+|4                |                   |      <---        | Have(optional)      |
+|5                | Interested        |      --->        |                     |
+|6                |                   |      <---        | Unchoke/Choke       |
+|7                | Request1          |      --->        |                     |
+|8                |                   |      <---        | Piece1              |
+|9                | Request2          |      --->        |                     |
+|10               |                   |      <---        | Piece2              |
+|k                | ...               |      --->        |                     |
+|k + 1            |                   |      <---        | ...                 |
+
+
+* However this is ideal case where all the validation of peer wire message is
+  successful and peer TCP connection is not closed. Example peer could send
+  choke message in that case subsequent message will get not reply, and
+  sometimes even handshake message are invalid !
+
+* Inorder to solve such issues Downloading Finite State Machine is designed 
+  taken into consideration the order in which the messages are exchanged and 
+  client state. The Finite state machine with each state having timeout is 
+  implemented as given below
+
+  Finite State Machine for downloading                          |
+  :------------------------------------------------------------:|
+  ![Downloading FSM](./images/downloading_state_diagram.png)    |
+
+* Typical sequence of event for the downloading woudl look like as given below.
+
+  Sequence of messages in Downloading                           |
+  :------------------------------------------------------------:|
+  ![Downloading FSM](./images/downloading_sequence.png)    |
+
+* **Question : How to write into file after receiving the piece message ?**
+  The solution is initialize the file with the size with null values and as and 
+  when you recieve any of the pieces from the peers write at the proper
+  location in the file. What to generate is file with many holes.
+
+## Legal issues with BitTorrent
+
+* Firstly torrenting is Legal ! It is the protocol used in peer to peer
+  architecture, but the problem is in the content that we share on torrent that 
+  needs to monitored and must hold permission to share by owner.
+
+* Copyrighted contents like any new NetFlix web series, any new movie, songs, 
+  some gamming softwares, etc generate many legal issues since first of all
+  downloading such copyrighted content is illegal (owner can sue you). And it 
+  is actually very hard to monitor over internet the copyrighted bittorrent 
+  traffic, there is even no way to know which people have copy righted content.
+
+* Make sure whatever you download by Bittorrent doesn't have such issues, and
+  lastly **enjoy torrenting !**.
 

@@ -40,6 +40,7 @@ class bittorrent_client():
         
         # bittorrent client logger
         self.bittorrent_logger = torrent_logger('bittorrent', BITTORRENT_LOG_FILE, DEBUG)
+        self.bittorrent_logger.set_console_logging()
         
         self.bittorrent_logger.log('Reading ' + torrent_file_path + ' file ...')
 
@@ -152,6 +153,8 @@ class bittorrent_client():
         
         # lastly download the whole file
         self.swarm.download_file() 
+
+
 
     """
         the event loop that either downloads / uploads a file

@@ -370,7 +370,9 @@ class peer():
 
         # DECODE the peer wire message into appropriate peer wire message type type
         decoded_message = PEER_MESSAGE_DECODER.decode(peer_response_message)
-        
+        if decoded_message is None:
+            return None
+
         # used for EXCECUTION LOGGING
         recieved_message_log = 'recieved message <----- ' + decoded_message.__str__() 
         self.peer_logger.log(recieved_message_log)
