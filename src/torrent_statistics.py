@@ -89,7 +89,7 @@ class torrent_statistics():
     """
     def update_upload_rate(self, piece_index, piece_size):
         # calculate the time for uploading
-        time = self.event_end_time - self.event_start_time
+        time = (self.event_end_time - self.event_start_time) / 2
 
         piece_size_kb = piece_size / (2 ** 10)
         self.upload_rate = round(piece_size_kb / time, 2)
@@ -103,7 +103,7 @@ class torrent_statistics():
         self.avg_upload_rate = round(self.avg_upload_rate, 2)
 
         # update the max download rate 
-        self.max_upload_rate = max(self.max_upload_rate, self.upload_log)
+        self.max_upload_rate = max(self.max_upload_rate, self.upload_rate)
         
     """
         function returns the download statistics of the torrent file
@@ -118,7 +118,7 @@ class torrent_statistics():
         function returns the upload statistics of the torrent file
     """
     def get_upload_statistics(self):
-        upload_log += 'uploaded : [upload rate = ' 
+        upload_log  = 'uploaded : [upload rate = ' 
         upload_log += str(self.upload_rate) + ' Kbps'
         upload_log += ', avg uploading rate = '
         upload_log += str(self.avg_upload_rate) + ' Kbps'

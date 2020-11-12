@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--" + SEEDING_DIR_PATH, help="unix directory path for the seeding file")
     parser.add_argument("-m", "--" + MAX_PEERS, help="maximum peers participating in upload/download of file")
     parser.add_argument("-l", "--" + RATE_LIMIT, help="upload / download limits in Kbps")
-    parser.add_argument("-a", "--" + AWS, action="store_true", default='False', help="test download from AWS Cloud")
+    parser.add_argument("-a", "--" + AWS, action="store_true", default=False, help="test download from AWS Cloud")
 
     # get the user input option after parsing the command line argument
     options = vars(parser.parse_args(sys.argv[1:]))

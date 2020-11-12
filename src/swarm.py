@@ -141,7 +141,6 @@ class swarm():
         if not self.have_file_handler():
             return False
         # initialize bitfields asynchronously
-        # for peer_index in range(1):
         for peer_index in range(len(self.peers_list)):
             connect_peer_thread = Thread(target = self.connect_to_peer, args=(peer_index, ))
             connect_peer_thread.start()

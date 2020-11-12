@@ -51,7 +51,7 @@ class bittorrent_client():
         # decide whether the user want to download or seed the torrent
         self.client_request = {'seeding' : None,               'downloading': None,
                                'uploading rate' : sys.maxsize,  'downloading rate' : sys.maxsize,
-                               'max peers' : 4}
+                               'max peers' : 4, 'AWS' : False}
         
         # user wants to download the torrent file
         if user_arguments[DOWNLOAD_DIR_PATH]:
@@ -69,7 +69,7 @@ class bittorrent_client():
             self.client_request['max peers'] = int(user_arguments[MAX_PEERS])
         
         # AWS Cloud test
-        if user_arguments[AWS] == 'True':
+        if user_arguments[AWS]:
             self.client_request['AWS'] = True
         else:
             self.client_request['AWS'] = False
