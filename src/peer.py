@@ -53,7 +53,7 @@ class peer():
         # peer logger object with unique ID 
         logger_name = 'peer' + self.unique_id
         self.peer_logger = torrent_logger(logger_name, PEER_LOG_FILE, DEBUG)
-        
+
         # response message handler for recieved message
         self.response_handler = { KEEP_ALIVE    : self.recieved_keep_alive,
                                   CHOKE         : self.recieved_choke,
@@ -820,8 +820,16 @@ class peer():
     """
     def upload_pieces(self):
         while self.upload_possible():
+            # torrent statistics starting the timer
+            self.torrent.statistics.start_time()
             # handle all the request messages
             request_message = self.handle_response()
+            # torrent statistics starting the timer
+            self.torrent.statistics.stop_time()
+            if request_message and request_message.message_id == REQUEST:
+                piece_index = request_message.piece_index
+                block_length = request_message.block_length
+                self.torrent.statistics.update_upload_rate(piece_index, block_length)
 
     """ 
         piece can be only uploaded only upon given conditions

@@ -22,7 +22,6 @@ def main(user_arguments):
     # download the file from the swarm
     client.event_loop()
 
-
 if __name__ == '__main__':
     bittorrent_description  = 'KP-Bittorrent Client implementation in python3'
     bittorrent_epilog  = 'Report bugs to : <https://github.com/kishanpatel22/bittorrent/issues>\n'
@@ -35,6 +34,7 @@ if __name__ == '__main__':
     parser.add_argument("-s", "--" + SEEDING_DIR_PATH, help="unix directory path for the seeding file")
     parser.add_argument("-m", "--" + MAX_PEERS, help="maximum peers participating in upload/download of file")
     parser.add_argument("-l", "--" + RATE_LIMIT, help="upload / download limits in Kbps")
+    parser.add_argument("-a", "--" + AWS, action="store_true", default='False', help="test download from AWS Cloud")
 
     # get the user input option after parsing the command line argument
     options = vars(parser.parse_args(sys.argv[1:]))
@@ -50,9 +50,8 @@ if __name__ == '__main__':
     if options[RATE_LIMIT] and int(options[RATE_LIMIT]) <= 0:
         print("KP-Bittorrent client upload / download rate must always greater than 0 Kbps")
         sys.exit()
-
+    
     # call the main function
     main(options)
-
 
 

@@ -75,7 +75,7 @@ class torrent():
         # file name
         torrent_file_table.rows.append(['File name', str(self.torrent_metadata.file_name)])
         # file size
-        torrent_file_table.rows.append(['File size', str(self.torrent_metadata.file_size)])
+        torrent_file_table.rows.append(['File size', str(round(self.torrent_metadata.file_size / (2 ** 20), 2)) + ' MB'])
         # piece length 
         torrent_file_table.rows.append(['Piece length', str(self.torrent_metadata.piece_length)])
         # info hash

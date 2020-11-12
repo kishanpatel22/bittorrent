@@ -15,7 +15,6 @@
 ```
 
 * If you don't have pipenv package then install it using command, else ignore below command
-
 ```
     $ pip3 install pipenv
 ```

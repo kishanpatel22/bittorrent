@@ -5,4 +5,5 @@ __pycache__
 *.*~
 tags
 results/*
-src/torrent_logs/*.log
+*.log
+*.pyc

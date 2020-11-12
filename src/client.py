@@ -23,6 +23,7 @@ DOWNLOAD_DIR_PATH = 'download_directory_path'
 SEEDING_DIR_PATH  = 'seeding_directory_path'
 MAX_PEERS         = 'max_peers'
 RATE_LIMIT        = 'rate_limit'
+AWS               = 'AWS'
 
 """
     Torrent client would help interacting with the tracker server and
@@ -66,7 +67,13 @@ class bittorrent_client():
         # max peer connections 
         if user_arguments[MAX_PEERS]:
             self.client_request['max peers'] = int(user_arguments[MAX_PEERS])
-
+        
+        # AWS Cloud test
+        if user_arguments[AWS] == 'True':
+            self.client_request['AWS'] = True
+        else:
+            self.client_request['AWS'] = False
+        
         # make torrent class instance from torrent data extracted from torrent file
         self.torrent = torrent(self.torrent_info.get_data(), self.client_request)
          
