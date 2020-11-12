@@ -286,6 +286,11 @@
   when you recieve any of the pieces from the peers write at the proper
   location in the file. What to generate is file with many holes.
 
+#### Downloading torrent file demo
+
+  [![asciicast](https://asciinema.org/a/yVvtbuvsPJc0tVQYPkwNVVXY9.svg)](https://asciinema.org/a/yVvtbuvsPJc0tVQYPkwNVVXY9)
+
+
 ## Legal issues with BitTorrent
 
 * Firstly torrenting is Legal ! It is the protocol used in peer to peer
