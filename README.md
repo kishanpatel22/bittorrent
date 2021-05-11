@@ -1,10 +1,28 @@
-<h1> 
+<h1 align="center">kp-torrent</h1>
+
+<div align="center">
     <a href="https://wiki.theory.org/index.php/BitTorrentSpecification">
         <img src="https://lh3.googleusercontent.com/3xw65ra0EExCeLTyHXSZDyzdVW63QB-X6-0-ALFT-1jaRulrGWroL5xsNu9x2Rd9TUw" 
              atl="bittorrent image" width=50 height=50 styles="float: left;">
     </a>
-    KP-Bittorrent client 
-</h1>
+</div>
+
+<div align="center">
+  <strong>Bittorrent Client</strong>
+</div>
+<br />
+
+<div align="center">
+  
+ [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+ [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+ ![Version](https://img.shields.io/badge/version-1.0-blue])
+</div>
+  
+<div align="center">
+  <sub>Built by
+  <a href="https://github.com/kishanpatel22">Kishan Patel</a> and
+</div>
 
 ## Installation and Build :hammer_and_wrench:
 
